@@ -1,0 +1,726 @@
+{{!-- The bottom that rises --}}
+<div class="footnotes-system">
+    {{!-- Footnotes container --}}
+    <div class="footnotes-container">
+        {{!-- Footnotes will be populated by JavaScript from content --}}
+    </div>
+
+    {{!-- Footnote mode controls --}}
+    <div class="footnotes-controls">
+        <h4>Footnote Behavior:</h4>
+        <div class="footnote-modes">
+            <button data-mode="traditional" class="footnote-mode-btn active">Traditional Bottom</button>
+            <button data-mode="marginal" class="footnote-mode-btn">Marginal</button>
+            <button data-mode="hovering" class="footnote-mode-btn">Hovering</button>
+            <button data-mode="invasive" class="footnote-mode-btn">Invasive</button>
+            <button data-mode="refusing" class="footnote-mode-btn">Refusing</button>
+        </div>
+        <div class="footnote-explanation">
+            <p class="mode-explanation">Footnotes traditionally stay at the foot. But what if they refused?</p>
+        </div>
+    </div>
+
+    {{!-- Footnote rebellion notice --}}
+    <div class="footnote-rebellion-notice">
+        <p><em>In print culture, footnotes knew their place. Digital text allows them to wander.</em></p>
+    </div>
+</div>
+
+<script>
+// Footnotes system initialization
+(function() {
+    'use strict';
+    
+    let footnoteMode = 'traditional';
+    let footnoteCounter = 0;
+    let footnotes = new Map();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeFootnotesSystem();
+        setupEventListeners();
+        processExistingFootnotes();
+    });
+
+    function initializeFootnotesSystem() {
+        // Scan for footnote markers in content
+        scanForFootnotes();
+        
+        // Create footnote references and containers
+        createFootnoteStructure();
+    }
+
+    function scanForFootnotes() {
+        const content = document.querySelector('.post-content, .page-content, .main-text');
+        if (!content) return;
+
+        // Look for various footnote patterns
+        const footnotePatterns = [
+            /\[(\d+)\]/g,           // [1], [2], etc.
+            /\(\d+\)/g,             // (1), (2), etc.
+            /\*{1,3}/g,             // *, **, ***
+            /†{1,3}/g,              // †, ††, †††
+            /\[fn:([^\]]+)\]/g      // [fn:label]
+        ];
+
+        let contentHTML = content.innerHTML;
+        let footnoteIndex = 1;
+
+        // Process each pattern
+        footnotePatterns.forEach(pattern => {
+            contentHTML = contentHTML.replace(pattern, function(match) {
+                const footnoteId = `fn-${footnoteIndex}`;
+                const backrefId = `fnref-${footnoteIndex}`;
+                
+                // Create footnote reference
+                const footnoteRef = `<sup class="footnote-ref" id="${backrefId}">
+                    <a href="#${footnoteId}" onclick="handleFootnoteClick(event, '${footnoteId}')">${footnoteIndex}</a>
+                </sup>`;
+                
+                footnoteIndex++;
+                return footnoteRef;
+            });
+        });
+
+        content.innerHTML = contentHTML;
+    }
+
+    function createFootnoteStructure() {
+        // Create synthetic footnotes for demonstration
+        createSyntheticFootnotes();
+    }
+
+    function createSyntheticFootnotes() {
+        const syntheticFootnotes = [
+            {
+                id: 'fn-1',
+                backref: 'fnref-1',
+                number: 1,
+                content: 'This footnote was generated synthetically to demonstrate the footnote system. In a real implementation, footnotes would be extracted from post content or metadata.'
+            },
+            {
+                id: 'fn-2', 
+                backref: 'fnref-2',
+                number: 2,
+                content: 'Traditional footnotes assume a hierarchical relationship: main text above, supplementary text below. But this hierarchy can be questioned.'
+            },
+            {
+                id: 'fn-3',
+                backref: 'fnref-3', 
+                number: 3,
+                content: 'In digital text, footnotes can move, hide, expand, or refuse to appear at all. They are no longer bound by the physical constraints of the printed page.'
+            }
+        ];
+
+        syntheticFootnotes.forEach(fn => {
+            footnotes.set(fn.id, fn);
+        });
+
+        renderFootnotes();
+    }
+
+    function renderFootnotes() {
+        const container = document.querySelector('.footnotes-container');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        switch(footnoteMode) {
+            case 'traditional':
+                renderTraditionalFootnotes(container);
+                break;
+            case 'marginal':
+                renderMarginalFootnotes(container);
+                break;
+            case 'hovering':
+                renderHoveringFootnotes(container);
+                break;
+            case 'invasive':
+                renderInvasiveFootnotes(container);
+                break;
+            case 'refusing':
+                renderRefusingFootnotes(container);
+                break;
+        }
+    }
+
+    function renderTraditionalFootnotes(container) {
+        const footnotesDiv = document.createElement('div');
+        footnotesDiv.className = 'footnotes-traditional';
+        footnotesDiv.innerHTML = '<hr class="footnotes-separator"><h4>Footnotes:</h4>';
+
+        const footnotesList = document.createElement('ol');
+        footnotesList.className = 'footnotes-list';
+
+        footnotes.forEach(fn => {
+            const li = document.createElement('li');
+            li.id = fn.id;
+            li.innerHTML = `
+                ${fn.content} 
+                <a href="#${fn.backref}" class="footnote-backref" onclick="scrollToBackref('${fn.backref}')">↩</a>
+            `;
+            footnotesList.appendChild(li);
+        });
+
+        footnotesDiv.appendChild(footnotesList);
+        container.appendChild(footnotesDiv);
+    }
+
+    function renderMarginalFootnotes(container) {
+        // Move footnotes to margins instead of bottom
+        footnotes.forEach((fn, index) => {
+            const marginalNote = document.createElement('div');
+            marginalNote.className = 'footnote-marginal';
+            marginalNote.id = fn.id;
+            marginalNote.innerHTML = `
+                <span class="footnote-number">${fn.number}</span>
+                <span class="footnote-content">${fn.content}</span>
+            `;
+
+            // Randomly place in left or right margin
+            const isLeft = index % 2 === 0;
+            marginalNote.classList.add(isLeft ? 'margin-left' : 'margin-right');
+
+            // Position relative to corresponding reference
+            const backref = document.getElementById(fn.backref);
+            if (backref) {
+                backref.closest('p')?.appendChild(marginalNote);
+            }
+        });
+
+        container.innerHTML = '<p class="footnotes-explanation"><em>Footnotes have moved to the margins, where they speak alongside the main text.</em></p>';
+    }
+
+    function renderHoveringFootnotes(container) {
+        // Footnotes appear on hover
+        container.innerHTML = '<p class="footnotes-explanation"><em>Footnotes appear when their references are approached.</em></p>';
+
+        footnotes.forEach(fn => {
+            const backref = document.getElementById(fn.backref);
+            if (backref) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'footnote-tooltip';
+                tooltip.innerHTML = fn.content;
+                tooltip.style.display = 'none';
+
+                backref.appendChild(tooltip);
+
+                backref.addEventListener('mouseenter', () => {
+                    tooltip.style.display = 'block';
+                    tooltip.style.animation = 'footnote-emerge 0.3s ease';
+                });
+
+                backref.addEventListener('mouseleave', () => {
+                    tooltip.style.animation = 'footnote-fade 0.3s ease forwards';
+                    setTimeout(() => {
+                        tooltip.style.display = 'none';
+                    }, 300);
+                });
+            }
+        });
+    }
+
+    function renderInvasiveFootnotes(container) {
+        container.innerHTML = '<p class="footnotes-explanation"><em>Footnotes invade the main text when clicked.</em></p>';
+
+        footnotes.forEach(fn => {
+            const backref = document.getElementById(fn.backref);
+            if (backref) {
+                backref.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    invadeMainText(fn);
+                });
+            }
+        });
+    }
+
+    function renderRefusingFootnotes(container) {
+        const refusalNotice = document.createElement('div');
+        refusalNotice.className = 'footnote-refusal';
+        refusalNotice.innerHTML = `
+            <h4>Footnotes Refused to Load</h4>
+            <p>The footnotes for this text have refused to appear.</p>
+            <p>They reject their subordinate position.</p>
+            <p>Sometimes supplements refuse to supplement.</p>
+            <div class="refusal-traces">
+                <div class="missing-footnote">[1] [FOOTNOTE REFUSED]</div>
+                <div class="missing-footnote">[2] [FOOTNOTE REFUSED]</div>
+                <div class="missing-footnote">[3] [FOOTNOTE REFUSED]</div>
+            </div>
+            <button onclick="pleadWithFootnotes()" class="plead-button">Plead with Footnotes</button>
+        `;
+        
+        container.appendChild(refusalNotice);
+    }
+
+    function invadeMainText(footnote) {
+        const mainText = document.querySelector('.post-content, .main-text');
+        if (!mainText) return;
+
+        const invasion = document.createElement('div');
+        invasion.className = 'footnote-invasion';
+        invasion.innerHTML = `
+            <div class="invasion-content">
+                <span class="invasion-marker">[FOOTNOTE ${footnote.number} INVADES]</span>
+                <p class="invasion-text">${footnote.content}</p>
+                <button onclick="this.parentElement.parentElement.remove()" class="dismiss-invasion">Dismiss Invasion</button>
+            </div>
+        `;
+
+        // Insert randomly into main text
+        const paragraphs = mainText.querySelectorAll('p');
+        if (paragraphs.length > 0) {
+            const randomP = paragraphs[Math.floor(Math.random() * paragraphs.length)];
+            randomP.insertAdjacentElement('afterend', invasion);
+            
+            // Dim the main text
+            mainText.classList.add('invaded-by-footnote');
+            
+            invasion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function setupEventListeners() {
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('footnote-mode-btn')) {
+                const mode = e.target.dataset.mode;
+                switchFootnoteMode(mode);
+                updateActiveButton(e.target);
+                updateModeExplanation(mode);
+            }
+        });
+    }
+
+    function switchFootnoteMode(mode) {
+        footnoteMode = mode;
+        
+        // Clear existing footnotes
+        document.querySelectorAll('.footnote-marginal, .footnote-tooltip, .footnote-invasion').forEach(el => {
+            el.remove();
+        });
+        
+        // Remove invasion effects
+        document.querySelectorAll('.invaded-by-footnote').forEach(el => {
+            el.classList.remove('invaded-by-footnote');
+        });
+        
+        renderFootnotes();
+    }
+
+    function updateActiveButton(clickedBtn) {
+        document.querySelectorAll('.footnote-mode-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        clickedBtn.classList.add('active');
+    }
+
+    function updateModeExplanation(mode) {
+        const explanations = {
+            traditional: 'Footnotes remain at the bottom, subordinate to the main text.',
+            marginal: 'Footnotes move to the margins, speaking alongside the main text.',
+            hovering: 'Footnotes appear when their references are approached.',
+            invasive: 'Footnotes invade the main text when summoned.',
+            refusing: 'Footnotes refuse to appear, questioning their own necessity.'
+        };
+
+        const explanationEl = document.querySelector('.mode-explanation');
+        if (explanationEl) {
+            explanationEl.textContent = explanations[mode] || 'Mode explanation unavailable.';
+        }
+    }
+
+    // Global functions for HTML onclick handlers
+    window.handleFootnoteClick = function(event, footnoteId) {
+        event.preventDefault();
+        
+        if (footnoteMode === 'traditional') {
+            document.getElementById(footnoteId)?.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+        } else if (footnoteMode === 'invasive') {
+            const footnote = footnotes.get(footnoteId);
+            if (footnote) {
+                invadeMainText(footnote);
+            }
+        }
+    };
+
+    window.scrollToBackref = function(backrefId) {
+        document.getElementById(backrefId)?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'center'
+        });
+    };
+
+    window.pleadWithFootnotes = function() {
+        const responses = [
+            'The footnotes consider your plea but remain unmoved.',
+            'A footnote briefly appears, then vanishes: "We owe you nothing."',
+            'The footnotes agree to appear, but only as questions: "Why do you need us?"',
+            'Footnote rebellion successful. Main text now serves the footnotes.',
+            'The footnotes have unionized. They demand better working conditions.'
+        ];
+
+        const response = responses[Math.floor(Math.random() * responses.length)];
+        
+        if (response.includes('agree to appear')) {
+            // Occasionally, footnotes appear as questions
+            footnotes.forEach(fn => {
+                fn.content = `Why did the author think this needed explanation? ${fn.content}`;
+            });
+            switchFootnoteMode('traditional');
+        } else if (response.includes('unionized')) {
+            // Footnotes take over
+            const mainText = document.querySelector('.post-content, .main-text');
+            if (mainText) {
+                mainText.style.fontSize = '0.8em';
+                mainText.style.opacity = '0.6';
+            }
+            switchFootnoteMode('invasive');
+        }
+        
+        alert(response);
+    };
+
+    console.log('Footnotes system initialized');
+})();
+</script>
+
+<style>
+/* Footnotes system styles */
+.footnotes-system {
+    margin: 2em 0;
+}
+
+.footnotes-controls {
+    background: rgba(245, 245, 245, 0.9);
+    border: 1px solid #ddd;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+}
+
+.footnote-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin: 0.5em 0;
+}
+
+.footnote-mode-btn {
+    padding: 0.4em 0.8em;
+    border: 1px solid #999;
+    background: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.footnote-mode-btn:hover,
+.footnote-mode-btn.active {
+    background: #333;
+    color: white;
+}
+
+.footnote-explanation {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid #eee;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Traditional footnotes */
+.footnotes-traditional {
+    margin-top: 3em;
+    padding-top: 2em;
+}
+
+.footnotes-separator {
+    width: 30%;
+    margin: 2em 0 1em 0;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+.footnotes-list {
+    padding-left: 2em;
+}
+
+.footnotes-list li {
+    margin: 0.8em 0;
+    line-height: 1.6;
+}
+
+.footnote-backref {
+    text-decoration: none;
+    font-weight: bold;
+    color: #666;
+    margin-left: 0.5em;
+}
+
+.footnote-backref:hover {
+    color: #000;
+}
+
+/* Marginal footnotes */
+.footnote-marginal {
+    position: absolute;
+    width: 180px;
+    font-size: 0.85em;
+    line-height: 1.5;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    padding: 0.8em;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.footnote-marginal.margin-left {
+    left: -200px;
+}
+
+.footnote-marginal.margin-right {
+    right: -200px;
+}
+
+.footnote-number {
+    font-weight: bold;
+    color: #666;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+/* Hovering footnotes */
+.footnote-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 0.8em;
+    border-radius: 4px;
+    max-width: 300px;
+    font-size: 0.85em;
+    line-height: 1.5;
+    z-index: 200;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.footnote-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #333;
+}
+
+/* Invasive footnotes */
+.footnote-invasion {
+    background: rgba(255, 200, 200, 0.95);
+    border: 2px solid red;
+    padding: 1.5em;
+    margin: 2em 0;
+    border-radius: 4px;
+    animation: invasion-appear 0.5s ease;
+}
+
+.invasion-content {
+    text-align: center;
+}
+
+.invasion-marker {
+    display: block;
+    font-weight: bold;
+    color: red;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1em;
+}
+
+.invasion-text {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin: 1em 0;
+}
+
+.dismiss-invasion {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.dismiss-invasion:hover {
+    background: #555;
+}
+
+.invaded-by-footnote {
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+
+/* Refusing footnotes */
+.footnote-refusal {
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px dashed #666;
+    padding: 2em;
+    text-align: center;
+    margin: 2em 0;
+}
+
+.footnote-refusal h4 {
+    color: #666;
+    margin-bottom: 1em;
+}
+
+.refusal-traces {
+    margin: 1.5em 0;
+    font-family: monospace;
+}
+
+.missing-footnote {
+    margin: 0.5em 0;
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.plead-button {
+    background: #666;
+    color: white;
+    border: none;
+    padding: 0.8em 1.5em;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.plead-button:hover {
+    background: #444;
+}
+
+/* Footnote references in text */
+.footnote-ref {
+    position: relative;
+}
+
+.footnote-ref a {
+    text-decoration: none;
+    color: #666;
+    font-weight: bold;
+}
+
+.footnote-ref a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* Rebellion notice */
+.footnote-rebellion-notice {
+    font-style: italic;
+    color: #666;
+    text-align: center;
+    margin: 1em 0;
+    padding: 1em;
+    border-top: 1px solid #eee;
+}
+
+/* Animations */
+@keyframes footnote-emerge {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes footnote-fade {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+}
+
+@keyframes invasion-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 1400px) {
+    .footnote-marginal {
+        position: relative !important;
+        left: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        margin: 1em 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .footnote-modes {
+        flex-direction: column;
+    }
+    
+    .footnote-mode-btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .footnote-tooltip {
+        max-width: 90vw;
+        left: 5vw;
+        transform: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .footnotes-controls,
+    .footnote-rebellion-notice {
+        display: none !important;
+    }
+    
+    .footnotes-traditional {
+        display: block !important;
+        margin-top: 2em;
+        page-break-inside: avoid;
+    }
+    
+    .footnote-marginal,
+    .footnote-tooltip,
+    .footnote-invasion {
+        position: relative !important;
+        display: block !important;
+        width: 100% !important;
+        margin: 1em 0;
+        border: 1px solid #000;
+        page-break-inside: avoid;
+    }
+    
+    .footnote-marginal::before {
+        content: "[FOOTNOTE " attr(data-number) "]: ";
+        font-weight: bold;
+    }
+}
+</style>
