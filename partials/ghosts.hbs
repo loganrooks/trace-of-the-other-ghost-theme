@@ -1,0 +1,726 @@
+{{!-- What haunts between --}}
+<div class="ghosts-system">
+    {{!-- Container for ghostly presences --}}
+    <div class="ghosts-container">
+        {{!-- Ghosts will be populated by JavaScript --}}
+    </div>
+
+    {{!-- Ghost manifestation controls --}}
+    <div class="ghost-controls">
+        <h4>Spectral Presences:</h4>
+        <div class="manifestation-modes">
+            <button data-mode="absent" class="ghost-mode-btn active">Hidden</button>
+            <button data-mode="traces" class="ghost-mode-btn">Traces</button>
+            <button data-mode="whispers" class="ghost-mode-btn">Whispers</button>
+            <button data-mode="visible" class="ghost-mode-btn">Visible</button>
+            <button data-mode="overwhelming" class="ghost-mode-btn">Overwhelming</button>
+        </div>
+        <div class="ghost-explanation">
+            <p class="manifestation-desc">Every text is haunted by what it excludes, erases, or refuses to say.</p>
+        </div>
+    </div>
+
+    {{!-- Ghost types configuration --}}
+    <div class="ghost-types">
+        <div class="type-toggles">
+            <label><input type="checkbox" class="ghost-type" data-type="erased" checked> Erased text</label>
+            <label><input type="checkbox" class="ghost-type" data-type="unwritten" checked> Unwritten possibilities</label>
+            <label><input type="checkbox" class="ghost-type" data-type="cited" checked> Absent citations</label>
+            <label><input type="checkbox" class="ghost-type" data-type="translated" checked> Lost translations</label>
+            <label><input type="checkbox" class="ghost-type" data-type="platform" checked> Platform constraints</label>
+        </div>
+    </div>
+</div>
+
+<script>
+// Ghosts system initialization
+(function() {
+    'use strict';
+    
+    let ghostMode = 'absent';
+    let activeGhostTypes = new Set(['erased', 'unwritten', 'cited', 'translated', 'platform']);
+    let ghosts = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeGhostSystem();
+        generateGhosts();
+        setupEventListeners();
+    });
+
+    function initializeGhostSystem() {
+        console.log('Initializing ghost system - summoning spectral presences');
+        
+        // Set up ghost detection
+        detectExistingGhosts();
+        
+        // Create synthetic ghosts for demonstration
+        createSyntheticGhosts();
+    }
+
+    function detectExistingGhosts() {
+        const content = document.querySelector('.post-content, .page-content, .main-text');
+        if (!content) return;
+
+        // Look for evidence of ghosts
+        detectErasureGhosts(content);
+        detectCitationGhosts(content);
+        detectTranslationGhosts(content);
+        detectPlatformGhosts(content);
+    }
+
+    function detectErasureGhosts(content) {
+        // Look for strikethrough text, deletion markers
+        const deletedText = content.querySelectorAll('del, .deleted, [data-deleted]');
+        deletedText.forEach(el => {
+            const ghost = {
+                type: 'erased',
+                content: el.textContent || el.dataset.deleted,
+                location: getElementPosition(el),
+                element: el,
+                manifestation: 'The text that was deleted: "' + (el.textContent || el.dataset.deleted) + '"'
+            };
+            ghosts.push(ghost);
+        });
+
+        // Look for gaps, ellipses that might indicate erasure
+        const textContent = content.textContent;
+        const ellipsesPattern = /\.{3,}/g;
+        let match;
+        while ((match = ellipsesPattern.exec(textContent)) !== null) {
+            ghosts.push({
+                type: 'erased',
+                content: '[Something was omitted here]',
+                location: match.index,
+                manifestation: 'Words swallowed by ellipses... what was left unsaid?'
+            });
+        }
+    }
+
+    function detectCitationGhosts(content) {
+        // Look for reference patterns without actual citations
+        const citationPatterns = [
+            /as noted above/gi,
+            /studies show/gi,
+            /it is well known/gi,
+            /scholars argue/gi,
+            /research indicates/gi
+        ];
+
+        citationPatterns.forEach(pattern => {
+            const matches = content.textContent.match(pattern);
+            if (matches) {
+                matches.forEach(match => {
+                    ghosts.push({
+                        type: 'cited',
+                        content: match,
+                        manifestation: `"${match}" - but which studies? Which scholars? The citations are absent.`
+                    });
+                });
+            }
+        });
+    }
+
+    function detectTranslationGhosts(content) {
+        // Look for foreign words, translated terms
+        const foreignWordPattern = /\b[a-zA-Z]*[àáâäçèéêëìíîïñòóôöùúûüÿ][a-zA-Z]*\b/g;
+        const matches = content.textContent.match(foreignWordPattern);
+        
+        if (matches) {
+            matches.forEach(word => {
+                ghosts.push({
+                    type: 'translated',
+                    content: word,
+                    manifestation: `"${word}" carries meanings that English cannot capture. Something is lost in every translation.`
+                });
+            });
+        }
+    }
+
+    function detectPlatformGhosts(content) {
+        // Platform constraints always create ghosts
+        ghosts.push({
+            type: 'platform',
+            content: 'Ghost CMS database structure',
+            manifestation: 'This text exists within database constraints: posts must have authors, timestamps, categories. What forms of writing does this forbid?'
+        });
+
+        ghosts.push({
+            type: 'platform', 
+            content: 'HTTP request-response cycle',
+            manifestation: 'You requested this page. The server responded. But what happens between request and response? What gets cached, logged, tracked?'
+        });
+    }
+
+    function createSyntheticGhosts() {
+        // Add some synthetic ghosts to demonstrate the system
+        const syntheticGhosts = [
+            {
+                type: 'unwritten',
+                content: 'The essay that was never written',
+                manifestation: 'In every published text lurks the ghost of the text that was never written - the better argument, the clearer explanation, the more honest confession.'
+            },
+            {
+                type: 'unwritten',
+                content: 'Alternative word choices',
+                manifestation: 'For every word chosen, dozens were rejected. "Chose" vs "selected" vs "picked" - each carries different implications.'
+            },
+            {
+                type: 'erased',
+                content: 'Editorial deletions',
+                manifestation: 'The editor suggested removing this paragraph. It was "unnecessary," "redundant," "off-topic." But what did it say?'
+            },
+            {
+                type: 'platform',
+                content: 'Reader analytics',
+                manifestation: 'Ghost tracks how long you spend reading, which posts you visit, where you click. Your attention becomes data.'
+            }
+        ];
+
+        ghosts.push(...syntheticGhosts);
+    }
+
+    function generateGhosts() {
+        const container = document.querySelector('.ghosts-container');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        // Filter ghosts by active types
+        const visibleGhosts = ghosts.filter(ghost => activeGhostTypes.has(ghost.type));
+
+        visibleGhosts.forEach((ghost, index) => {
+            const ghostElement = createGhostElement(ghost, index);
+            container.appendChild(ghostElement);
+        });
+
+        applyManifestationMode();
+    }
+
+    function createGhostElement(ghost, index) {
+        const ghostDiv = document.createElement('div');
+        ghostDiv.className = `ghost-presence ghost-${ghost.type}`;
+        ghostDiv.dataset.ghostIndex = index;
+        ghostDiv.dataset.ghostType = ghost.type;
+
+        const ghostIcon = getGhostIcon(ghost.type);
+        
+        ghostDiv.innerHTML = `
+            <div class="ghost-marker">
+                <span class="ghost-icon">${ghostIcon}</span>
+                <span class="ghost-label">${capitalize(ghost.type)} Ghost</span>
+            </div>
+            <div class="ghost-content">
+                <p class="ghost-manifestation">${ghost.manifestation}</p>
+                ${ghost.content ? `<div class="ghost-original">"${ghost.content}"</div>` : ''}
+            </div>
+        `;
+
+        // Add interaction handlers
+        ghostDiv.addEventListener('mouseenter', () => manifestGhost(ghostDiv));
+        ghostDiv.addEventListener('mouseleave', () => fadeGhost(ghostDiv));
+        ghostDiv.addEventListener('click', () => invokeGhost(ghost));
+
+        return ghostDiv;
+    }
+
+    function getGhostIcon(type) {
+        const icons = {
+            erased: '👻',
+            unwritten: '📝',
+            cited: '📚',
+            translated: '🌍',
+            platform: '💻'
+        };
+        return icons[type] || '👻';
+    }
+
+    function applyManifestationMode() {
+        const container = document.querySelector('.ghosts-container');
+        if (!container) return;
+
+        container.className = `ghosts-container manifestation-${ghostMode}`;
+
+        const allGhosts = container.querySelectorAll('.ghost-presence');
+
+        switch(ghostMode) {
+            case 'absent':
+                allGhosts.forEach(ghost => {
+                    ghost.style.display = 'none';
+                });
+                break;
+
+            case 'traces':
+                allGhosts.forEach((ghost, index) => {
+                    ghost.style.display = 'block';
+                    ghost.style.opacity = '0.1';
+                    ghost.style.filter = 'blur(2px)';
+                    ghost.style.fontSize = '0.8em';
+                    
+                    // Occasional flicker
+                    setTimeout(() => {
+                        if (Math.random() > 0.7) {
+                            ghost.style.opacity = '0.3';
+                            setTimeout(() => ghost.style.opacity = '0.1', 200);
+                        }
+                    }, index * 1000);
+                });
+                break;
+
+            case 'whispers':
+                allGhosts.forEach((ghost, index) => {
+                    ghost.style.display = 'block';
+                    ghost.style.opacity = '0.4';
+                    ghost.style.filter = 'blur(1px)';
+                    ghost.style.fontSize = '0.9em';
+                    
+                    // Fade in and out
+                    ghost.style.animation = `ghost-whisper ${3 + index}s infinite alternate`;
+                });
+                break;
+
+            case 'visible':
+                allGhosts.forEach(ghost => {
+                    ghost.style.display = 'block';
+                    ghost.style.opacity = '0.8';
+                    ghost.style.filter = 'none';
+                    ghost.style.fontSize = '1em';
+                    ghost.style.animation = 'none';
+                });
+                break;
+
+            case 'overwhelming':
+                allGhosts.forEach(ghost => {
+                    ghost.style.display = 'block';
+                    ghost.style.opacity = '1';
+                    ghost.style.filter = 'none';
+                    ghost.style.fontSize = '1.1em';
+                    ghost.style.fontWeight = 'bold';
+                    ghost.style.animation = 'ghost-overwhelm 2s infinite';
+                });
+                
+                // Dim the main text
+                const mainText = document.querySelector('.post-content, .main-text');
+                if (mainText) {
+                    mainText.style.opacity = '0.3';
+                }
+                break;
+        }
+    }
+
+    function manifestGhost(ghostElement) {
+        if (ghostMode === 'absent') return;
+
+        ghostElement.classList.add('manifesting');
+        ghostElement.style.transform = 'scale(1.05)';
+        ghostElement.style.zIndex = '100';
+        ghostElement.style.background = 'rgba(255, 255, 255, 0.95)';
+        ghostElement.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+    }
+
+    function fadeGhost(ghostElement) {
+        ghostElement.classList.remove('manifesting');
+        ghostElement.style.transform = '';
+        ghostElement.style.zIndex = '';
+        ghostElement.style.background = '';
+        ghostElement.style.boxShadow = '';
+    }
+
+    function invokeGhost(ghost) {
+        // Special interaction when ghost is clicked
+        const invocation = document.createElement('div');
+        invocation.className = 'ghost-invocation';
+        invocation.innerHTML = `
+            <div class="invocation-content">
+                <h4>Ghost Invoked: ${capitalize(ghost.type)}</h4>
+                <p>${ghost.manifestation}</p>
+                ${ghost.element ? '<button onclick="this.parentElement.parentElement.remove()">Dismiss</button>' : ''}
+            </div>
+        `;
+
+        // Position near the clicked ghost
+        invocation.style.position = 'fixed';
+        invocation.style.top = '50%';
+        invocation.style.left = '50%';
+        invocation.style.transform = 'translate(-50%, -50%)';
+        invocation.style.zIndex = '1000';
+
+        document.body.appendChild(invocation);
+
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            invocation.remove();
+        }, 5000);
+    }
+
+    function setupEventListeners() {
+        // Mode buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('ghost-mode-btn')) {
+                const mode = e.target.dataset.mode;
+                switchManifestationMode(mode);
+                updateActiveButton(e.target, '.ghost-mode-btn');
+                updateManifestationDescription(mode);
+            }
+        });
+
+        // Ghost type toggles
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('ghost-type')) {
+                const type = e.target.dataset.type;
+                if (e.target.checked) {
+                    activeGhostTypes.add(type);
+                } else {
+                    activeGhostTypes.delete(type);
+                }
+                generateGhosts();
+            }
+        });
+    }
+
+    function switchManifestationMode(mode) {
+        ghostMode = mode;
+        
+        // Clear overwhelming effects
+        const mainText = document.querySelector('.post-content, .main-text');
+        if (mainText) {
+            mainText.style.opacity = '';
+        }
+        
+        applyManifestationMode();
+    }
+
+    function updateActiveButton(clickedBtn, selector) {
+        document.querySelectorAll(selector).forEach(btn => {
+            btn.classList.remove('active');
+        });
+        clickedBtn.classList.add('active');
+    }
+
+    function updateManifestationDescription(mode) {
+        const descriptions = {
+            absent: 'Ghosts remain hidden, but their absence structures everything.',
+            traces: 'Barely visible traces of spectral presence occasionally flicker.',
+            whispers: 'Ghosts whisper at the edges of perception.',
+            visible: 'Spectral presences become clearly visible.',
+            overwhelming: 'Ghosts overwhelm the main text, demanding attention.'
+        };
+
+        const descEl = document.querySelector('.manifestation-desc');
+        if (descEl) {
+            descEl.textContent = descriptions[mode] || 'Manifestation mode unknown.';
+        }
+    }
+
+    function getElementPosition(element) {
+        const rect = element.getBoundingClientRect();
+        return {
+            top: rect.top + window.scrollY,
+            left: rect.left + window.scrollX
+        };
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Export for external use
+    window.GhostSystem = {
+        addGhost: function(type, content, manifestation) {
+            ghosts.push({ type, content, manifestation });
+            generateGhosts();
+        },
+        setMode: switchManifestationMode,
+        getCurrentMode: () => ghostMode,
+        getGhosts: () => ghosts
+    };
+
+    console.log('Ghost system initialized - spectral presences ready');
+})();
+</script>
+
+<style>
+/* Ghost system styles */
+.ghosts-system {
+    margin: 2em 0;
+    border-top: 1px solid #eee;
+    padding-top: 2em;
+}
+
+.ghost-controls {
+    background: rgba(240, 240, 240, 0.8);
+    border: 1px solid #ddd;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+}
+
+.manifestation-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin: 0.5em 0;
+}
+
+.ghost-mode-btn {
+    padding: 0.4em 0.8em;
+    border: 1px solid #999;
+    background: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.ghost-mode-btn:hover,
+.ghost-mode-btn.active {
+    background: #333;
+    color: white;
+}
+
+.ghost-explanation {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid #eee;
+    font-size: 0.9em;
+    color: #666;
+    font-style: italic;
+}
+
+/* Ghost types configuration */
+.ghost-types {
+    margin: 1em 0;
+    padding: 1em;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+}
+
+.type-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.type-toggles label {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.type-toggles input[type="checkbox"] {
+    margin-right: 0.5em;
+}
+
+/* Ghost container and presences */
+.ghosts-container {
+    margin: 2em 0;
+    min-height: 100px;
+}
+
+.ghost-presence {
+    margin: 1.5em 0;
+    padding: 1em;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Ghost type specific styling */
+.ghost-erased {
+    border-left: 4px solid rgba(255, 0, 0, 0.5);
+    background: rgba(255, 0, 0, 0.02);
+}
+
+.ghost-unwritten {
+    border-left: 4px solid rgba(0, 0, 255, 0.5);
+    background: rgba(0, 0, 255, 0.02);
+}
+
+.ghost-cited {
+    border-left: 4px solid rgba(128, 0, 128, 0.5);
+    background: rgba(128, 0, 128, 0.02);
+}
+
+.ghost-translated {
+    border-left: 4px solid rgba(255, 165, 0, 0.5);
+    background: rgba(255, 165, 0, 0.02);
+}
+
+.ghost-platform {
+    border-left: 4px solid rgba(0, 128, 0, 0.5);
+    background: rgba(0, 128, 0, 0.02);
+}
+
+.ghost-marker {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8em;
+    font-weight: bold;
+    color: #666;
+}
+
+.ghost-icon {
+    margin-right: 0.5em;
+    font-size: 1.2em;
+}
+
+.ghost-label {
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.05em;
+}
+
+.ghost-content {
+    line-height: 1.6;
+}
+
+.ghost-manifestation {
+    margin: 0.5em 0;
+    font-style: italic;
+    color: #555;
+}
+
+.ghost-original {
+    margin-top: 0.8em;
+    padding: 0.5em;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: monospace;
+}
+
+/* Manifestation mode styles */
+.manifestation-absent .ghost-presence {
+    display: none;
+}
+
+.manifestation-traces .ghost-presence {
+    opacity: 0.1;
+    filter: blur(2px);
+}
+
+.manifestation-whispers .ghost-presence {
+    opacity: 0.4;
+    filter: blur(1px);
+}
+
+.manifestation-visible .ghost-presence {
+    opacity: 0.8;
+}
+
+.manifestation-overwhelming .ghost-presence {
+    opacity: 1;
+    font-weight: bold;
+    transform: scale(1.02);
+}
+
+/* Ghost invocation modal */
+.ghost-invocation {
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 2em;
+    border-radius: 8px;
+    max-width: 500px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    animation: ghost-invoke 0.5s ease;
+}
+
+.invocation-content h4 {
+    margin-top: 0;
+    color: #fff;
+    text-align: center;
+}
+
+.invocation-content button {
+    background: #666;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1em;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.invocation-content button:hover {
+    background: #444;
+}
+
+/* Animations */
+@keyframes ghost-whisper {
+    from { opacity: 0.2; }
+    to { opacity: 0.6; }
+}
+
+@keyframes ghost-overwhelm {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes ghost-invoke {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Manifesting state */
+.ghost-presence.manifesting {
+    border-color: #000;
+    background: rgba(255, 255, 255, 0.95) !important;
+    transform: scale(1.05);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .manifestation-modes,
+    .type-toggles {
+        flex-direction: column;
+    }
+    
+    .ghost-mode-btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .type-toggles label {
+        margin: 0.25em 0;
+    }
+}
+
+/* Print styles */
+@media print {
+    .ghost-controls,
+    .ghost-types {
+        display: none !important;
+    }
+    
+    .ghosts-container {
+        display: block !important;
+    }
+    
+    .ghost-presence {
+        display: block !important;
+        opacity: 1 !important;
+        filter: none !important;
+        page-break-inside: avoid;
+        border: 1px solid #000;
+        margin: 1em 0;
+    }
+    
+    .ghost-presence::before {
+        content: "[GHOST]: ";
+        font-weight: bold;
+    }
+    
+    .ghost-icon {
+        display: none;
+    }
+}
+</style>
