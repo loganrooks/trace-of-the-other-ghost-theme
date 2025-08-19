@@ -1,0 +1,241 @@
+{{!< default}}
+
+{{!-- The supposed center that defers --}}
+<div class="home-content">
+    {{!-- Introduction to the site's purpose --}}
+    <div class="site-introduction">
+        <h2 class="intro-title">The Archive Under Erasure</h2>
+        <div class="intro-text">
+            <p class="palimpsest" 
+               data-layer-1="Welcome to a site that questions its own existence"
+               data-layer-2="This is a Ghost theme exploring deconstruction"
+               data-timestamp-1="{{date format="YYYY-MM-DD"}}">
+                You are reading through a platform that shapes every word before it reaches you.
+            </p>
+            <p>This site performs the impossibility of pure presence, the violence of archiving, the necessity of margins.</p>
+        </div>
+
+        {{!-- Temporal disruption notice --}}
+        {{#if @custom.temporal_disruption}}
+        <div class="temporal-notice">
+            <p><em>Chronological ordering has been disrupted. Posts may appear in non-linear time.</em></p>
+        </div>
+        {{/if}}
+    </div>
+
+    {{!-- Posts loop with deconstructive modifications --}}
+    {{#if posts}}
+    <div class="post-feed" data-post-count="{{posts.length}}">
+        {{!-- Amnesia notice --}}
+        <div class="feed-meta">
+            <p class="post-count-notice">
+                {{posts.length}} posts visible. 
+                <span class="erasure-note">(Previous versions erased without trace)</span>
+            </p>
+        </div>
+
+        {{#foreach posts}}
+        <article class="post-card {{post_class}}" data-post-index="{{@index}}">
+            {{!-- Post meta with authorship troubles --}}
+            <header class="post-card-header">
+                {{#if feature_image}}
+                <div class="post-card-image">
+                    <a href="{{url}}" aria-label="{{title}}">
+                        <img src="{{img_url feature_image size="m"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" loading="lazy">
+                    </a>
+                </div>
+                {{/if}}
+
+                {{!-- Title with palimpsest potential --}}
+                <h2 class="post-card-title">
+                    <a href="{{url}}" class="palimpsest-title" data-original="{{title}}">
+                        {{title}}
+                    </a>
+                </h2>
+
+                {{!-- Author and date under question --}}
+                <div class="post-card-meta">
+                    <div class="post-card-byline">
+                        <span class="post-card-author">
+                            {{#foreach authors}}
+                            <a href="{{url}}" class="author-name" data-original="{{name}}">{{name}}</a>
+                            <span class="author-question">?</span>
+                            {{#unless @last}}, {{/unless}}
+                            {{/foreach}}
+                        </span>
+                        
+                        <time class="post-card-date" datetime="{{date format="YYYY-MM-DD"}}">
+                            {{date format="MMM DD, YYYY"}}
+                        </time>
+                    </div>
+
+                    {{!-- Tags as questionable categories --}}
+                    {{#if tags}}
+                    <div class="post-card-tags">
+                        {{#foreach tags}}
+                        <a href="{{url}}" class="tag-link">{{name}}</a>
+                        {{#unless @last}} · {{/unless}}
+                        {{/foreach}}
+                        <span class="tag-critique">(Categories are violence)</span>
+                    </div>
+                    {{/if}}
+                </div>
+            </header>
+
+            {{!-- Excerpt with margins --}}
+            <div class="post-card-content">
+                <div class="post-card-excerpt" 
+                     data-margin-left="What voice speaks here?"
+                     data-margin-right="The excerpt promises but never delivers the whole.">
+                    {{excerpt words="50"}}
+                    <span class="excerpt-ellipsis">...</span>
+                    <span class="excerpt-critique">[This fragment stands for an absent whole]</span>
+                </div>
+
+                {{!-- Read more link that questions arrival --}}
+                <div class="post-card-link">
+                    <a href="{{url}}" class="read-more-link">
+                        Continue reading
+                        <span class="link-question">(But will you arrive?)</span>
+                    </a>
+                </div>
+            </div>
+
+            {{!-- Version absence marker --}}
+            <div class="version-absence-marker">
+                <span class="absence-icon">👻</span>
+                <span class="absence-text">[Previous versions erased]</span>
+            </div>
+        </article>
+        {{/foreach}}
+    </div>
+
+    {{!-- Pagination under question --}}
+    {{pagination}}
+    {{else}}
+
+    {{!-- Empty state as philosophical position --}}
+    <div class="no-posts-message">
+        <h2>The Archive is Empty</h2>
+        <div class="empty-archive-meditation">
+            <p>No posts exist. This is also a text.</p>
+            <p>The absence of content is itself content.</p>
+            <p>Ghost's database contains only empty tables.</p>
+            <p>Even emptiness has structure.</p>
+        </div>
+
+        {{!-- Database structure visualization --}}
+        <div class="empty-db-structure">
+            <pre>
+posts [TABLE] - 0 rows
+  ├── id (waiting)
+  ├── title (absent) 
+  ├── content (void)
+  └── author_id (nobody)
+
+The structure persists without content.
+The violence remains in the schema.
+            </pre>
+        </div>
+    </div>
+    {{/if}}
+
+    {{!-- Ghost limitation exposition --}}
+    {{#if @custom.ghost_limitations_visible}}
+    <div class="platform-exposition">
+        <h3>What You Cannot See Here:</h3>
+        <ul class="impossibility-list">
+            <li>Posts without authors (Ghost forbids this)</li>
+            <li>Non-chronological archives (time is enforced)</li>
+            <li>Revision histories (erased without trace)</li>
+            <li>Comments that precede posts (linearity enforced)</li>
+            <li>Content without containers (everything must be categorized)</li>
+            <li>Texts that modify themselves (static content only)</li>
+        </ul>
+        <p class="platform-critique">
+            <em>This homepage is generated by a database query that SELECT, JOIN, and ORDER. 
+            The violence is in the SQL.</em>
+        </p>
+    </div>
+    {{/if}}
+
+    {{!-- Random post generator (throw of the dice) --}}
+    <div class="aleatory-navigation">
+        <button class="random-post-btn" onclick="navigateRandomly()">
+            ⚃ Throw of the Dice ⚃
+        </button>
+        <p class="dice-explanation">
+            <em>Let chance, not chronology, determine your reading path.</em>
+        </p>
+    </div>
+</div>
+
+{{!-- Marginal commentary for the homepage --}}
+<aside class="homepage-margins">
+    <div class="margin-left">
+        <p class="margin-voice" data-speaker="critic">
+            What makes this a "home" page? Who decides what appears first?
+        </p>
+    </div>
+    <div class="margin-right">
+        <p class="margin-voice" data-speaker="ghost">
+            Ghost's pagination system creates the illusion of pages, 
+            but it's just database LIMIT and OFFSET clauses.
+        </p>
+    </div>
+</aside>
+
+<script>
+// Random navigation function
+function navigateRandomly() {
+    const posts = document.querySelectorAll('.post-card');
+    if (posts.length > 0) {
+        const randomIndex = Math.floor(Math.random() * posts.length);
+        const randomPost = posts[randomIndex];
+        const randomLink = randomPost.querySelector('.post-card-title a');
+        if (randomLink) {
+            // Sometimes the dice refuses to land
+            if (Math.random() > 0.1) {
+                window.location.href = randomLink.href;
+            } else {
+                alert('The dice rolled off the table. Chance itself failed.');
+            }
+        }
+    } else {
+        alert('No posts exist. Even randomness needs content to work with.');
+    }
+}
+
+// Initialize homepage-specific features
+document.addEventListener('DOMContentLoaded', function() {
+    // Mark this as the supposed center
+    document.body.classList.add('page-home');
+    
+    // Add temporal disruption if enabled
+    if (document.body.dataset.temporalDisruption) {
+        scramblePostOrder();
+    }
+
+    console.log('Homepage loaded: the center that questions centrality');
+});
+
+function scramblePostOrder() {
+    const feed = document.querySelector('.post-feed');
+    const posts = Array.from(feed.querySelectorAll('.post-card'));
+    
+    // Fisher-Yates shuffle
+    for (let i = posts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        feed.appendChild(posts[j]);
+    }
+    
+    // Mark the violence
+    posts.forEach(post => {
+        const date = post.querySelector('.post-card-date');
+        if (date) {
+            date.style.textDecoration = 'line-through';
+            date.insertAdjacentHTML('afterend', ' <span class="time-violence">[TIME DISRUPTED]</span>');
+        }
+    });
+}
+</script>
