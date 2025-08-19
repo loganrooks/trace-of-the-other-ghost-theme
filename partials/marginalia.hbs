@@ -1,0 +1,456 @@
+{{!-- Voices from the edges --}}
+<div class="marginalia-system" data-mode="{{@custom.marginalia_mode}}">
+    {{!-- Left margin voices --}}
+    <aside class="margin-left-container">
+        <div class="margin-voices-left">
+            {{!-- Default marginalia for different contexts --}}
+            {{#is "post"}}
+            <div class="margin-voice voice-critic" data-speaker="critic">
+                <p>Who speaks from the margin? Whose voice is this?</p>
+            </div>
+            <div class="margin-voice voice-translator" data-speaker="translator">
+                <p>Translation is already violence. Every word carries untranslatable remainders.</p>
+            </div>
+            {{/is}}
+
+            {{#is "index"}}
+            <div class="margin-voice voice-archivist" data-speaker="archivist">
+                <p>Archives are never neutral. Someone decided what to preserve.</p>
+            </div>
+            {{/is}}
+
+            {{#is "page"}}
+            <div class="margin-voice voice-questioner" data-speaker="questioner">
+                <p>What makes this page "static"? Nothing is truly static.</p>
+            </div>
+            {{/is}}
+        </div>
+    </aside>
+
+    {{!-- Right margin voices --}}
+    <aside class="margin-right-container">
+        <div class="margin-voices-right">
+            {{#is "post"}}
+            <div class="margin-voice voice-ghost" data-speaker="ghost">
+                <p>Ghost CMS enforces single authorship. But who else writes here?</p>
+            </div>
+            <div class="margin-voice voice-reader" data-speaker="reader">
+                <p>You complete this text by reading it. Are you not also its author?</p>
+            </div>
+            {{/is}}
+
+            {{#is "index"}}
+            <div class="margin-voice voice-platform" data-speaker="platform">
+                <p>This order is imposed by database queries: SELECT ... ORDER BY published_at DESC</p>
+            </div>
+            {{/is}}
+        </div>
+    </aside>
+</div>
+
+{{!-- Marginalia mode switcher --}}
+{{#if @custom.margin_voices}}
+<div class="marginalia-controls">
+    <h4>Margin Modes:</h4>
+    <div class="mode-buttons">
+        <button data-mode="traditional" class="mode-btn">Traditional</button>
+        <button data-mode="invasive" class="mode-btn">Invasive</button>
+        <button data-mode="talmudic" class="mode-btn">Talmudic</button>
+        <button data-mode="choral" class="mode-btn">Choral</button>
+        <button data-mode="ghosted" class="mode-btn">Ghosted</button>
+    </div>
+    <div class="mode-explanation">
+        <p class="mode-desc">Current mode shapes how margins speak and when they interrupt.</p>
+    </div>
+</div>
+{{/if}}
+
+<script>
+// Marginalia partial initialization
+(function() {
+    'use strict';
+    
+    // Wait for MarginaliaSystem to be available
+    if (typeof window.MarginaliaSystem === 'undefined') {
+        // Create placeholder if main system not loaded
+        window.MarginaliaSystem = function() {
+            console.log('MarginaliaSystem placeholder initialized');
+        };
+    }
+
+    // Mode switching functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('mode-btn')) {
+            const mode = e.target.dataset.mode;
+            switchMarginaliaMode(mode);
+            
+            // Update active button
+            document.querySelectorAll('.mode-btn').forEach(btn => 
+                btn.classList.remove('active')
+            );
+            e.target.classList.add('active');
+        }
+    });
+
+    function switchMarginaliaMode(mode) {
+        const marginalia = document.querySelector('.marginalia-system');
+        if (marginalia) {
+            marginalia.dataset.mode = mode;
+            marginalia.className = 'marginalia-system mode-' + mode;
+            
+            // Apply mode-specific behaviors
+            switch(mode) {
+                case 'invasive':
+                    enableInvasiveMode();
+                    break;
+                case 'talmudic':
+                    enableTalmudicMode();
+                    break;
+                case 'choral':
+                    enableChoralMode();
+                    break;
+                case 'ghosted':
+                    enableGhostedMode();
+                    break;
+                default:
+                    enableTraditionalMode();
+            }
+            
+            updateModeExplanation(mode);
+        }
+    }
+
+    function enableInvasiveMode() {
+        document.querySelectorAll('.margin-voice').forEach(voice => {
+            voice.style.cursor = 'pointer';
+            voice.onclick = function() {
+                const mainText = document.querySelector('.main-text, .post-content');
+                if (mainText) {
+                    if (this.classList.contains('invaded')) {
+                        // Return to margin
+                        this.classList.remove('invaded');
+                        mainText.classList.remove('marginalized');
+                        this.style.position = '';
+                        this.style.left = '';
+                        this.style.transform = '';
+                        this.style.width = '';
+                        this.style.zIndex = '';
+                        mainText.style.visibility = '';
+                    } else {
+                        // Invade the center
+                        this.classList.add('invaded');
+                        mainText.classList.add('marginalized');
+                        this.style.position = 'absolute';
+                        this.style.left = '50%';
+                        this.style.transform = 'translateX(-50%)';
+                        this.style.width = '80%';
+                        this.style.zIndex = '100';
+                        this.style.background = 'rgba(255, 255, 255, 0.95)';
+                        this.style.padding = '2em';
+                        this.style.border = '2px solid #000';
+                        
+                        // Sometimes completely hide main text
+                        if (Math.random() > 0.7) {
+                            mainText.style.visibility = 'hidden';
+                        }
+                    }
+                }
+            };
+        });
+    }
+
+    function enableTalmudicMode() {
+        const container = document.querySelector('.marginalia-system');
+        if (container) {
+            container.style.display = 'grid';
+            container.style.gridTemplateAreas = `
+                "left-margin main-content right-margin"
+                "commentary commentary commentary"
+            `;
+            container.style.gridTemplateColumns = '1fr 2fr 1fr';
+            container.style.gap = '1em';
+        }
+    }
+
+    function enableChoralMode() {
+        document.querySelectorAll('.margin-voice').forEach((voice, idx) => {
+            voice.style.animationDelay = `${idx * 0.5}s`;
+            voice.style.animation = 'choral-emerge 2s forwards';
+            
+            // Stagger the voices
+            setTimeout(() => {
+                voice.style.opacity = '1';
+                voice.style.transform = 'translateY(0)';
+            }, idx * 500);
+        });
+    }
+
+    function enableGhostedMode() {
+        document.querySelectorAll('.margin-voice').forEach(voice => {
+            voice.style.opacity = '0.3';
+            voice.style.filter = 'blur(1px)';
+            
+            voice.onmouseenter = function() {
+                this.style.opacity = '0.8';
+                this.style.filter = 'blur(0px)';
+            };
+            
+            voice.onmouseleave = function() {
+                this.style.opacity = '0.3';
+                this.style.filter = 'blur(1px)';
+            };
+        });
+    }
+
+    function enableTraditionalMode() {
+        document.querySelectorAll('.margin-voice').forEach(voice => {
+            voice.style = ''; // Reset all styles
+            voice.onclick = null;
+            voice.onmouseenter = null;
+            voice.onmouseleave = null;
+        });
+    }
+
+    function updateModeExplanation(mode) {
+        const explanation = document.querySelector('.mode-desc');
+        if (explanation) {
+            const explanations = {
+                traditional: 'Margins remain in their designated space, speaking quietly.',
+                invasive: 'Margins can invade the center, taking over the main text.',
+                talmudic: 'Page layout mimics traditional Talmudic commentary structure.',
+                choral: 'Multiple voices emerge in sequence, creating polyvocal cacophony.',
+                ghosted: 'Margins appear as ghosts, becoming visible only when approached.'
+            };
+            explanation.textContent = explanations[mode] || 'Mode explanation unavailable.';
+        }
+    }
+
+    // Initialize with default mode
+    document.addEventListener('DOMContentLoaded', function() {
+        const defaultMode = document.querySelector('.marginalia-system')?.dataset.mode || 'traditional';
+        switchMarginaliaMode(defaultMode);
+        
+        // Set active button
+        const defaultBtn = document.querySelector(`[data-mode="${defaultMode}"]`);
+        if (defaultBtn) {
+            defaultBtn.classList.add('active');
+        }
+    });
+
+    console.log('Marginalia partial loaded');
+})();
+</script>
+
+<style>
+/* Marginalia partial styles */
+.marginalia-system {
+    position: relative;
+    width: 100%;
+}
+
+.margin-left-container,
+.margin-right-container {
+    position: absolute;
+    width: 200px;
+    top: 0;
+}
+
+.margin-left-container {
+    left: -220px;
+}
+
+.margin-right-container {
+    right: -220px;
+}
+
+.margin-voice {
+    margin: 2em 0;
+    padding: 1em;
+    font-size: 0.85em;
+    line-height: 1.6;
+    border-left: 2px solid #ccc;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.margin-voice:hover {
+    opacity: 1;
+    border-left-color: #000;
+}
+
+/* Speaker-specific styling */
+.voice-critic {
+    font-style: italic;
+    color: #666;
+}
+
+.voice-translator {
+    color: #333;
+    border-left-color: blue;
+}
+
+.voice-ghost {
+    opacity: 0.6;
+    color: #999;
+}
+
+.voice-questioner {
+    color: red;
+}
+
+.voice-reader {
+    color: green;
+    font-weight: 500;
+}
+
+.voice-platform {
+    font-family: monospace;
+    font-size: 0.8em;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Mode controls */
+.marginalia-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ccc;
+    padding: 1em;
+    border-radius: 4px;
+    max-width: 200px;
+    z-index: 1000;
+}
+
+.mode-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin: 0.5em 0;
+}
+
+.mode-btn {
+    padding: 0.25em 0.5em;
+    font-size: 0.8em;
+    border: 1px solid #999;
+    background: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mode-btn:hover,
+.mode-btn.active {
+    background: #333;
+    color: white;
+}
+
+.mode-explanation {
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+    border-top: 1px solid #eee;
+}
+
+.mode-desc {
+    font-size: 0.8em;
+    line-height: 1.4;
+    margin: 0;
+    color: #666;
+}
+
+/* Mode-specific styles */
+.mode-invasive .margin-voice {
+    cursor: pointer;
+}
+
+.mode-invasive .margin-voice:hover {
+    background: rgba(255, 255, 0, 0.1);
+    border-left-color: red;
+}
+
+.mode-talmudic {
+    display: grid !important;
+    grid-template-areas: "left main right" "commentary commentary commentary";
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 1em;
+}
+
+.mode-choral .margin-voice {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.5s ease;
+}
+
+.mode-ghosted .margin-voice {
+    opacity: 0.3;
+    filter: blur(1px);
+    transition: all 0.3s ease;
+}
+
+/* Responsive behavior */
+@media (max-width: 1400px) {
+    .margin-left-container,
+    .margin-right-container {
+        position: relative;
+        width: 100%;
+        left: auto;
+        right: auto;
+        margin: 2em 0;
+        padding: 1em;
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px dashed #ccc;
+    }
+    
+    .margin-left-container::before {
+        content: "Left margin voices:";
+        font-weight: bold;
+        font-size: 0.9em;
+        color: #666;
+    }
+    
+    .margin-right-container::before {
+        content: "Right margin voices:";
+        font-weight: bold;
+        font-size: 0.9em;
+        color: #666;
+    }
+}
+
+/* Print styles - margins become visible annotations */
+@media print {
+    .marginalia-system {
+        display: block !important;
+    }
+    
+    .margin-left-container,
+    .margin-right-container {
+        position: relative !important;
+        width: 100% !important;
+        left: auto !important;
+        right: auto !important;
+        border: 2px solid #000;
+        margin: 1em 0;
+        page-break-inside: avoid;
+    }
+    
+    .margin-voice::before {
+        content: "[MARGIN]: ";
+        font-weight: bold;
+    }
+    
+    .marginalia-controls {
+        display: none;
+    }
+}
+
+/* Animation keyframes */
+@keyframes choral-emerge {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
