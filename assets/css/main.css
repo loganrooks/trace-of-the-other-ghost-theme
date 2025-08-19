@@ -394,75 +394,7 @@ code {
 }
 
 /* ===== MARGINALIA ===== */
-.post-marginalia, .page-marginalia {
-  position: relative;
-}
-
-.margin-voice {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 1px solid var(--hacker-green-dark);
-  border-left: 3px solid var(--hacker-green);
-  padding: 0.8rem;
-  color: var(--hacker-green-dim);
-  position: absolute;
-  max-width: 220px;
-  z-index: 10;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.margin-voice::before {
-  content: "// ";
-  color: var(--accent-grey);
-  font-weight: bold;
-}
-
-.margin-left {
-  left: -250px;
-  text-align: left;
-}
-
-.margin-right {
-  right: -250px;
-  text-align: left;
-}
-
-/* Voice types with different styling */
-.voice-critic {
-  border-left-color: var(--accent-red);
-  color: var(--accent-red);
-}
-
-.voice-critic::before {
-  content: "/* ERROR: ";
-  color: var(--accent-red);
-}
-
-.voice-critic::after {
-  content: " */";
-  color: var(--accent-red);
-}
-
-.voice-translator {
-  border-left-color: var(--accent-purple);
-  color: var(--accent-purple);
-}
-
-.voice-translator::before {
-  content: "# ";
-  color: var(--accent-purple);
-}
-
-.voice-reader {
-  border-left-color: var(--accent-cyan);
-  color: var(--accent-cyan);
-}
-
-.voice-reader::before {
-  content: "> ";
-  color: var(--accent-cyan);
-}
+/* Marginalia styles moved to digital-talmud.css for the new Digital Talmud system */
 
 /* ===== FOOTER ===== */
 .site-footer {
@@ -493,15 +425,7 @@ code {
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1400px) {
-  .margin-voice {
-    position: static !important;
-    max-width: 100% !important;
-    margin: 1rem 0;
-    left: auto !important;
-    right: auto !important;
-  }
-}
+/* Responsive marginalia styles moved to digital-talmud.css */
 
 @media (max-width: 768px) {
   .site-wrapper {

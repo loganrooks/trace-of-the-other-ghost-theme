@@ -8,7 +8,7 @@ ZIP_NAME="${THEME_NAME}-$(date +%Y%m%d-%H%M).zip"
 
 echo "Building $ZIP_NAME..."
 
-# Create zip with hacker theme files
+# Create zip with hacker theme files including Digital Talmud system
 zip -r "$ZIP_NAME" \
     package.json \
     default.hbs \
@@ -17,7 +17,9 @@ zip -r "$ZIP_NAME" \
     page.hbs \
     assets/css/main.css \
     assets/css/hacker-effects.css \
+    assets/css/digital-talmud.css \
     assets/js/hacker-effects.js \
+    assets/js/digital-talmud.js \
     -x "*.DS_Store" \
     -x "__MACOSX/*" \
     -x "*.git*" \

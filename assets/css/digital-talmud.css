@@ -1,0 +1,346 @@
+/* ===== DIGITAL TALMUD LAYOUT SYSTEM ===== */
+
+/* ===== CORE TALMUDIC GRID ===== */
+.post-content, .page-content {
+  display: grid;
+  grid-template-areas: 
+    "margin-tl    margin-top    margin-tr"
+    "margin-left  main-text     margin-right" 
+    "margin-bl    margin-bottom margin-br";
+  grid-template-columns: 0fr 1fr 0fr; /* Start collapsed, expand as marginalia appears */
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  transition: grid-template-columns 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 60vh;
+  position: relative;
+  padding: 2rem 0;
+}
+
+/* Main text area */
+.main-text-flow {
+  grid-area: main-text;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+  transition: font-size 0.6s ease;
+}
+
+/* ===== MARGINALIA POSITIONING ===== */
+.marginalia-voice {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 1rem;
+  border: 1px solid var(--hacker-green-dark);
+  background: rgba(0, 0, 0, 0.9);
+  
+  /* Initial state - invisible */
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Glitch preparation */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Position-based grid assignment */
+.marginalia-voice[data-position="top-left"] { grid-area: margin-tl; }
+.marginalia-voice[data-position="top"] { grid-area: margin-top; }
+.marginalia-voice[data-position="top-right"] { grid-area: margin-tr; }
+.marginalia-voice[data-position="left"] { grid-area: margin-left; }
+.marginalia-voice[data-position="right"] { grid-area: margin-right; }
+.marginalia-voice[data-position="bottom-left"] { grid-area: margin-bl; }
+.marginalia-voice[data-position="bottom"] { grid-area: margin-bottom; }
+.marginalia-voice[data-position="bottom-right"] { grid-area: margin-br; }
+
+/* ===== VOICE DIFFERENTIATION ===== */
+.marginalia-voice[data-voice="1"] {
+  color: var(--hacker-green);
+  border-left: 3px solid var(--hacker-green);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.marginalia-voice[data-voice="2"] {
+  color: var(--accent-cyan);
+  border-left: 3px solid var(--accent-cyan);
+  font-family: 'Share Tech Mono', monospace;
+  font-style: italic;
+}
+
+.marginalia-voice[data-voice="3"] {
+  color: var(--accent-purple);
+  border-left: 3px solid var(--accent-purple);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 300;
+}
+
+.marginalia-voice[data-voice="4"] {
+  color: var(--accent-red);
+  border-left: 3px solid var(--accent-red);
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.marginalia-voice[data-voice="5"] {
+  color: #ffaa00;
+  border-left: 3px solid #ffaa00;
+  font-family: 'Share Tech Mono', monospace;
+  opacity: 0.8;
+}
+
+.marginalia-voice[data-voice="6"] {
+  color: #ff6b9d;
+  border-left: 3px solid #ff6b9d;
+  font-family: 'JetBrains Mono', monospace;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 107, 157, 0.3);
+}
+
+/* ===== LAYOUT STATES ===== */
+/* No marginalia - main text takes full width */
+.talmud-layout-none {
+  grid-template-columns: 0fr 1fr 0fr;
+}
+
+/* Left marginalia active */
+.talmud-layout-left {
+  grid-template-columns: 200px 1fr 0fr;
+}
+
+/* Right marginalia active */
+.talmud-layout-right {
+  grid-template-columns: 0fr 1fr 200px;
+}
+
+/* Both sides active */
+.talmud-layout-both {
+  grid-template-columns: 200px 400px 200px;
+}
+
+/* Full marginalia (all positions) */
+.talmud-layout-full {
+  grid-template-columns: 180px 300px 180px;
+}
+
+/* Intense marginalia - main text squeezed further */
+.talmud-layout-intense {
+  grid-template-columns: 220px 200px 220px;
+}
+
+/* ===== MATERIALIZATION EFFECTS ===== */
+.marginalia-voice.materializing {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  animation: marginalia-glitch-in 0.6s ease-out;
+}
+
+@keyframes marginalia-glitch-in {
+  0% { 
+    filter: hue-rotate(180deg) brightness(2);
+    text-shadow: 
+      2px 0 var(--glitch-cyan),
+      -2px 0 var(--glitch-magenta);
+    transform: scale(0.8) skew(2deg);
+  }
+  25% {
+    filter: hue-rotate(90deg) brightness(1.5);
+    text-shadow: 
+      1px 0 var(--glitch-cyan),
+      -1px 0 var(--glitch-magenta);
+    transform: scale(1.05) skew(-1deg);
+  }
+  50% {
+    filter: hue-rotate(45deg) brightness(1.2);
+    text-shadow: 
+      3px 0 var(--glitch-cyan),
+      -3px 0 var(--glitch-magenta);
+    transform: scale(0.95) skew(0.5deg);
+  }
+  100% { 
+    filter: none;
+    text-shadow: none;
+    transform: scale(1) skew(0deg);
+  }
+}
+
+/* ===== MAIN TEXT ADAPTATION ===== */
+/* As marginalia appears, main text adjusts */
+.main-text-squeezed-light .main-text-flow {
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.main-text-squeezed-medium .main-text-flow {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.main-text-squeezed-heavy .main-text-flow {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* ===== RESPONSIVE TALMUDIC LAYOUT ===== */
+@media (max-width: 1400px) {
+  .talmud-layout-both {
+    grid-template-columns: 160px 1fr 160px;
+  }
+  
+  .talmud-layout-full {
+    grid-template-columns: 140px 1fr 140px;
+  }
+  
+  .talmud-layout-intense {
+    grid-template-columns: 180px 1fr 180px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .post-content, .page-content {
+    grid-template-columns: 120px 1fr 120px;
+    gap: 0.8rem;
+  }
+  
+  .talmud-layout-both {
+    grid-template-columns: 120px 1fr 120px;
+  }
+  
+  .marginalia-voice {
+    font-size: 0.75rem;
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .post-content, .page-content {
+    grid-template-areas: 
+      "margin-top"
+      "margin-left"
+      "main-text"
+      "margin-right"
+      "margin-bottom";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: 1.5rem;
+  }
+  
+  .marginalia-voice {
+    max-width: 100%;
+    font-size: 0.8rem;
+    margin: 0;
+  }
+  
+  .main-text-flow {
+    font-size: 1rem !important;
+    line-height: 1.8 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-content, .page-content {
+    padding: 1rem 0;
+    gap: 1rem;
+  }
+  
+  .marginalia-voice {
+    font-size: 0.75rem;
+    padding: 0.6rem;
+  }
+}
+
+/* ===== SCROLL TRIGGER INDICATORS ===== */
+.marginalia-voice[data-scroll-trigger] {
+  position: relative;
+}
+
+.marginalia-voice[data-scroll-trigger]::before {
+  content: "[TRIGGER: " attr(data-scroll-trigger) "%]";
+  position: absolute;
+  top: -1rem;
+  right: 0;
+  font-size: 0.6rem;
+  color: var(--accent-grey);
+  opacity: 0.5;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ===== TALMUDIC FLOW EFFECTS ===== */
+/* Text flow around marginalia */
+.main-text-flow p {
+  margin-bottom: 1.5rem;
+  transition: all 0.6s ease;
+}
+
+/* When marginalia is heavy, create more fragmented text flow */
+.talmud-layout-intense .main-text-flow p {
+  margin-bottom: 2rem;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ===== MARGINALIA INTERACTION EFFECTS ===== */
+.marginalia-voice:hover {
+  transform: scale(1.02);
+  border-left-width: 5px;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  z-index: 10;
+}
+
+/* Cross-marginalia references */
+.marginalia-voice.referenced {
+  animation: marginalia-pulse 2s ease-in-out infinite;
+}
+
+@keyframes marginalia-pulse {
+  0%, 100% { 
+    opacity: 1;
+    border-left-width: 3px;
+  }
+  50% { 
+    opacity: 0.7;
+    border-left-width: 6px;
+  }
+}
+
+/* ===== DEBUG MODE ===== */
+.talmud-debug .post-content,
+.talmud-debug .page-content {
+  grid-gap: 1px;
+  background: #333;
+}
+
+.talmud-debug .marginalia-voice {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid red;
+}
+
+.talmud-debug .main-text-flow {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid green;
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+.marginalia-voice,
+.main-text-flow {
+  will-change: transform, opacity;
+  transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .marginalia-voice,
+  .post-content,
+  .page-content {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .marginalia-voice.materializing {
+    opacity: 1;
+    transform: none;
+  }
+}
