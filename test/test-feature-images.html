@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Feature Image Test - Trace of the Other</title>
+    
+    <!-- Font imports -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Theme styles -->
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/digital-talmud.css">
+    
+    <style>
+        /* Test-specific styles */
+        .test-feature-image {
+            width: 2000px; /* Intentionally oversized to test responsiveness */
+            height: 800px;
+            background: linear-gradient(135deg, 
+                var(--hacker-green) 0%, 
+                var(--accent-cyan) 25%, 
+                var(--accent-purple) 50%, 
+                var(--accent-red) 75%, 
+                var(--hacker-green) 100%
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-primary);
+            font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        
+        .viewport-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--bg-secondary);
+            color: var(--hacker-green);
+            padding: 0.5rem;
+            border: 1px solid var(--hacker-green);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            z-index: 1000;
+        }
+        
+        .test-container {
+            border: 2px dashed var(--accent-cyan);
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(0, 255, 255, 0.05);
+        }
+        
+        .test-container h3 {
+            color: var(--accent-cyan);
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body class="post-template">
+    <div class="viewport-indicator">
+        Viewport: <span id="viewport-size">Loading...</span>
+    </div>
+    
+    <div class="site-wrapper">
+        <header class="site-header">
+            <h1 class="site-title">Feature Image Responsive Test</h1>
+            <p class="site-description">Testing oversized feature image scaling</p>
+        </header>
+
+        <main class="site-main">
+            <article class="post">
+                <header class="post-header">
+                    <h1 class="post-title">Feature Image Responsive Test</h1>
+                    <div class="post-meta">
+                        <time>Testing Mode</time>
+                    </div>
+                </header>
+
+                <!-- FEATURE IMAGE TEST - This is where the problem usually occurs -->
+                <div class="post-feature-image">
+                    <div class="test-feature-image">
+                        OVERSIZED FEATURE IMAGE<br>
+                        2000×800px<br>
+                        Should be constrained to container
+                    </div>
+                </div>
+
+                <div class="post-content">
+                    <div class="main-text-flow">
+                        <div class="test-container">
+                            <h3>Test Results:</h3>
+                            <p>The feature image above should:</p>
+                            <ul>
+                                <li>✓ Never exceed the site-wrapper width</li>
+                                <li>✓ Scale proportionally on mobile devices</li>
+                                <li>✓ Not cause horizontal scrolling</li>
+                                <li>✓ Maintain aspect ratio</li>
+                                <li>✓ Be contained within the post boundaries</li>
+                            </ul>
+                        </div>
+
+                        <div class="test-container">
+                            <h3>Viewport Test Guidelines:</h3>
+                            <p><strong>Desktop (1200px+):</strong> Image should fill container width with cover/contain</p>
+                            <p><strong>Tablet (768-1199px):</strong> Image should scale down proportionally</p>
+                            <p><strong>Mobile (320-767px):</strong> Image should use object-fit: contain and max-height: 50vh</p>
+                        </div>
+
+                        <div class="test-container">
+                            <h3>Interactive Test:</h3>
+                            <button onclick="testResize()">Simulate Mobile View</button>
+                            <button onclick="testResize(1024)">Simulate Tablet View</button>
+                            <button onclick="testResize(1440)">Simulate Desktop View</button>
+                        </div>
+                    </div>
+
+                    <!-- Marginalia to test interaction with Digital Talmud system -->
+                    <div class="marginalia-voice" data-position="left" data-voice="1" data-scroll-trigger="20">
+                        /* Feature images should not break the talmudic grid */
+                    </div>
+                    <div class="marginalia-voice" data-position="right" data-voice="2" data-scroll-trigger="60">
+                        # Responsive images are crucial for mobile experience
+                    </div>
+                </div>
+            </article>
+        </main>
+
+        <footer class="site-footer">
+            <p>Feature Image Test Complete</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/digital-talmud.js"></script>
+    
+    <script>
+        function updateViewportIndicator() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            document.getElementById('viewport-size').textContent = `${width}×${height}`;
+            
+            // Log viewport category
+            let category;
+            if (width >= 1200) category = 'Desktop';
+            else if (width >= 768) category = 'Tablet';
+            else category = 'Mobile';
+            
+            console.log(`Viewport: ${width}×${height} (${category})`);
+        }
+        
+        function testResize(width = 375) {
+            // Simulate different viewport sizes for testing
+            const message = `Testing ${width}px width. Check if feature image scales properly.`;
+            console.log(message);
+            alert(message);
+        }
+        
+        // Monitor viewport changes
+        window.addEventListener('resize', updateViewportIndicator);
+        document.addEventListener('DOMContentLoaded', updateViewportIndicator);
+        
+        // Test feature image dimensions
+        document.addEventListener('DOMContentLoaded', function() {
+            const featureImage = document.querySelector('.post-feature-image');
+            if (featureImage) {
+                const observer = new ResizeObserver(entries => {
+                    for (let entry of entries) {
+                        const { width, height } = entry.contentRect;
+                        console.log(`Feature image container: ${width}×${height}`);
+                    }
+                });
+                observer.observe(featureImage);
+            }
+        });
+        
+        // Alert if horizontal scrolling is detected
+        function checkHorizontalScroll() {
+            const hasHorizontalScroll = document.body.scrollWidth > window.innerWidth;
+            if (hasHorizontalScroll) {
+                console.warn('⚠️ HORIZONTAL SCROLLING DETECTED - Feature image may be overflowing!');
+                return false;
+            } else {
+                console.log('✓ No horizontal scrolling - feature image properly constrained');
+                return true;
+            }
+        }
+        
+        // Run scroll check after load and resize
+        window.addEventListener('load', checkHorizontalScroll);
+        window.addEventListener('resize', () => setTimeout(checkHorizontalScroll, 100));
+    </script>
+</body>
+</html>

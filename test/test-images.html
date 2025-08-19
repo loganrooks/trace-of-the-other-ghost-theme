@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Image Responsiveness Test - Trace of the Other</title>
+    
+    <!-- Font imports -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Theme styles -->
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/digital-talmud.css">
+    
+    <style>
+        /* Test-specific styles */
+        .test-section {
+            margin: 3rem 0;
+            border: 2px solid var(--accent-cyan);
+            padding: 2rem;
+            background: rgba(0, 255, 255, 0.05);
+        }
+        .test-section h2 {
+            color: var(--accent-cyan);
+            margin-top: 0;
+        }
+        .test-image {
+            width: 1200px; /* Intentionally large to test responsiveness */
+            height: 600px;
+            background: linear-gradient(45deg, var(--hacker-green), var(--accent-purple));
+            border: 2px solid var(--hacker-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-primary);
+            font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body class="post-template">
+    <div class="site-wrapper">
+        <header class="site-header">
+            <h1 class="site-title">Image Responsiveness Test</h1>
+            <p class="site-description">Testing image scaling and responsiveness</p>
+        </header>
+
+        <main class="site-main">
+            <article class="post">
+                <header class="post-header">
+                    <h1 class="post-title">Image Responsiveness Test</h1>
+                    <div class="post-meta">
+                        <time>Testing Mode</time>
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="main-text-flow">
+                        <div class="test-section">
+                            <h2>Basic Image Element</h2>
+                            <p>Standard img tag that should be responsive:</p>
+                            <div class="test-image">LARGE TEST IMAGE 1200x600px</div>
+                        </div>
+
+                        <div class="test-section">
+                            <h2>Ghost Image Card</h2>
+                            <p>Simulated .kg-image-card structure:</p>
+                            <figure class="kg-image-card">
+                                <div class="kg-image test-image">GHOST IMAGE CARD 1200x600px</div>
+                                <figcaption>This is a test caption for the image card</figcaption>
+                            </figure>
+                        </div>
+
+                        <div class="test-section">
+                            <h2>Wide Width Content</h2>
+                            <p>This should span wider than normal content:</p>
+                            <div class="kg-width-wide">
+                                <div class="test-image">WIDE WIDTH CONTENT 1200x600px</div>
+                            </div>
+                        </div>
+
+                        <div class="test-section">
+                            <h2>Full Width Content</h2>
+                            <p>This should span the full viewport width:</p>
+                            <div class="kg-width-full">
+                                <div class="test-image">FULL WIDTH CONTENT 1200x600px</div>
+                            </div>
+                        </div>
+
+                        <div class="test-section">
+                            <h2>Gallery Test</h2>
+                            <p>Multiple images in a gallery:</p>
+                            <div class="kg-gallery-card">
+                                <div class="kg-gallery-container">
+                                    <div class="kg-gallery-image test-image" style="height: 200px;">GALLERY 1</div>
+                                    <div class="kg-gallery-image test-image" style="height: 200px;">GALLERY 2</div>
+                                    <div class="kg-gallery-image test-image" style="height: 200px;">GALLERY 3</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Test marginalia to see how images behave with the talmudic grid -->
+                    <div class="marginalia-voice" data-position="left" data-voice="1" data-scroll-trigger="30">
+                        /* Testing marginalia with grid layout */
+                    </div>
+                    <div class="marginalia-voice" data-position="right" data-voice="2" data-scroll-trigger="60">
+                        # Images should respect the constrained main text area
+                    </div>
+                </div>
+            </article>
+        </main>
+
+        <footer class="site-footer">
+            <p>Image Responsiveness Test Complete</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/digital-talmud.js"></script>
+    
+    <script>
+        // Add resize event listener to test responsive behavior
+        window.addEventListener('resize', function() {
+            console.log('Window resized to:', window.innerWidth, 'x', window.innerHeight);
+        });
+        
+        // Log current window size
+        console.log('Initial window size:', window.innerWidth, 'x', window.innerHeight);
+        
+        // Test different viewport sizes programmatically
+        function testViewportSizes() {
+            const sizes = [
+                { width: 320, label: 'Mobile (320px)' },
+                { width: 768, label: 'Tablet (768px)' },
+                { width: 1024, label: 'Desktop (1024px)' },
+                { width: 1440, label: 'Large Desktop (1440px)' }
+            ];
+            
+            console.log('=== IMAGE RESPONSIVENESS TEST ===');
+            sizes.forEach(size => {
+                console.log(`${size.label}: Images should be constrained to container width`);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', testViewportSizes);
+    </script>
+</body>
+</html>

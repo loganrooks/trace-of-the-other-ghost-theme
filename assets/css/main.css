@@ -53,6 +53,39 @@
   box-sizing: border-box;
 }
 
+/* NUCLEAR-LEVEL RESPONSIVE CONSTRAINTS */
+html {
+  overflow-x: hidden !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+}
+
+body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Universal responsive constraint - prevent ALL overflow */
+*, *::before, *::after,
+img, video, iframe, object, embed,
+.kg-image, .kg-image-card, .kg-gallery-card, .kg-embed-card,
+.post-feature-image, .page-feature-image,
+div, article, section, header, main, aside, footer {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Specific image constraints with highest priority */
+img, .kg-image {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
 body {
   font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
   background: var(--bg-primary);
@@ -101,9 +134,37 @@ h3 {
   min-height: 100vh;
   background: var(--bg-primary);
   position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  max-width: 1200px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 2rem !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Emergency overflow prevention for ALL containers */
+.site-wrapper *,
+.post *,
+.page *,
+.post-content *,
+.page-content * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Force all images and media to be constrained */
+.site-wrapper img,
+.site-wrapper video,
+.site-wrapper iframe,
+.post img,
+.page img,
+.post-content img,
+.page-content img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
 }
 
 /* ===== HEADER ===== */
@@ -285,6 +346,10 @@ h3 {
   padding: 3rem;
   position: relative;
   margin-bottom: 2rem;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+  box-sizing: border-box;
 }
 
 .post::before {
@@ -393,6 +458,218 @@ code {
   font-size: 0.9em;
 }
 
+/* ===== IMAGES & FIGURES ===== */
+/* Aggressive responsive image styling - override everything */
+img,
+.kg-image,
+.post-feature-image img,
+.page-feature-image img {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+  border: 1px solid var(--hacker-green-dark);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
+  box-sizing: border-box !important;
+  object-fit: contain !important;
+}
+
+/* Ghost image cards - aggressive container sizing */
+.kg-image-card,
+.kg-gallery-card,
+.kg-embed-card,
+figure {
+  margin: 2rem 0 !important;
+  text-align: center;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.kg-image {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  border: 1px solid var(--hacker-green-dark);
+  background: var(--bg-secondary);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+  object-fit: contain !important;
+  box-sizing: border-box !important;
+}
+
+/* Image captions */
+.kg-image-card figcaption,
+.kg-image figcaption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-top: 1px solid var(--terminal-border);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.kg-image-card figcaption::before {
+  content: "// ";
+  color: var(--accent-grey);
+}
+
+/* Gallery cards */
+.kg-gallery-card {
+  margin: 2rem 0;
+}
+
+.kg-gallery-container {
+  display: grid;
+  grid-gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.kg-gallery-image {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--hacker-green-dark);
+  transition: all 0.3s ease;
+}
+
+.kg-gallery-image:hover {
+  border-color: var(--hacker-green);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  transform: scale(1.02);
+}
+
+/* Feature images - aggressive responsive constraints */
+.post-feature-image,
+.page-feature-image {
+  margin: 2rem 0 !important;
+  text-align: center;
+  position: relative;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.post-feature-image img,
+.page-feature-image img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: contain !important;
+  object-position: center;
+  border: 2px solid var(--hacker-green-dark);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.15);
+  box-sizing: border-box !important;
+}
+
+.post-feature-image::before,
+.page-feature-image::before {
+  content: "[FEATURE_IMAGE]";
+  position: absolute;
+  top: -0.5rem;
+  left: 1rem;
+  background: var(--bg-primary);
+  color: var(--hacker-green-dim);
+  font-size: 0.7rem;
+  padding: 0 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+
+/* Figure elements */
+figure {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+figure img {
+  margin-bottom: 1rem;
+}
+
+figcaption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  padding: 0.5rem;
+  border: 1px solid var(--terminal-border);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+figcaption::before {
+  content: "$ caption: ";
+  color: var(--hacker-green-dim);
+}
+
+/* Wide and full width content - simplified and constrained */
+.kg-width-wide {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 2rem 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.kg-width-full {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 2rem 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure wide/full images stay responsive */
+.kg-width-wide img,
+.kg-width-wide .kg-image,
+.kg-width-full img,
+.kg-width-full .kg-image {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  box-sizing: border-box !important;
+}
+
+/* Emergency overflow prevention */
+.post-content,
+.page-content {
+  overflow-x: hidden;
+  word-wrap: break-word;
+}
+
+.post-content *,
+.page-content * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Video and iframe responsive */
+.kg-embed-card {
+  margin: 2rem 0;
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+}
+
+.kg-embed-card iframe,
+.kg-embed-card video,
+.kg-embed-card object,
+.kg-embed-card embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--hacker-green-dark);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+}
+
 /* ===== MARGINALIA ===== */
 /* Marginalia styles moved to digital-talmud.css for the new Digital Talmud system */
 
@@ -432,7 +709,7 @@ code {
     padding: 0 1rem;
   }
   
-  .post {
+  .post, .page {
     padding: 1.5rem;
   }
   
@@ -447,6 +724,80 @@ code {
   
   .site-title {
     font-size: 1.5rem;
+  }
+  
+  /* Mobile image adjustments */
+  .kg-width-wide,
+  .kg-width-full {
+    width: calc(100vw - 2rem);
+    max-width: calc(100vw - 2rem);
+    margin-left: calc(-50vw + 50% + 1rem);
+    margin-right: calc(-50vw + 50% + 1rem);
+  }
+  
+  .kg-gallery-container {
+    grid-template-columns: 1fr;
+    grid-gap: 1rem;
+  }
+  
+  .post-feature-image,
+  .page-feature-image {
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .post-feature-image img,
+  .page-feature-image img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain; /* Contain instead of cover on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .site-wrapper {
+    padding: 0 0.5rem;
+  }
+  
+  .post, .page {
+    padding: 1rem;
+  }
+  
+  /* Extra small mobile image handling */
+  .kg-width-wide,
+  .kg-width-full {
+    width: calc(100vw - 1rem);
+    max-width: calc(100vw - 1rem);
+    margin-left: calc(-50vw + 50% + 0.5rem);
+    margin-right: calc(-50vw + 50% + 0.5rem);
+  }
+  
+  .kg-image-card,
+  .kg-gallery-card {
+    margin: 1rem 0;
+  }
+  
+  .kg-image-card figcaption,
+  .kg-image figcaption,
+  figcaption {
+    font-size: 0.7rem;
+    padding: 0.3rem;
+  }
+  
+  /* Extra constraints for feature images on very small screens */
+  .post-feature-image,
+  .page-feature-image {
+    margin: 0.5rem 0;
+    padding: 0;
+  }
+  
+  .post-feature-image img,
+  .page-feature-image img {
+    border-width: 1px; /* Thinner border on small screens */
+    object-fit: contain;
+    max-height: 50vh; /* Prevent very tall images from dominating the screen */
   }
 }
 
@@ -491,6 +842,46 @@ a:focus,
 button:focus {
   outline: 2px solid var(--hacker-green);
   outline-offset: 2px;
+}
+
+/* ===== ABSOLUTE FINAL OVERFLOW PREVENTION ===== */
+/* This MUST be at the end to override everything */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+/* Nuclear option - target EVERYTHING with maximum specificity */
+.site-wrapper .post .post-content img,
+.site-wrapper .page .page-content img,
+.site-wrapper .post-feature-image img,
+.site-wrapper .page-feature-image img,
+.site-wrapper .kg-image-card img,
+.site-wrapper .kg-image,
+article.post img,
+article.page img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+/* Prevent any absolutely positioned elements from causing overflow */
+[style*="position: absolute"],
+[style*="position:absolute"] {
+  max-width: 100vw !important;
+  right: 0 !important;
+}
+
+/* Force Ghost's containers to be responsive */
+.gh-content,
+.gh-canvas,
+.gh-head,
+.gh-main {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
 }
 
 /* ===== SELECTION STYLING ===== */
