@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palimpsest & Text Archaeology Test</title>
+    <link rel="stylesheet" href="../assets/css/derridean.css">
+    <link rel="stylesheet" href="../assets/css/traces.css">
+    <style>
+        body {
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 2em auto;
+            padding: 0 2em;
+        }
+        
+        .test-section {
+            margin: 3em 0;
+            padding: 2em;
+            border: 1px solid #ccc;
+            background: #fafafa;
+        }
+        
+        .test-controls {
+            margin: 1em 0;
+            padding: 1em;
+            background: #e9e9e9;
+            border-radius: 4px;
+        }
+        
+        .test-controls button {
+            margin: 0.5em;
+            padding: 0.5em 1em;
+            border: 1px solid #666;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .test-results {
+            margin: 1em 0;
+            padding: 1em;
+            background: #f0f0f0;
+            border-left: 3px solid #333;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+        
+        .palimpsest-demo {
+            position: relative;
+            padding: 2em;
+            margin: 2em 0;
+            border: 2px solid #666;
+            background: #fefefe;
+        }
+        
+        .excavation-toolkit {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            background: rgba(139, 69, 19, 0.9);
+            color: white;
+            padding: 1em;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+        
+        .excavation-toolkit h4 {
+            margin-top: 0;
+            color: #f4a460;
+        }
+        
+        .excavation-toolkit button {
+            width: 100%;
+            margin: 0.2em 0;
+            padding: 0.5em;
+            background: #8b4513;
+            color: white;
+            border: 1px solid #a0522d;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .archaeology-mode-archaeological .palimpsest::before,
+        .archaeology-mode-archaeological .palimpsest::after {
+            opacity: 0.7;
+        }
+        
+        .archaeology-mode-temporal .palimpsest {
+            transition: all 2s ease;
+        }
+        
+        .archaeology-mode-violent .palimpsest {
+            filter: contrast(1.2);
+        }
+        
+        .excavation-depth-1 .layer-1 { opacity: 0.8; }
+        .excavation-depth-2 .layer-1 { opacity: 0.8; }
+        .excavation-depth-2 .layer-2 { opacity: 0.6; }
+        .excavation-depth-3 .layer-1 { opacity: 0.8; }
+        .excavation-depth-3 .layer-2 { opacity: 0.6; }
+        .excavation-depth-3 .layer-3 { opacity: 0.4; }
+    </style>
+</head>
+<body>
+    <div class="excavation-toolkit">
+        <h4>🏛️ Excavation Toolkit</h4>
+        <div id="excavation-status">Ready</div>
+        <hr>
+        <button onclick="setArchaeologyMode('archaeological')">🔍 Archaeological</button>
+        <button onclick="setArchaeologyMode('temporal')">⏰ Temporal</button>
+        <button onclick="setArchaeologyMode('violent')">⚔️ Violent</button>
+        <button onclick="setArchaeologyMode('excavation')">⛏️ Excavation</button>
+        <hr>
+        <button onclick="useExcavationTool('brush')">🖌️ Brush</button>
+        <button onclick="useExcavationTool('pick')">⛏️ Pick</button>
+        <button onclick="useExcavationTool('hammer')">🔨 Hammer</button>
+        <button onclick="useExcavationTool('restore')">🔄 Restore</button>
+    </div>
+
+    <h1>Palimpsest & Text Archaeology Testing</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Basic Palimpsest Layers</h2>
+        <div class="test-controls">
+            <button onclick="revealLayers()">Reveal All Layers</button>
+            <button onclick="hideAllLayers()">Hide All Layers</button>
+            <button onclick="toggleLayerVisibility()">Toggle Layer Visibility</button>
+            <button onclick="addNewLayer()">Add New Layer</button>
+        </div>
+        
+        <div class="palimpsest-demo">
+            <div class="palimpsest" 
+                 data-erased="This was the original argument about digital media"
+                 data-erased-2="The first draft discussed print culture"
+                 data-erased-3="The earliest notes mentioned oral tradition"
+                 data-excavation-depth="3">
+                <span class="current-layer">
+                    The final text about post-digital culture and its relationship to memory, 
+                    after multiple revisions and theoretical reconsiderations.
+                </span>
+                <span class="layer-1" style="display: none;">
+                    [LAYER 1: This was the original argument about digital media and its effects on consciousness]
+                </span>
+                <span class="layer-2" style="display: none;">
+                    [LAYER 2: The first draft discussed print culture and the transition to digital forms]
+                </span>
+                <span class="layer-3" style="display: none;">
+                    [LAYER 3: The earliest notes mentioned oral tradition and collective memory]
+                </span>
+            </div>
+        </div>
+        
+        <div class="test-results" id="palimpsest-results">
+            Palimpsest test results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Archaeological Revelation Modes</h2>
+        <div class="test-controls">
+            <button onclick="demonstrateArchaeologicalMode()">Demonstrate Archaeological Mode</button>
+            <button onclick="demonstrateTemporalMode()">Demonstrate Temporal Mode</button>
+            <button onclick="demonstrateViolentMode()">Demonstrate Violent Mode</button>
+            <button onclick="demonstrateExcavationMode()">Demonstrate Excavation Mode</button>
+        </div>
+        
+        <div class="palimpsest-demo" id="mode-demo">
+            <div class="palimpsest" 
+                 data-erased="Previous version: The nature of digital text is fundamentally different"
+                 data-erased-2="Earlier draft: Digital text challenges traditional reading">
+                Current version: Digital text performs its own archaeology, revealing the violence of revision.
+            </div>
+        </div>
+        
+        <div class="test-results" id="mode-results">
+            Mode demonstration results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Excavation Tools</h2>
+        <div class="test-controls">
+            <button onclick="testBrushTool()">Test Brush (Gentle Reveal)</button>
+            <button onclick="testPickTool()">Test Pick (Targeted Excavation)</button>
+            <button onclick="testHammerTool()">Test Hammer (Violent Revelation)</button>
+            <button onclick="testRestoreTool()">Test Restore (Return to Surface)</button>
+        </div>
+        
+        <div class="palimpsest-demo" id="excavation-demo">
+            <div class="palimpsest excavation-target" 
+                 data-erased="Hidden layer: The original thesis about hypertext"
+                 data-erased-2="Deeper layer: Early thoughts on non-linear narrative"
+                 data-erased-3="Deepest layer: Fragment about the death of the book">
+                Surface text: Contemporary reflections on digital archaeology and the layers of meaning in electronic text.
+            </div>
+        </div>
+        
+        <div class="test-results" id="excavation-results">
+            Excavation tool results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Interactive Text Archaeology</h2>
+        <div class="test-controls">
+            <button onclick="startGuidedExcavation()">Start Guided Excavation</button>
+            <button onclick="randomExcavation()">Random Archaeological Event</button>
+            <button onclick="deepDig()">Deep Dig (All Layers)</button>
+            <button onclick="createNewPalimpsest()">Create New Palimpsest</button>
+        </div>
+        
+        <div class="palimpsest-demo" id="interactive-demo">
+            <div class="palimpsest interactive-palimpsest" 
+                 data-erased="Revision 3: The digital medium questions the nature of permanence"
+                 data-erased-2="Revision 2: Digital text is always already edited"
+                 data-erased-3="Revision 1: What does it mean to write on screen?"
+                 data-erased-4="Original fragment: Screen writing differs from paper">
+                Final version: The screen becomes a palimpsest where every character overwrites countless predecessors, 
+                each keystroke an act of digital archaeology.
+            </div>
+            
+            <div id="excavation-progress">
+                <h4>Excavation Progress</h4>
+                <div style="width: 100%; height: 20px; border: 1px solid #333; background: #f0f0f0;">
+                    <div id="progress-bar" style="width: 0%; height: 100%; background: #8b4513; transition: width 0.5s ease;"></div>
+                </div>
+                <p>Layers revealed: <span id="layers-revealed">0</span>/4</p>
+            </div>
+        </div>
+        
+        <div class="test-results" id="interactive-results">
+            Interactive archaeology results will appear here...
+        </div>
+    </div>
+
+    <script>
+        let excavationState = {
+            currentMode: 'none',
+            layersRevealed: 0,
+            excavationDepth: 0,
+            archaeologyInProgress: false
+        };
+        
+        // Basic palimpsest functions
+        function revealLayers() {
+            document.querySelectorAll('.layer-1, .layer-2, .layer-3').forEach(layer => {
+                layer.style.display = 'block';
+                layer.style.opacity = '0.7';
+                layer.style.textDecoration = 'line-through';
+                layer.style.color = 'rgba(180, 0, 0, 0.8)';
+            });
+            
+            document.getElementById('palimpsest-results').textContent += 'All palimpsest layers revealed\n';
+        }
+        
+        function hideAllLayers() {
+            document.querySelectorAll('.layer-1, .layer-2, .layer-3').forEach(layer => {
+                layer.style.display = 'none';
+            });
+            
+            document.getElementById('palimpsest-results').textContent += 'All layers hidden - surface text only\n';
+        }
+        
+        function toggleLayerVisibility() {
+            const layers = document.querySelectorAll('.layer-1, .layer-2, .layer-3');
+            const isVisible = layers[0].style.display !== 'none';
+            
+            layers.forEach(layer => {
+                layer.style.display = isVisible ? 'none' : 'block';
+            });
+            
+            document.getElementById('palimpsest-results').textContent += 
+                `Layers ${isVisible ? 'hidden' : 'revealed'}\n`;
+        }
+        
+        function addNewLayer() {
+            const palimpsest = document.querySelector('.palimpsest');
+            const newLayer = document.createElement('span');
+            newLayer.className = 'layer-new';
+            newLayer.textContent = '[NEW LAYER: Just added layer with timestamp ' + new Date().toLocaleTimeString() + ']';
+            newLayer.style.display = 'block';
+            newLayer.style.color = 'blue';
+            newLayer.style.fontStyle = 'italic';
+            
+            palimpsest.appendChild(newLayer);
+            
+            document.getElementById('palimpsest-results').textContent += 
+                'New layer added to palimpsest\n';
+        }
+        
+        // Archaeological mode functions
+        function setArchaeologyMode(mode) {
+            excavationState.currentMode = mode;
+            
+            const container = document.getElementById('mode-demo');
+            container.className = `palimpsest-demo archaeology-mode-${mode}`;
+            
+            document.getElementById('excavation-status').textContent = `Mode: ${mode}`;
+            
+            const modeEffects = {
+                archaeological: 'Systematic layer revelation with careful preservation',
+                temporal: 'Time-based transitions between textual states',
+                violent: 'Aggressive excavation that may damage layers',
+                excavation: 'Active digging through textual strata'
+            };
+            
+            document.getElementById('mode-results').textContent += 
+                `Switched to ${mode} mode: ${modeEffects[mode]}\n`;
+        }
+        
+        function demonstrateArchaeologicalMode() {
+            setArchaeologyMode('archaeological');
+            
+            const palimpsest = document.querySelector('#mode-demo .palimpsest');
+            palimpsest.style.border = '2px solid brown';
+            palimpsest.style.background = 'rgba(139, 69, 19, 0.05)';
+            
+            // Gradually reveal erased content
+            setTimeout(() => {
+                palimpsest.innerHTML += '<br><span style="color: #8b4513; opacity: 0.7;">[ARCHAEOLOGICAL REVEAL: ' + 
+                    palimpsest.dataset.erased + ']</span>';
+            }, 1000);
+            
+            setTimeout(() => {
+                palimpsest.innerHTML += '<br><span style="color: #8b4513; opacity: 0.5;">[DEEPER LAYER: ' + 
+                    palimpsest.dataset.erased2 + ']</span>';
+            }, 2000);
+        }
+        
+        function demonstrateTemporalMode() {
+            setArchaeologyMode('temporal');
+            
+            const palimpsest = document.querySelector('#mode-demo .palimpsest');
+            const originalText = palimpsest.textContent;
+            
+            // Temporal regression through versions
+            palimpsest.style.transition = 'all 1s ease';
+            palimpsest.style.filter = 'sepia(0.5)';
+            
+            setTimeout(() => {
+                palimpsest.textContent = palimpsest.dataset.erased;
+                palimpsest.style.opacity = '0.8';
+            }, 1000);
+            
+            setTimeout(() => {
+                palimpsest.textContent = palimpsest.dataset.erased2;
+                palimpsest.style.opacity = '0.6';
+            }, 2000);
+            
+            setTimeout(() => {
+                palimpsest.textContent = originalText;
+                palimpsest.style.opacity = '1';
+                palimpsest.style.filter = '';
+            }, 3000);
+        }
+        
+        function demonstrateViolentMode() {
+            setArchaeologyMode('violent');
+            
+            const palimpsest = document.querySelector('#mode-demo .palimpsest');
+            
+            // Violent revelation with damage effects
+            palimpsest.style.background = 'rgba(255, 0, 0, 0.1)';
+            palimpsest.style.border = '2px solid red';
+            
+            // Simulate violent excavation damage
+            const words = palimpsest.textContent.split(' ');
+            const damagedText = words.map(word => 
+                Math.random() > 0.8 ? `[${word}]` : word
+            ).join(' ');
+            
+            palimpsest.innerHTML = damagedText + 
+                '<br><span style="color: red; font-weight: bold;">[VIOLENT EXCAVATION DAMAGE]</span>' +
+                '<br><span style="color: red; opacity: 0.7;">' + palimpsest.dataset.erased + '</span>';
+        }
+        
+        function demonstrateExcavationMode() {
+            setArchaeologyMode('excavation');
+            
+            const palimpsest = document.querySelector('#mode-demo .palimpsest');
+            
+            // Active excavation with digging animation
+            palimpsest.style.border = '3px dashed #8b4513';
+            palimpsest.style.background = 'rgba(139, 69, 19, 0.1)';
+            
+            let digProgress = 0;
+            const digInterval = setInterval(() => {
+                digProgress += 25;
+                
+                if (digProgress === 25) {
+                    palimpsest.innerHTML += '<br><span style="color: #8b4513;">⛏️ Excavating...</span>';
+                } else if (digProgress === 50) {
+                    palimpsest.innerHTML += '<br><span style="color: #8b4513;">📜 Layer found: ' + 
+                        palimpsest.dataset.erased + '</span>';
+                } else if (digProgress === 75) {
+                    palimpsest.innerHTML += '<br><span style="color: #8b4513;">📜 Deeper layer: ' + 
+                        palimpsest.dataset.erased2 + '</span>';
+                } else if (digProgress >= 100) {
+                    palimpsest.innerHTML += '<br><span style="color: #8b4513;">🏛️ Excavation complete</span>';
+                    clearInterval(digInterval);
+                }
+            }, 800);
+        }
+        
+        // Excavation tool functions
+        function useExcavationTool(tool) {
+            const target = document.querySelector('.excavation-target');
+            document.getElementById('excavation-status').textContent = `Using: ${tool}`;
+            
+            const toolEffects = {
+                brush: () => {
+                    target.style.filter = 'brightness(1.1)';
+                    target.innerHTML += '<br><span style="color: #8b4513; opacity: 0.8;">🖌️ Gently brushed: ' + 
+                        target.dataset.erased + '</span>';
+                },
+                pick: () => {
+                    target.style.border = '2px dashed #8b4513';
+                    target.innerHTML += '<br><span style="color: #8b4513;">⛏️ Carefully extracted: ' + 
+                        target.dataset.erased2 + '</span>';
+                },
+                hammer: () => {
+                    target.style.background = 'rgba(255, 0, 0, 0.1)';
+                    target.innerHTML += '<br><span style="color: red;">🔨 Hammered through: ' + 
+                        target.dataset.erased3 + ' [DAMAGED]</span>';
+                },
+                restore: () => {
+                    target.style.filter = '';
+                    target.style.border = '';
+                    target.style.background = '';
+                    target.innerHTML = target.innerHTML.split('<br>')[0]; // Keep only original text
+                }
+            };
+            
+            toolEffects[tool]();
+            
+            document.getElementById('excavation-results').textContent += 
+                `Used ${tool} tool - ${tool === 'restore' ? 'restored to surface' : 'revealed hidden layer'}\n`;
+        }
+        
+        function testBrushTool() { useExcavationTool('brush'); }
+        function testPickTool() { useExcavationTool('pick'); }
+        function testHammerTool() { useExcavationTool('hammer'); }
+        function testRestoreTool() { useExcavationTool('restore'); }
+        
+        // Interactive archaeology functions
+        function startGuidedExcavation() {
+            excavationState.archaeologyInProgress = true;
+            excavationState.layersRevealed = 0;
+            
+            const palimpsest = document.querySelector('.interactive-palimpsest');
+            
+            document.getElementById('interactive-results').textContent += 'Guided excavation started\n';
+            
+            const excavationSteps = [
+                () => {
+                    palimpsest.innerHTML += '<br><span class="excavated-layer" style="color: #8b4513; opacity: 0.8;">📜 Layer 1: ' + 
+                        palimpsest.dataset.erased + '</span>';
+                    updateExcavationProgress(1);
+                },
+                () => {
+                    palimpsest.innerHTML += '<br><span class="excavated-layer" style="color: #8b4513; opacity: 0.6;">📜 Layer 2: ' + 
+                        palimpsest.dataset.erased2 + '</span>';
+                    updateExcavationProgress(2);
+                },
+                () => {
+                    palimpsest.innerHTML += '<br><span class="excavated-layer" style="color: #8b4513; opacity: 0.4;">📜 Layer 3: ' + 
+                        palimpsest.dataset.erased3 + '</span>';
+                    updateExcavationProgress(3);
+                },
+                () => {
+                    palimpsest.innerHTML += '<br><span class="excavated-layer" style="color: #8b4513; opacity: 0.2;">📜 Layer 4: ' + 
+                        palimpsest.dataset.erased4 + '</span>';
+                    updateExcavationProgress(4);
+                    document.getElementById('interactive-results').textContent += 'Guided excavation complete - all layers revealed\n';
+                }
+            ];
+            
+            excavationSteps.forEach((step, index) => {
+                setTimeout(step, (index + 1) * 1500);
+            });
+        }
+        
+        function randomExcavation() {
+            const events = [
+                'Unexpected layer discovered',
+                'Archaeological tool broke - violent revelation',
+                'Temporal anomaly - layers mixed',
+                'Preservation effort - layer protected',
+                'Cross-contamination between layers'
+            ];
+            
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            
+            const palimpsest = document.querySelector('.interactive-palimpsest');
+            palimpsest.innerHTML += `<br><span style="color: purple; font-weight: bold;">🎲 RANDOM EVENT: ${randomEvent}</span>`;
+            
+            document.getElementById('interactive-results').textContent += `Random archaeological event: ${randomEvent}\n`;
+        }
+        
+        function deepDig() {
+            const palimpsest = document.querySelector('.interactive-palimpsest');
+            
+            // Reveal all layers simultaneously with violence markers
+            palimpsest.innerHTML += '<br><span style="color: red; font-weight: bold;">⚡ DEEP DIG - ALL LAYERS EXPOSED</span>';
+            palimpsest.innerHTML += '<br><span style="color: #8b4513; text-decoration: line-through;">' + palimpsest.dataset.erased + '</span>';
+            palimpsest.innerHTML += '<br><span style="color: #8b4513; text-decoration: line-through;">' + palimpsest.dataset.erased2 + '</span>';
+            palimpsest.innerHTML += '<br><span style="color: #8b4513; text-decoration: line-through;">' + palimpsest.dataset.erased3 + '</span>';
+            palimpsest.innerHTML += '<br><span style="color: #8b4513; text-decoration: line-through;">' + palimpsest.dataset.erased4 + '</span>';
+            
+            updateExcavationProgress(4);
+            
+            document.getElementById('interactive-results').textContent += 'Deep dig completed - violent but complete excavation\n';
+        }
+        
+        function createNewPalimpsest() {
+            const container = document.getElementById('interactive-demo');
+            
+            const newPalimpsest = document.createElement('div');
+            newPalimpsest.className = 'palimpsest';
+            newPalimpsest.dataset.erased = 'Dynamic layer: Created at ' + new Date().toLocaleTimeString();
+            newPalimpsest.dataset.erased2 = 'Previous state: Empty container waiting for content';
+            newPalimpsest.innerHTML = 'New palimpsest: This text is born already carrying the traces of its creation process.';
+            newPalimpsest.style.border = '2px solid green';
+            newPalimpsest.style.background = 'rgba(0, 255, 0, 0.1)';
+            newPalimpsest.style.margin = '1em 0';
+            
+            container.appendChild(newPalimpsest);
+            
+            document.getElementById('interactive-results').textContent += 'New palimpsest created - already archaeological\n';
+        }
+        
+        function updateExcavationProgress(layers) {
+            excavationState.layersRevealed = layers;
+            
+            const progressBar = document.getElementById('progress-bar');
+            const layersSpan = document.getElementById('layers-revealed');
+            
+            progressBar.style.width = (layers / 4) * 100 + '%';
+            layersSpan.textContent = layers;
+        }
+        
+        // Initialize palimpsest testing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Palimpsest test page loaded');
+            
+            document.getElementById('excavation-status').textContent = 'Ready for archaeology';
+            document.getElementById('palimpsest-results').textContent = 'Palimpsest system ready - layers hidden beneath surface\n';
+            
+            // Add CSS for palimpsest effects
+            const style = document.createElement('style');
+            style.textContent = `
+                .palimpsest::before {
+                    content: attr(data-erased);
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    background: rgba(255, 255, 255, 0.9);
+                    color: rgba(180, 0, 0, 0.5);
+                    text-decoration: line-through;
+                    opacity: 0;
+                    transition: opacity 0.5s ease;
+                    padding: inherit;
+                    z-index: 1;
+                }
+                
+                .palimpsest:hover::before {
+                    opacity: 0.7;
+                }
+                
+                .excavated-layer {
+                    display: block;
+                    margin: 0.5em 0;
+                    padding: 0.5em;
+                    border-left: 3px solid #8b4513;
+                    background: rgba(139, 69, 19, 0.05);
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

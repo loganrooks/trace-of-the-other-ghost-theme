@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Différance System Test</title>
+    <link rel="stylesheet" href="../assets/css/derridean.css">
+    <link rel="stylesheet" href="../assets/css/traces.css">
+    <style>
+        body {
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 2em auto;
+            padding: 0 2em;
+        }
+        
+        .test-section {
+            margin: 3em 0;
+            padding: 2em;
+            border: 1px solid #ccc;
+            background: #fafafa;
+        }
+        
+        .test-controls {
+            margin: 1em 0;
+            padding: 1em;
+            background: #e9e9e9;
+            border-radius: 4px;
+        }
+        
+        .test-controls button {
+            margin: 0.5em;
+            padding: 0.5em 1em;
+            border: 1px solid #666;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .test-results {
+            margin: 1em 0;
+            padding: 1em;
+            background: #f0f0f0;
+            border-left: 3px solid #333;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+        
+        .reading-timer {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 0.5em;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="reading-timer">
+        Reading time: <span class="reading-time-dynamic">0:00</span>
+    </div>
+
+    <h1>Différance System Testing</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Deferred Loading</h2>
+        <div class="test-controls">
+            <button onclick="addDeferredContent()">Add Deferred Content</button>
+            <button onclick="testLoadingFailure()">Test Loading Failure</button>
+            <button onclick="clearDeferred()">Clear Deferred Elements</button>
+        </div>
+        
+        <div class="test-content">
+            <div class="deferred" data-defer="2000">
+                This content should load after a 2-second delay with a philosophical loading state.
+            </div>
+            
+            <div class="temporal-content">
+                This content will receive random delays and temporal effects.
+            </div>
+            
+            <div class="load-delayed">
+                Another deferred element that demonstrates the concept of différance.
+            </div>
+        </div>
+        
+        <div class="test-results" id="deferred-results">
+            Deferred loading results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Temporal Effects</h2>
+        <div class="test-controls">
+            <button onclick="triggerTextFading()">Trigger Text Fading</button>
+            <button onclick="triggerTemporalRevisions()">Start Temporal Revisions</button>
+            <button onclick="triggerChronologicalDisruption()">Disrupt Chronology</button>
+            <button onclick="addAbsenceMarker()">Add Absence Marker</button>
+        </div>
+        
+        <div class="test-content">
+            <p class="temporal-fade" data-fade="3000" data-fade-rate="0.03">
+                This text will gradually fade away, demonstrating temporal decay and the impermanence of digital text.
+            </p>
+            
+            <p class="temporal-revision" data-revise="true">
+                This text will revise itself progressively, showing the temporal nature of meaning.
+            </p>
+            
+            <div class="post-cards-container">
+                <article class="post-card">Post 1 - Most Recent</article>
+                <article class="post-card">Post 2 - Yesterday</article>
+                <article class="post-card">Post 3 - Last Week</article>
+                <article class="post-card">Post 4 - Last Month</article>
+            </div>
+        </div>
+        
+        <div class="test-results" id="temporal-results">
+            Temporal effects results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Presence and Absence Play</h2>
+        <div class="test-controls">
+            <button onclick="triggerGlitchEffect()">Trigger Glitch</button>
+            <button onclick="triggerPresenceFlicker()">Test Presence Flicker</button>
+            <button onclick="showMutationTraces()">Show DOM Mutations</button>
+            <button onclick="testReadingTime()">Test Reading Time Effects</button>
+        </div>
+        
+        <div class="test-content">
+            <p class="glitch" data-glitch="true">
+                This text is subject to occasional glitches that reveal the instability of digital presence.
+            </p>
+            
+            <p class="presence-flicker" data-flicker="true">
+                This text demonstrates the flickering nature of digital existence - sometimes present, sometimes absent.
+            </p>
+            
+            <div id="mutation-target">
+                This content will be modified to demonstrate DOM mutations and their traces.
+            </div>
+        </div>
+        
+        <div class="test-results" id="presence-results">
+            Presence/absence test results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Reading Time and Temporal Commentary</h2>
+        <div class="test-controls">
+            <button onclick="simulateLongReading()">Simulate Long Reading Session</button>
+            <button onclick="resetReadingTime()">Reset Reading Timer</button>
+            <button onclick="getReadingStats()">Get Reading Statistics</button>
+        </div>
+        
+        <div class="test-content">
+            <p>Keep reading to see how the theme responds to extended reading time. After 30 seconds of simulated reading, temporal commentary should appear.</p>
+            
+            <div id="reading-commentary-area">
+                <!-- Long reading notices will appear here -->
+            </div>
+        </div>
+        
+        <div class="test-results" id="reading-results">
+            Reading session: <span id="session-time">0</span>ms
+            Scroll events: <span id="scroll-events">0</span>
+        </div>
+    </div>
+
+    <script src="../assets/js/differance.js"></script>
+    
+    <script>
+        let testScrollEvents = 0;
+        
+        // Testing functions
+        function addDeferredContent() {
+            const container = document.querySelector('.test-content');
+            const newElement = document.createElement('div');
+            newElement.className = 'deferred';
+            newElement.dataset.defer = Math.floor(Math.random() * 5000) + 1000;
+            newElement.innerHTML = `This content has a ${newElement.dataset.defer}ms delay - différance at work.`;
+            
+            container.appendChild(newElement);
+            
+            // Re-initialize deferred loading for new element
+            if (window.Differance) {
+                window.Differance.setupDeferredLoading();
+            }
+            
+            document.getElementById('deferred-results').textContent += `Added deferred content with ${newElement.dataset.defer}ms delay\n`;
+        }
+        
+        function testLoadingFailure() {
+            // Temporarily override Math.random to force loading failure
+            const originalRandom = Math.random;
+            Math.random = () => 0.85; // Force failure condition
+            
+            addDeferredContent();
+            
+            // Restore original Math.random after a short delay
+            setTimeout(() => {
+                Math.random = originalRandom;
+            }, 100);
+            
+            document.getElementById('deferred-results').textContent += 'Forced loading failure for testing\n';
+        }
+        
+        function clearDeferred() {
+            document.querySelectorAll('.deferred, .temporal-content, .load-delayed').forEach(el => {
+                el.remove();
+            });
+            document.getElementById('deferred-results').textContent += 'Cleared deferred elements\n';
+        }
+        
+        function triggerTextFading() {
+            const fadeElement = document.querySelector('.temporal-fade');
+            if (fadeElement && window.Differance) {
+                // Manually trigger fading
+                const fadeRate = 0.05;
+                const fadeInterval = setInterval(() => {
+                    const currentOpacity = parseFloat(window.getComputedStyle(fadeElement).opacity);
+                    if (currentOpacity <= 0.1) {
+                        clearInterval(fadeInterval);
+                        document.getElementById('temporal-results').textContent += 'Text fading completed\n';
+                        return;
+                    }
+                    fadeElement.style.opacity = currentOpacity - fadeRate;
+                }, 100);
+                
+                document.getElementById('temporal-results').textContent += 'Text fading initiated\n';
+            }
+        }
+        
+        function triggerTemporalRevisions() {
+            const revisionElement = document.querySelector('.temporal-revision');
+            if (revisionElement) {
+                const originalText = revisionElement.textContent;
+                const words = originalText.split(' ');
+                let currentIndex = 0;
+                
+                const revisionInterval = setInterval(() => {
+                    if (currentIndex >= words.length) {
+                        clearInterval(revisionInterval);
+                        revisionElement.textContent = originalText; // Restore original
+                        document.getElementById('temporal-results').textContent += 'Temporal revision cycle completed\n';
+                        return;
+                    }
+                    
+                    const partialText = words.slice(0, currentIndex + 1).join(' ') + 
+                                      (currentIndex < words.length - 1 ? '...' : '');
+                    revisionElement.textContent = partialText;
+                    currentIndex++;
+                }, 1000);
+                
+                document.getElementById('temporal-results').textContent += 'Temporal revision started\n';
+            }
+        }
+        
+        function triggerChronologicalDisruption() {
+            const container = document.querySelector('.post-cards-container');
+            const posts = Array.from(container.querySelectorAll('.post-card'));
+            
+            // Shuffle posts
+            const shuffled = posts.sort(() => Math.random() - 0.5);
+            shuffled.forEach(post => container.appendChild(post));
+            
+            // Add disruption notice
+            const notice = document.createElement('div');
+            notice.className = 'temporal-disruption-notice';
+            notice.innerHTML = '<strong>Temporal disruption detected:</strong> Chronological order disrupted by différance.';
+            container.insertBefore(notice, container.firstChild);
+            
+            document.getElementById('temporal-results').textContent += 'Chronological order disrupted\n';
+        }
+        
+        function addAbsenceMarker() {
+            const targetElement = document.querySelector('.test-content p');
+            if (targetElement) {
+                const absence = document.createElement('div');
+                absence.className = 'absence-marker';
+                absence.innerHTML = `
+                    <span class="absence-text">[Something was here but is now absent]</span>
+                    <span class="absence-timestamp">${new Date().toLocaleTimeString()}</span>
+                `;
+                
+                targetElement.insertAdjacentElement('afterend', absence);
+                
+                // Fade in the absence
+                absence.style.opacity = '0';
+                setTimeout(() => {
+                    absence.style.transition = 'opacity 1s ease';
+                    absence.style.opacity = '0.6';
+                }, 100);
+                
+                document.getElementById('temporal-results').textContent += `Absence marker added at ${new Date().toLocaleTimeString()}\n`;
+            }
+        }
+        
+        function triggerGlitchEffect() {
+            const glitchElement = document.querySelector('.glitch');
+            if (glitchElement) {
+                const originalText = glitchElement.textContent;
+                const glitchChars = ['█', '▓', '▒', '░', '§', '¶', '‡', '†'];
+                
+                // Create glitched version
+                const glitchedText = originalText.split('').map(char => {
+                    return Math.random() > 0.8 ? 
+                           glitchChars[Math.floor(Math.random() * glitchChars.length)] : 
+                           char;
+                }).join('');
+                
+                glitchElement.style.transition = 'none';
+                glitchElement.textContent = glitchedText;
+                glitchElement.style.color = '#ff0000';
+                glitchElement.style.textShadow = '2px 0 #ff0000, -2px 0 #00ff00';
+                
+                setTimeout(() => {
+                    glitchElement.textContent = originalText;
+                    glitchElement.style.color = '';
+                    glitchElement.style.textShadow = '';
+                }, 200);
+                
+                document.getElementById('presence-results').textContent += `Glitch effect triggered at ${new Date().toLocaleTimeString()}\n`;
+            }
+        }
+        
+        function triggerPresenceFlicker() {
+            const flickerElement = document.querySelector('.presence-flicker');
+            if (flickerElement) {
+                flickerElement.style.opacity = '0';
+                setTimeout(() => {
+                    flickerElement.style.opacity = '1';
+                }, 100);
+                
+                document.getElementById('presence-results').textContent += 'Presence flicker triggered\n';
+            }
+        }
+        
+        function showMutationTraces() {
+            const target = document.getElementById('mutation-target');
+            target.textContent += ' [MODIFIED]';
+            
+            // Add mutation trace
+            const trace = document.createElement('span');
+            trace.className = 'mutation-trace';
+            trace.innerHTML = ` <span class="trace-marker">[DOM childList ${Date.now()}]</span>`;
+            target.appendChild(trace);
+            
+            document.getElementById('presence-results').textContent += 'DOM mutation trace added\n';
+        }
+        
+        function testReadingTime() {
+            if (window.Differance) {
+                document.getElementById('reading-results').textContent = 
+                    `Reading session: ${Date.now() - window.Differance.startTime}ms\n` +
+                    `Scroll events: ${window.Differance.readingEvents ? window.Differance.readingEvents.length : 0}`;
+            }
+        }
+        
+        function simulateLongReading() {
+            // Simulate long reading by artificially advancing the start time
+            if (window.Differance) {
+                window.Differance.startTime = Date.now() - 35000; // 35 seconds ago
+                window.Differance.updateReadingTime();
+                
+                document.getElementById('reading-results').textContent += 'Simulated 35-second reading session\n';
+            }
+        }
+        
+        function resetReadingTime() {
+            if (window.Differance) {
+                window.Differance.startTime = Date.now();
+                window.Differance.readingEvents = [];
+                window.Differance.longReadingNoticeAdded = false;
+                
+                // Remove long reading notices
+                document.querySelectorAll('.long-reading-notice').forEach(notice => notice.remove());
+                
+                document.getElementById('reading-results').textContent = 'Reading timer reset\n';
+            }
+        }
+        
+        function getReadingStats() {
+            if (window.Differance) {
+                const stats = {
+                    sessionTime: Date.now() - window.Differance.startTime,
+                    deferredElements: window.Differance.deferredElements.size,
+                    readingEvents: window.Differance.readingEvents ? window.Differance.readingEvents.length : 0,
+                    temporalEffects: window.Differance.temporalEffects.length
+                };
+                
+                document.getElementById('reading-results').textContent = 
+                    `Session: ${stats.sessionTime}ms\n` +
+                    `Deferred elements: ${stats.deferredElements}\n` +
+                    `Reading events: ${stats.readingEvents}\n` +
+                    `Temporal effects: ${stats.temporalEffects}`;
+            }
+        }
+        
+        // Track scroll events for testing
+        window.addEventListener('scroll', () => {
+            testScrollEvents++;
+            document.getElementById('scroll-events').textContent = testScrollEvents;
+        });
+        
+        // Initialize testing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Différance test page loaded');
+            
+            setTimeout(() => {
+                if (window.Differance) {
+                    console.log('Différance system detected:', window.Differance);
+                    document.getElementById('deferred-results').textContent = 'Différance system initialized successfully\n';
+                    
+                    // Start reading time tracking
+                    setInterval(() => {
+                        if (window.Differance) {
+                            const elapsed = Date.now() - window.Differance.startTime;
+                            const minutes = Math.floor(elapsed / 60000);
+                            const seconds = Math.floor((elapsed % 60000) / 1000);
+                            document.querySelector('.reading-time-dynamic').textContent = 
+                                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        }
+                    }, 1000);
+                } else {
+                    console.log('Différance system not found');
+                    document.getElementById('deferred-results').textContent = 'ERROR: Différance system failed to initialize\n';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

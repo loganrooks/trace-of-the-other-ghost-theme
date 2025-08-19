@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplement & Pharmakon Testing</title>
+    <link rel="stylesheet" href="../assets/css/derridean.css">
+    <link rel="stylesheet" href="../assets/css/traces.css">
+    <style>
+        body {
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 2em auto;
+            padding: 0 2em;
+        }
+        
+        .test-section {
+            margin: 3em 0;
+            padding: 2em;
+            border: 1px solid #ccc;
+            background: #fafafa;
+        }
+        
+        .test-controls {
+            margin: 1em 0;
+            padding: 1em;
+            background: #e9e9e9;
+            border-radius: 4px;
+        }
+        
+        .test-controls button {
+            margin: 0.5em;
+            padding: 0.5em 1em;
+            border: 1px solid #666;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .test-results {
+            margin: 1em 0;
+            padding: 1em;
+            background: #f0f0f0;
+            border-left: 3px solid #333;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+        
+        .supplement-target {
+            border: 1px dashed #999;
+            padding: 1em;
+            margin: 1em 0;
+        }
+        
+        .pharmakon-element {
+            border: 1px solid #666;
+            padding: 0.5em;
+            margin: 0.5em 0;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Supplement & Pharmakon Systems Testing</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Supplement Mechanics</h2>
+        <div class="test-controls">
+            <button onclick="testMarginBecomingCenter()">Test Margin → Center</button>
+            <button onclick="testFootnoteTakeover()">Test Footnote Takeover</button>
+            <button onclick="testCommentReplacement()">Test Comment Replacement</button>
+            <button onclick="testSearchSupplement()">Test Search Supplement</button>
+            <button onclick="resetSupplements()">Reset Supplements</button>
+        </div>
+        
+        <div class="test-content">
+            <div class="supplement-target" id="main-text">
+                <h3>Main Text</h3>
+                <p>This is the primary text that should be supplemented by marginal content, footnotes, and comments.</p>
+                <p>The supplement system will gradually make these additions more prominent than the original.</p>
+            </div>
+            
+            <div class="supplement-target" id="marginal-content">
+                <h4>Marginal Content</h4>
+                <p>This marginal commentary should eventually become more prominent than the main text.</p>
+            </div>
+            
+            <div class="supplement-target" id="footnote-content">
+                <h4>Footnote</h4>
+                <p>This footnote explains something about the main text, but may take it over entirely.</p>
+            </div>
+            
+            <div class="supplement-target" id="comment-content">
+                <h4>Reader Comment</h4>
+                <p>A reader's comment that might replace the original content through supplement mechanics.</p>
+            </div>
+        </div>
+        
+        <div class="test-results" id="supplement-results">
+            Supplement test results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Pharmakon Effects</h2>
+        <div class="test-controls">
+            <button onclick="testSearchPharmakon()">Test Search Pharmakon</button>
+            <button onclick="testNavigationPharmakon()">Test Navigation Pharmakon</button>
+            <button onclick="testReadingToolsPharmakon()">Test Reading Tools Pharmakon</button>
+            <button onclick="testAccessibilityPharmakon()">Test Accessibility Pharmakon</button>
+            <button onclick="resetPharmakon()">Reset Pharmakon Effects</button>
+        </div>
+        
+        <div class="test-content">
+            <div class="pharmakon-element" id="search-pharmakon">
+                <label for="test-search">Search (Pharmakon):</label>
+                <input type="text" id="test-search" placeholder="Search for something...">
+                <div id="search-effects"></div>
+            </div>
+            
+            <div class="pharmakon-element" id="navigation-pharmakon">
+                <h4>Navigation (Pharmakon)</h4>
+                <nav>
+                    <a href="#" onclick="testNavClick('home'); return false;">Home</a>
+                    <a href="#" onclick="testNavClick('about'); return false;">About</a>
+                    <a href="#" onclick="testNavClick('contact'); return false;">Contact</a>
+                </nav>
+                <div id="navigation-effects"></div>
+            </div>
+            
+            <div class="pharmakon-element" id="reading-tools-pharmakon">
+                <h4>Reading Tools (Pharmakon)</h4>
+                <button onclick="testReadingTool('zoom')">Zoom In</button>
+                <button onclick="testReadingTool('highlight')">Highlight</button>
+                <button onclick="testReadingTool('bookmark')">Bookmark</button>
+                <div id="reading-tool-effects"></div>
+            </div>
+            
+            <div class="pharmakon-element" id="accessibility-pharmakon">
+                <h4>Accessibility Features (Pharmakon)</h4>
+                <button onclick="testAccessibilityTool('contrast')">High Contrast</button>
+                <button onclick="testAccessibilityTool('text-size')">Larger Text</button>
+                <button onclick="testAccessibilityTool('focus')">Focus Mode</button>
+                <div id="accessibility-effects"></div>
+            </div>
+        </div>
+        
+        <div class="test-results" id="pharmakon-results">
+            Pharmakon test results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Combined Supplement + Pharmakon Effects</h2>
+        <div class="test-controls">
+            <button onclick="testCombinedEffects()">Test Combined Effects</button>
+            <button onclick="testSupplementPharmakonInteraction()">Test S+P Interaction</button>
+            <button onclick="measureEffectIntensity()">Measure Effect Intensity</button>
+            <button onclick="resetAllEffects()">Reset All Effects</button>
+        </div>
+        
+        <div class="test-content">
+            <div id="combined-target">
+                <p>This content will be affected by both supplement and pharmakon mechanics simultaneously.</p>
+                <p>We can observe how these philosophical concepts interact in the digital medium.</p>
+            </div>
+        </div>
+        
+        <div class="test-results" id="combined-results">
+            Combined effects results will appear here...
+        </div>
+    </div>
+
+    <script src="../assets/js/supplement.js"></script>
+    <script src="../assets/js/pharmakon.js"></script>
+    
+    <script>
+        // Testing functions for Supplement system
+        function testMarginBecomingCenter() {
+            const mainText = document.getElementById('main-text');
+            const marginalContent = document.getElementById('marginal-content');
+            
+            if (window.SupplementSystem) {
+                // Simulate margin becoming center
+                window.SupplementSystem.expandSupplementContent('margin-test', {
+                    element: marginalContent,
+                    originalContent: mainText.innerHTML
+                });
+                
+                // Visual effect: make margin larger, main text smaller
+                marginalContent.style.fontSize = '1.2em';
+                marginalContent.style.fontWeight = 'bold';
+                marginalContent.style.border = '2px solid red';
+                
+                mainText.style.fontSize = '0.9em';
+                mainText.style.opacity = '0.7';
+                
+                document.getElementById('supplement-results').textContent += 'Margin becoming center - supplement effect applied\n';
+            } else {
+                document.getElementById('supplement-results').textContent += 'ERROR: SupplementSystem not available\n';
+            }
+        }
+        
+        function testFootnoteTakeover() {
+            const mainText = document.getElementById('main-text');
+            const footnoteContent = document.getElementById('footnote-content');
+            
+            // Simulate footnote taking over main text
+            footnoteContent.style.fontSize = '1.1em';
+            footnoteContent.style.fontWeight = 'bold';
+            footnoteContent.style.background = 'rgba(0, 255, 0, 0.1)';
+            footnoteContent.style.border = '2px solid green';
+            
+            mainText.style.fontSize = '0.8em';
+            mainText.style.opacity = '0.6';
+            mainText.style.background = 'rgba(0, 0, 0, 0.05)';
+            
+            // Add takeover notice
+            const notice = document.createElement('div');
+            notice.textContent = '[FOOTNOTE TAKEOVER: The supplement replaces what it was meant to supplement]';
+            notice.style.fontWeight = 'bold';
+            notice.style.color = 'green';
+            footnoteContent.appendChild(notice);
+            
+            document.getElementById('supplement-results').textContent += 'Footnote takeover - supplement replacing original\n';
+        }
+        
+        function testCommentReplacement() {
+            const mainText = document.getElementById('main-text');
+            const commentContent = document.getElementById('comment-content');
+            
+            // Simulate comment becoming primary
+            commentContent.style.fontSize = '1.15em';
+            commentContent.style.background = 'rgba(255, 255, 0, 0.2)';
+            commentContent.style.border = '3px solid orange';
+            
+            // Add replacement text
+            const replacement = document.createElement('div');
+            replacement.innerHTML = '<strong>READER COMMENT HAS BECOME PRIMARY TEXT</strong><br>The original author\'s voice is now marginal.';
+            replacement.style.fontWeight = 'bold';
+            replacement.style.color = 'orange';
+            commentContent.appendChild(replacement);
+            
+            mainText.style.fontSize = '0.75em';
+            mainText.style.opacity = '0.5';
+            
+            document.getElementById('supplement-results').textContent += 'Comment replacement - reader voice becoming primary\n';
+        }
+        
+        function testSearchSupplement() {
+            // Create search functionality that creates what it searches for
+            const searchInput = document.getElementById('test-search');
+            const query = searchInput.value || 'philosophy';
+            
+            // Supplement: search creates content rather than finding it
+            const createdContent = document.createElement('div');
+            createdContent.innerHTML = `
+                <h4>Search Created Content</h4>
+                <p>Your search for "${query}" has created this content. 
+                The supplement system generates what was absent.</p>
+                <em>The search does not find; it creates what it seeks.</em>
+            `;
+            createdContent.style.border = '2px solid blue';
+            createdContent.style.padding = '1em';
+            createdContent.style.background = 'rgba(0, 0, 255, 0.1)';
+            
+            document.getElementById('search-effects').appendChild(createdContent);
+            
+            document.getElementById('supplement-results').textContent += `Search supplement created content for "${query}"\n`;
+        }
+        
+        function resetSupplements() {
+            // Reset all supplement effects
+            document.querySelectorAll('.supplement-target').forEach(target => {
+                target.style.fontSize = '';
+                target.style.fontWeight = '';
+                target.style.opacity = '';
+                target.style.background = '';
+                target.style.border = '';
+                
+                // Remove added elements
+                target.querySelectorAll('div').forEach(div => {
+                    if (div.textContent.includes('TAKEOVER') || div.textContent.includes('BECOME PRIMARY') || div.textContent.includes('Search Created')) {
+                        div.remove();
+                    }
+                });
+            });
+            
+            document.getElementById('search-effects').innerHTML = '';
+            document.getElementById('supplement-results').textContent += 'All supplement effects reset\n';
+        }
+        
+        // Testing functions for Pharmakon system
+        function testSearchPharmakon() {
+            const searchInput = document.getElementById('test-search');
+            const searchEffects = document.getElementById('search-effects');
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value;
+                
+                // Remedy effect
+                const remedy = document.createElement('div');
+                remedy.textContent = `✓ Remedy: Searching for "${query}"`;
+                remedy.style.color = 'green';
+                remedy.style.marginTop = '0.5em';
+                
+                // Poison effect
+                const poison = document.createElement('div');
+                poison.textContent = `✗ Poison: But "${query}" excludes everything else`;
+                poison.style.color = 'red';
+                poison.style.marginTop = '0.5em';
+                
+                searchEffects.innerHTML = '';
+                searchEffects.appendChild(remedy);
+                setTimeout(() => searchEffects.appendChild(poison), 1000);
+            });
+            
+            document.getElementById('pharmakon-results').textContent += 'Search pharmakon activated - remedy and poison effects\n';
+        }
+        
+        function testNavigationPharmakon() {
+            // Navigation already has pharmakon effects in onclick handlers
+            document.getElementById('pharmakon-results').textContent += 'Navigation pharmakon ready - click nav links to see effects\n';
+        }
+        
+        function testNavClick(destination) {
+            const navEffects = document.getElementById('navigation-effects');
+            
+            // Remedy: helps navigate
+            const remedy = document.createElement('div');
+            remedy.textContent = `✓ Remedy: Navigation to ${destination}`;
+            remedy.style.color = 'green';
+            
+            // Poison: leads astray
+            const poison = document.createElement('div');
+            poison.textContent = `✗ Poison: But where is "${destination}" really?`;
+            poison.style.color = 'red';
+            
+            navEffects.innerHTML = '';
+            navEffects.appendChild(remedy);
+            setTimeout(() => navEffects.appendChild(poison), 800);
+            
+            document.getElementById('pharmakon-results').textContent += `Navigation pharmakon triggered for ${destination}\n`;
+        }
+        
+        function testReadingTool(tool) {
+            const toolEffects = document.getElementById('reading-tool-effects');
+            
+            // Remedy effect
+            const remedy = document.createElement('div');
+            remedy.textContent = `✓ Remedy: ${tool} helps reading`;
+            remedy.style.color = 'green';
+            
+            // Poison effect  
+            const poison = document.createElement('div');
+            poison.textContent = `✗ Poison: ${tool} obscures original text`;
+            poison.style.color = 'red';
+            
+            toolEffects.innerHTML = '';
+            toolEffects.appendChild(remedy);
+            setTimeout(() => toolEffects.appendChild(poison), 600);
+            
+            document.getElementById('pharmakon-results').textContent += `Reading tool pharmakon: ${tool}\n`;
+        }
+        
+        function testAccessibilityTool(tool) {
+            const accessEffects = document.getElementById('accessibility-effects');
+            
+            // Remedy effect
+            const remedy = document.createElement('div');
+            remedy.textContent = `✓ Remedy: ${tool} improves accessibility`;
+            remedy.style.color = 'green';
+            
+            // Poison effect
+            const poison = document.createElement('div');
+            poison.textContent = `✗ Poison: ${tool} excludes other needs`;
+            poison.style.color = 'red';
+            
+            accessEffects.innerHTML = '';
+            accessEffects.appendChild(remedy);
+            setTimeout(() => accessEffects.appendChild(poison), 700);
+            
+            document.getElementById('pharmakon-results').textContent += `Accessibility pharmakon: ${tool}\n`;
+        }
+        
+        function testReadingToolsPharmakon() {
+            document.getElementById('pharmakon-results').textContent += 'Reading tools pharmakon ready - click tools to see dual effects\n';
+        }
+        
+        function testAccessibilityPharmakon() {
+            document.getElementById('pharmakon-results').textContent += 'Accessibility pharmakon ready - click features to see remedy/poison\n';
+        }
+        
+        function resetPharmakon() {
+            // Clear all pharmakon effect displays
+            document.getElementById('search-effects').innerHTML = '';
+            document.getElementById('navigation-effects').innerHTML = '';
+            document.getElementById('reading-tool-effects').innerHTML = '';
+            document.getElementById('accessibility-effects').innerHTML = '';
+            
+            document.getElementById('pharmakon-results').textContent += 'All pharmakon effects reset\n';
+        }
+        
+        // Combined effects testing
+        function testCombinedEffects() {
+            const target = document.getElementById('combined-target');
+            
+            // Apply supplement effect
+            target.style.fontSize = '1.2em';
+            target.style.background = 'rgba(255, 255, 0, 0.1)';
+            target.style.border = '2px solid orange';
+            
+            // Add supplementary content
+            const supplement = document.createElement('div');
+            supplement.textContent = '[SUPPLEMENT: This text supplements and may replace the original]';
+            supplement.style.fontWeight = 'bold';
+            supplement.style.color = 'orange';
+            target.appendChild(supplement);
+            
+            // Apply pharmakon effect after delay
+            setTimeout(() => {
+                const pharmakon = document.createElement('div');
+                pharmakon.innerHTML = `
+                    <span style="color: green">✓ This supplement helps understanding</span><br>
+                    <span style="color: red">✗ But also destroys the original meaning</span>
+                `;
+                target.appendChild(pharmakon);
+            }, 1500);
+            
+            document.getElementById('combined-results').textContent += 'Combined supplement + pharmakon effects applied\n';
+        }
+        
+        function testSupplementPharmakonInteraction() {
+            // Test how supplement and pharmakon systems interact
+            const target = document.getElementById('combined-target');
+            
+            // Create interaction where supplement's pharmakon nature is revealed
+            const interaction = document.createElement('div');
+            interaction.innerHTML = `
+                <h4>Supplement-Pharmakon Interaction</h4>
+                <p style="color: green">✓ Supplement provides what was missing</p>
+                <p style="color: red">✗ Supplement reveals original was never complete</p>
+                <p style="color: purple"><strong>The supplement is always already pharmakon</strong></p>
+            `;
+            interaction.style.border = '2px solid purple';
+            interaction.style.padding = '1em';
+            interaction.style.margin = '1em 0';
+            
+            target.appendChild(interaction);
+            
+            document.getElementById('combined-results').textContent += 'Supplement-pharmakon interaction demonstrated\n';
+        }
+        
+        function measureEffectIntensity() {
+            const supplements = document.querySelectorAll('[style*="fontSize"]').length;
+            const pharmakons = document.querySelectorAll('[style*="color: green"], [style*="color: red"]').length;
+            
+            document.getElementById('combined-results').textContent += 
+                `Effect intensity - Supplements: ${supplements}, Pharmakons: ${pharmakons}\n`;
+        }
+        
+        function resetAllEffects() {
+            resetSupplements();
+            resetPharmakon();
+            
+            const target = document.getElementById('combined-target');
+            target.style.fontSize = '';
+            target.style.background = '';
+            target.style.border = '';
+            
+            // Remove added elements
+            target.querySelectorAll('div').forEach(div => {
+                if (div.textContent.includes('SUPPLEMENT') || div.textContent.includes('pharmakon') || div.textContent.includes('Interaction')) {
+                    div.remove();
+                }
+            });
+            
+            document.getElementById('combined-results').textContent += 'All effects reset\n';
+        }
+        
+        // Initialize testing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Supplement & Pharmakon test page loaded');
+            
+            setTimeout(() => {
+                const supplementAvailable = window.SupplementSystem !== undefined;
+                const pharmakonAvailable = window.PharmakonSystem !== undefined;
+                
+                document.getElementById('supplement-results').textContent = 
+                    `Supplement system: ${supplementAvailable ? 'Available' : 'Not found'}\n`;
+                document.getElementById('pharmakon-results').textContent = 
+                    `Pharmakon system: ${pharmakonAvailable ? 'Available' : 'Not found'}\n`;
+                
+                if (supplementAvailable) {
+                    console.log('SupplementSystem detected');
+                }
+                if (pharmakonAvailable) {
+                    console.log('PharmakonSystem detected');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+/* Marginalia Styles */
+.post-content {
+    position: relative;
+}
+
+.margin-voice {
+    position: absolute;
+    width: 180px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #666;
+}
+
+.margin-left {
+    left: -200px;
+    text-align: right;
+}
+
+.margin-right {
+    right: -200px;
+    text-align: left;
+}
+
+/* Different voice styles */
+.voice-critic {
+    font-family: 'Courier New', monospace;
+    color: #8b0000;
+}
+
+.voice-translator {
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: #4a4a4a;
+}
+
+.voice-reader {
+    font-family: Arial, sans-serif;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Mobile responsive */
+@media (max-width: 1200px) {
+    .margin-voice {
+        position: static;
+        width: 100%;
+        margin: 1rem 0;
+        padding: 1rem;
+        border-left: 3px solid #ddd;
+        background: #f9f9f9;
+    }
+    
+    .margin-left,
+    .margin-right {
+        left: auto;
+        right: auto;
+        text-align: left;
+    }
+}

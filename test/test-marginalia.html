@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marginalia System Test</title>
+    <link rel="stylesheet" href="../assets/css/derridean.css">
+    <link rel="stylesheet" href="../assets/css/traces.css">
+    <style>
+        body {
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 0 2em;
+        }
+        
+        .test-section {
+            margin: 3em 0;
+            padding: 2em;
+            border: 1px solid #ccc;
+            background: #fafafa;
+        }
+        
+        .test-controls {
+            margin: 1em 0;
+            padding: 1em;
+            background: #e9e9e9;
+            border-radius: 4px;
+        }
+        
+        .test-controls button {
+            margin: 0.5em;
+            padding: 0.5em 1em;
+            border: 1px solid #666;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .test-results {
+            margin: 1em 0;
+            padding: 1em;
+            background: #f0f0f0;
+            border-left: 3px solid #333;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Marginalia System Testing</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Basic Marginalia Display</h2>
+        <div class="test-controls">
+            <button onclick="testBasicMarginalia()">Generate Basic Marginalia</button>
+            <button onclick="clearMarginalia()">Clear All</button>
+        </div>
+        
+        <div class="test-content">
+            <p id="test-paragraph-1" data-margin-left="This is a critical voice questioning the main text" 
+               data-margin-right="The translator notes: this concept doesn't exist in the original language">
+               This is the main text that will be surrounded by marginal voices. The marginalia should appear 
+               on both sides with different speakers and personalities.
+            </p>
+            
+            <p id="test-paragraph-2">
+               This paragraph has no predefined marginalia but should receive auto-generated voices 
+               when the marginalia system initializes.
+            </p>
+        </div>
+        
+        <div class="test-results" id="marginalia-results">
+            Results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Marginalia Modes</h2>
+        <div class="test-controls">
+            <button onclick="switchMarginaliaMode('traditional')">Traditional Mode</button>
+            <button onclick="switchMarginaliaMode('invasive')">Invasive Mode</button>
+            <button onclick="switchMarginaliaMode('talmudic')">Talmudic Mode</button>
+            <button onclick="switchMarginaliaMode('choral')">Choral Mode</button>
+            <button onclick="switchMarginaliaMode('ghosted')">Ghosted Mode</button>
+        </div>
+        
+        <div class="test-content">
+            <div class="margin-voice margin-left speaker-critic">
+                But who has the authority to make this claim?
+            </div>
+            <div class="margin-voice margin-right speaker-translator">
+                The word "authority" here carries colonial implications.
+            </div>
+            <div class="margin-voice margin-left speaker-questioner">
+                What questions are not being asked?
+            </div>
+        </div>
+        
+        <div class="test-results" id="mode-results">
+            Current mode: <span id="current-mode">none</span>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Voice Interactions and Conversations</h2>
+        <div class="test-controls">
+            <button onclick="testVoiceConversation()">Trigger Voice Conversation</button>
+            <button onclick="testVoiceInvasion()">Test Invasion Mechanics</button>
+            <button onclick="getVoiceStats()">Get System Stats</button>
+        </div>
+        
+        <div class="test-content">
+            <div class="margin-voice margin-left speaker-critic" data-voice-id="test-critic">
+                This argument has serious logical flaws.
+            </div>
+            <div class="margin-voice margin-right speaker-reader" data-voice-id="test-reader">
+                As a reader, I find this confusing.
+            </div>
+            <div class="margin-voice margin-left speaker-ghost" data-voice-id="test-ghost">
+                The platform shapes what you can express here.
+            </div>
+        </div>
+        
+        <div class="test-results" id="interaction-results">
+            Interaction results will appear here...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Invasion Threshold Testing</h2>
+        <div class="test-controls">
+            <button onclick="simulateInvasion(0.3)">Trigger Minor Invasion (30%)</button>
+            <button onclick="simulateInvasion(0.6)">Trigger Major Invasion (60%)</button>
+            <button onclick="simulateInvasion(0.9)">Trigger Total Invasion (90%)</button>
+            <button onclick="resetInvasion()">Reset Invasion State</button>
+        </div>
+        
+        <div class="invasion-progress-bar" style="width: 100%; height: 20px; border: 1px solid #333; background: #f0f0f0;">
+            <div class="invasion-progress" style="width: 0%; height: 100%; background: red; transition: width 0.5s ease;"></div>
+        </div>
+        <p>Invasion Progress: <span id="invasion-percentage">0%</span></p>
+        
+        <div class="test-results" id="invasion-results">
+            Invasion test results will appear here...
+        </div>
+    </div>
+
+    <script src="../assets/js/marginalia.js"></script>
+    
+    <script>
+        // Testing functions
+        function testBasicMarginalia() {
+            const results = document.getElementById('marginalia-results');
+            results.innerHTML = 'Testing basic marginalia generation...\n';
+            
+            if (window.MarginaliaSystemInstance) {
+                const stats = window.MarginaliaSystemInstance.getVoiceStats();
+                results.innerHTML += `System loaded: ${stats.totalVoices} voices, ${stats.speakers} speakers\n`;
+                results.innerHTML += `Current mode: ${stats.currentMode}\n`;
+                results.innerHTML += `Invasion progress: ${stats.invasionProgress}\n`;
+            } else {
+                results.innerHTML += 'ERROR: MarginaliaSystem not initialized\n';
+            }
+        }
+        
+        function clearMarginalia() {
+            const marginVoices = document.querySelectorAll('.margin-voice');
+            marginVoices.forEach(voice => {
+                if (voice.dataset.voiceId) {
+                    window.MarginaliaSystemInstance?.removeVoice(voice.dataset.voiceId);
+                }
+            });
+            document.getElementById('marginalia-results').innerHTML = 'Marginalia cleared.\n';
+        }
+        
+        function switchMarginaliaMode(mode) {
+            if (window.MarginaliaSystemInstance) {
+                window.MarginaliaSystemInstance.switchMode(mode);
+                document.getElementById('current-mode').textContent = mode;
+                document.getElementById('mode-results').innerHTML = `Switched to ${mode} mode\n`;
+            } else {
+                document.getElementById('mode-results').innerHTML = 'ERROR: MarginaliaSystem not available\n';
+            }
+        }
+        
+        function testVoiceConversation() {
+            const results = document.getElementById('interaction-results');
+            if (window.MarginaliaSystemInstance) {
+                // Manually trigger a conversation between critic and reader
+                const voices = window.MarginaliaSystemInstance.voices;
+                const voiceArray = Array.from(voices.values());
+                
+                if (voiceArray.length >= 2) {
+                    window.MarginaliaSystemInstance.initiateConversation(voiceArray[0], voiceArray[1]);
+                    results.innerHTML = `Conversation initiated between ${voiceArray[0].speaker} and ${voiceArray[1].speaker}\n`;
+                } else {
+                    results.innerHTML = 'Not enough voices for conversation\n';
+                }
+            } else {
+                results.innerHTML = 'ERROR: MarginaliaSystem not available\n';
+            }
+        }
+        
+        function testVoiceInvasion() {
+            const results = document.getElementById('interaction-results');
+            if (window.MarginaliaSystemInstance) {
+                const voices = window.MarginaliaSystemInstance.voices;
+                const firstVoice = voices.values().next().value;
+                
+                if (firstVoice) {
+                    firstVoice.invasiveness = 0.8; // Set high invasiveness
+                    window.MarginaliaSystemInstance.beginVoiceInvasion(firstVoice);
+                    results.innerHTML += `Voice invasion triggered for ${firstVoice.speaker}\n`;
+                } else {
+                    results.innerHTML = 'No voices available for invasion test\n';
+                }
+            } else {
+                results.innerHTML = 'ERROR: MarginaliaSystem not available\n';
+            }
+        }
+        
+        function getVoiceStats() {
+            const results = document.getElementById('interaction-results');
+            if (window.MarginaliaSystemInstance) {
+                const stats = window.MarginaliaSystemInstance.getVoiceStats();
+                results.innerHTML = `
+Voice Statistics:
+- Total Voices: ${stats.totalVoices}
+- Unique Speakers: ${stats.speakers}
+- Active Conversations: ${stats.conversations}
+- Invasion Progress: ${stats.invasionProgress}
+- Current Mode: ${stats.currentMode}
+                `;
+            } else {
+                results.innerHTML = 'ERROR: MarginaliaSystem not available\n';
+            }
+        }
+        
+        function simulateInvasion(threshold) {
+            if (window.MarginaliaSystemInstance) {
+                // Artificially set invasion progress
+                window.MarginaliaSystemInstance.invasionProgress = threshold;
+                
+                // Update progress bar
+                const progressBar = document.querySelector('.invasion-progress');
+                const percentage = document.getElementById('invasion-percentage');
+                progressBar.style.width = (threshold * 100) + '%';
+                percentage.textContent = Math.floor(threshold * 100) + '%';
+                
+                // Trigger invasion check
+                window.MarginaliaSystemInstance.checkInvasionThresholds();
+                
+                const results = document.getElementById('invasion-results');
+                results.innerHTML += `Simulated ${Math.floor(threshold * 100)}% invasion\n`;
+            }
+        }
+        
+        function resetInvasion() {
+            if (window.MarginaliaSystemInstance) {
+                window.MarginaliaSystemInstance.invasionProgress = 0;
+                window.MarginaliaSystemInstance.minorInvasionTriggered = false;
+                window.MarginaliaSystemInstance.majorInvasionTriggered = false;
+                window.MarginaliaSystemInstance.totalInvasionTriggered = false;
+                
+                // Reset visual indicators
+                const progressBar = document.querySelector('.invasion-progress');
+                const percentage = document.getElementById('invasion-percentage');
+                progressBar.style.width = '0%';
+                percentage.textContent = '0%';
+                
+                // Remove invasion notices
+                document.querySelectorAll('.minor-invasion-notice, .major-invasion-notice, .total-invasion-notice').forEach(notice => notice.remove());
+                
+                document.getElementById('invasion-results').innerHTML = 'Invasion state reset\n';
+            }
+        }
+        
+        // Initialize testing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Marginalia test page loaded');
+            
+            // Wait a moment for marginalia system to initialize
+            setTimeout(() => {
+                if (window.MarginaliaSystemInstance) {
+                    console.log('MarginaliaSystem detected:', window.MarginaliaSystemInstance);
+                    testBasicMarginalia();
+                } else {
+                    console.log('MarginaliaSystem not found');
+                    document.getElementById('marginalia-results').innerHTML = 'ERROR: MarginaliaSystem failed to initialize\n';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,175 +1,51 @@
 <!DOCTYPE html>
-<html lang="{{@site.locale}}"{{#match @custom.reading_mode "deconstructive"}} data-reading-mode="deconstructive"{{/match}}{{#match @custom.reading_mode "marginal"}} data-reading-mode="marginal"{{/match}}{{#match @custom.reading_mode "palimpsest"}} data-reading-mode="palimpsest"{{/match}}>
+<html lang="{{@site.locale}}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{meta_title}}</title>
-    <meta name="description" content="{{meta_description}}">
-    <meta name="generator" content="Ghost {{@version}}">
-    <meta name="robots" content="{{meta_robots}}">
-
-    {{!-- The frame that questions framing --}}
-    <meta name="theme-color" content="#000000">
-    <meta name="theme-philosophy" content="deconstruction">
-    <meta name="platform-violence" content="ghost-cms">
-
-    <link rel="icon" href="{{asset "favicon.ico"}}">
+    
     <link rel="canonical" href="{{url absolute="true"}}">
     <meta name="referrer" content="no-referrer-when-downgrade">
-
-    {{!-- CSS that performs its own critique --}}
-    <link rel="stylesheet" type="text/css" href="{{asset "css/derridean.css"}}">
-    <link rel="stylesheet" type="text/css" href="{{asset "css/traces.css"}}">
-    <link rel="stylesheet" type="text/css" href="{{asset "css/aporias.css"}}">
-
-    {{!-- Conditional loading based on theme settings --}}
-    {{#if @custom.margin_voices}}
-    <link rel="stylesheet" type="text/css" href="{{asset "css/marginalia.css"}}">
-    {{/if}}
-
-    {{!-- Print styles that reveal what screen hides --}}
-    <link rel="stylesheet" type="text/css" href="{{asset "css/print.css"}}" media="print">
-
-    {{!-- Ghost head - outputs important meta data and structured data --}}
+    
+    {{!-- Google Fonts --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Playfair+Display&display=swap" rel="stylesheet">
+    
+    {{!-- Main theme styles --}}
+    <link rel="stylesheet" type="text/css" href="{{asset "css/main.css"}}">
+    
+    {{!-- Ghost head outputs meta tags and structured data --}}
     {{ghost_head}}
 </head>
-<body class="{{body_class}}"{{#if @custom.temporal_disruption}} data-temporal-disruption="enabled"{{/if}}{{#if @custom.ghost_limitations_visible}} data-limitations-visible="true"{{/if}}>
-    <div class="viewport">
-        {{!-- The header that admits its contingency --}}
-        <header class="page-header">
-            <div class="header-content">
-                {{#if @site.logo}}
-                <div class="site-logo">
-                    <a href="{{@site.url}}">
-                        <img src="{{@site.logo}}" alt="{{@site.title}}" class="logo-image">
-                    </a>
-                </div>
+<body class="{{body_class}}">
+    <div class="site-wrapper">
+        <header class="site-header">
+            <div class="site-header-content">
+                <h1 class="site-title">
+                    <a href="{{@site.url}}">{{@site.title}}</a>
+                </h1>
+                {{#if @site.description}}
+                <p class="site-description">{{@site.description}}</p>
                 {{/if}}
-
-                <div class="site-title-group">
-                    <h1 class="site-title">
-                        <a href="{{@site.url}}">{{@site.title}}</a>
-                    </h1>
-                    {{#if @site.description}}
-                    <p class="site-description">{{@site.description}}</p>
-                    {{/if}}
-                </div>
-
-                {{!-- Navigation under erasure --}}
-                {{navigation}}
+                <nav class="site-nav">
+                    {{navigation}}
+                </nav>
             </div>
-
-            {{!-- Platform limitation marker --}}
-            {{#if @custom.ghost_limitations_visible}}
-            <div class="limitation-notice">
-                <span class="limit-marker">[!]</span>
-                <span class="limit-text">You are reading through Ghost CMS - a platform with specific constraints</span>
-            </div>
-            {{/if}}
         </header>
 
-        {{!-- The main content area that questions centrality --}}
-        <main class="site-content" role="main">
-            {{!-- This is where each page template fills in content --}}
+        <main class="site-main">
             {{{body}}}
         </main>
 
-        {{!-- The footer that refuses finality --}}
         <footer class="site-footer">
-            <div class="footer-content">
-                <div class="footer-meta">
-                    <p class="copyright">
-                        &copy; {{date format="YYYY"}} {{@site.title}}
-                        <span class="copyright-question">(But who owns these words?)</span>
-                    </p>
-                    <p class="powered-by">
-                        Powered by <a href="https://ghost.org" target="_blank">Ghost</a>
-                        <span class="platform-critique">(Which shapes every word you read)</span>
-                    </p>
-                </div>
-
-                {{!-- Temporal disruption controls --}}
-                {{#if @custom.temporal_disruption}}
-                <div class="temporal-controls">
-                    <h4>Resist Linear Time:</h4>
-                    <button data-temporal="scramble">Scramble Chronology</button>
-                    <button data-temporal="freeze">Freeze Time</button>
-                    <button data-temporal="reverse">Reverse Flow</button>
-                </div>
-                {{/if}}
-
-                {{!-- Archive amnesia notice --}}
-                <div class="archive-critique">
-                    <p><em>This archive forgets. Ghost preserves no public history of revisions. Every edit is murder.</em></p>
-                </div>
+            <div class="site-footer-content">
+                <p>&copy; {{date format="YYYY"}} {{@site.title}}</p>
+                <p>Powered by <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a></p>
             </div>
         </footer>
     </div>
 
-    {{!-- The scripts that sometimes refuse to execute --}}
-    <script src="{{asset "js/differance.js"}}"></script>
-    <script src="{{asset "js/supplement.js"}}"></script>
-    
-    {{#if @custom.margin_voices}}
-    <script src="{{asset "js/marginalia.js"}}"></script>
-    {{/if}}
-
-    {{!-- Palimpsest system --}}
-    {{#if @custom.palimpsest_depth}}{{#is @custom.palimpsest_depth ">" 0}}
-    <script src="{{asset "js/palimpsest.js"}}"></script>
-    {{/is}}{{/if}}
-
-    {{!-- Platform limitation revealing scripts --}}
-    {{#if @custom.ghost_limitations_visible}}
-    <script src="{{asset "js/limitations.js"}}"></script>
-    {{/if}}
-
-    <script src="{{asset "js/pharmakon.js"}}"></script>
-
-    {{!-- Ghost foot - outputs additional scripts and closes body tag --}}
     {{ghost_foot}}
-
-    {{!-- The script that questions its own execution --}}
-    <script>
-        // Sometimes the theme refuses to load completely
-        if (Math.random() > 0.95) {
-            document.body.innerHTML = '<div style="padding: 2em; font-family: monospace;"><h1>Theme Loading Failed</h1><p>This failure is intentional. Even themes can refuse.</p><p>Ghost continues underneath, unchanged.</p></div>';
-        }
-
-        // Initialize theme based on configuration
-        document.addEventListener('DOMContentLoaded', function() {
-            // Apply reading mode
-            const readingMode = document.documentElement.dataset.readingMode;
-            if (readingMode) {
-                document.body.classList.add('reading-mode-' + readingMode);
-            }
-
-            // Initialize temporal disruption
-            if (document.body.dataset.temporalDisruption) {
-                window.TemporalDisruption && new TemporalDisruption();
-            }
-
-            // Initialize marginalia
-            if ({{@custom.margin_voices}}) {
-                window.MarginaliaSystem && new MarginaliaSystem();
-            }
-
-            // Initialize palimpsest with configured depth
-            const palimpsestDepth = {{@custom.palimpsest_depth}};
-            if (palimpsestDepth > 0 && window.PalimpsestSystem) {
-                new PalimpsestSystem(palimpsestDepth);
-            }
-
-            // Initialize limitation markers
-            if ({{@custom.ghost_limitations_visible}}) {
-                window.GhostLimitations && new GhostLimitations();
-            }
-
-            console.log('Theme loaded: trace-of-the-other v0.1.0');
-            console.log('Platform: Ghost {{@version}}');
-            console.log('Reading Mode:', readingMode || 'traditional');
-            console.log('Every word you read is shaped by these constraints.');
-        });
-    </script>
 </body>
 </html>

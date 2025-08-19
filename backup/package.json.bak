@@ -1,0 +1,97 @@
+{
+  "name": "trace-of-the-other",
+  "description": "A theme that performs its own deconstruction - exploring the margins, palimpsests, and limitations of digital text",
+  "demo": "https://trace-of-the-other.example.com",
+  "version": "0.1.0",
+  "engines": {
+    "ghost": ">=5.0.0"
+  },
+  "license": "MIT",
+  "screenshots": {
+    "desktop": "assets/screenshot-desktop.png",
+    "mobile": "assets/screenshot-mobile.png"
+  },
+  "author": {
+    "name": "The Collective/Nobody/Everybody",
+    "email": "ghost@example.com",
+    "url": "https://trace-of-the-other.example.com"
+  },
+  "gpm": {
+    "type": "theme",
+    "categories": [
+      "Minimal",
+      "Magazine",
+      "Blog",
+      "Experimental",
+      "Philosophy"
+    ]
+  },
+  "keywords": [
+    "ghost-theme",
+    "deconstruction",
+    "philosophy",
+    "margins",
+    "palimpsest",
+    "experimental",
+    "derrida"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/trace-of-the-other-ghost-theme.git"
+  },
+  "config": {
+    "posts_per_page": 7,
+    "image_sizes": {
+      "xs": {
+        "width": 150
+      },
+      "s": {
+        "width": 300
+      },
+      "m": {
+        "width": 720
+      },
+      "l": {
+        "width": 960
+      },
+      "xl": {
+        "width": 1200
+      }
+    },
+    "card_assets": true,
+    "custom": {
+      "navigation_layout": {
+        "type": "select",
+        "options": ["linear", "rhizomatic", "fragmentary", "talmudic"],
+        "default": "rhizomatic",
+        "description": "How should navigation be structured?"
+      },
+      "reading_mode": {
+        "type": "select",
+        "options": ["traditional", "deconstructive", "marginal", "palimpsest"],
+        "default": "deconstructive",
+        "description": "Default reading experience"
+      },
+      "margin_voices": {
+        "type": "boolean",
+        "default": true,
+        "description": "Enable marginal commentary system"
+      },
+      "palimpsest_depth": {
+        "type": "number",
+        "default": 3,
+        "description": "How many layers of textual history to preserve"
+      },
+      "temporal_disruption": {
+        "type": "boolean",
+        "default": false,
+        "description": "Allow disruption of chronological ordering"
+      },
+      "ghost_limitations_visible": {
+        "type": "boolean",
+        "default": true,
+        "description": "Show platform limitation markers"
+      }
+    }
+  }
+}

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Test - All Systems</title>
+    <link rel="stylesheet" href="../assets/css/derridean.css">
+    <link rel="stylesheet" href="../assets/css/traces.css">
+    <link rel="stylesheet" href="../assets/css/aporias.css">
+    <style>
+        body {
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 2em auto;
+            padding: 0 2em;
+        }
+        
+        .integration-header {
+            text-align: center;
+            margin: 2em 0;
+            padding: 2em;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid #ccc;
+        }
+        
+        .system-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1em;
+            margin: 2em 0;
+        }
+        
+        .status-card {
+            padding: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            text-align: center;
+        }
+        
+        .status-active {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: green;
+        }
+        
+        .status-inactive {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: red;
+        }
+        
+        .test-area {
+            margin: 3em 0;
+            padding: 2em;
+            border: 2px solid #333;
+            background: #fafafa;
+            position: relative;
+        }
+        
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 250px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 1em;
+            border-radius: 8px;
+            z-index: 10000;
+            font-family: monospace;
+            font-size: 0.8em;
+        }
+        
+        .control-panel button {
+            width: 100%;
+            margin: 0.2em 0;
+            padding: 0.5em;
+            background: #333;
+            color: white;
+            border: 1px solid #666;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .control-panel button:hover {
+            background: #555;
+        }
+        
+        .chaos-mode {
+            animation: chaos-glitch 0.1s infinite;
+        }
+        
+        @keyframes chaos-glitch {
+            0% { transform: translate(0px, 0px); }
+            25% { transform: translate(1px, -1px); }
+            50% { transform: translate(-1px, 1px); }
+            75% { transform: translate(1px, 1px); }
+            100% { transform: translate(0px, 0px); }
+        }
+        
+        .invasion-in-progress {
+            background: rgba(255, 0, 0, 0.1) !important;
+            border: 2px solid red !important;
+        }
+        
+        .system-overload {
+            filter: blur(1px);
+            opacity: 0.8;
+        }
+        
+        .philosophical-crisis {
+            transform: rotate(1deg);
+            filter: contrast(1.2) saturate(0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <h4>Integration Control Panel</h4>
+        <div id="system-stats">Loading...</div>
+        <hr>
+        <button onclick="activateAllSystems()">Activate All Systems</button>
+        <button onclick="triggerChaosMode()">Chaos Mode</button>
+        <button onclick="triggerPhilosophicalCrisis()">Philosophical Crisis</button>
+        <button onclick="resetAllSystems()">Reset Everything</button>
+        <hr>
+        <button onclick="measureComplexity()">Measure Complexity</button>
+        <button onclick="documentInteractions()">Document Interactions</button>
+        <button onclick="validatePhilosophy()">Validate Philosophy</button>
+    </div>
+
+    <div class="integration-header">
+        <h1>Integration Test: All Systems Active</h1>
+        <p>This page demonstrates all philosophical systems working together simultaneously.</p>
+        <p><em>Expect complexity, contradiction, and the impossible.</em></p>
+    </div>
+    
+    <div class="system-status" id="system-status">
+        <div class="status-card" id="marginalia-status">
+            <h3>Marginalia</h3>
+            <div class="status">Loading...</div>
+        </div>
+        <div class="status-card" id="differance-status">
+            <h3>Différance</h3>
+            <div class="status">Loading...</div>
+        </div>
+        <div class="status-card" id="supplement-status">
+            <h3>Supplement</h3>
+            <div class="status">Loading...</div>
+        </div>
+        <div class="status-card" id="pharmakon-status">
+            <h3>Pharmakon</h3>
+            <div class="status">Loading...</div>
+        </div>
+    </div>
+    
+    <div class="test-area" id="main-test-area">
+        <h2>Primary Text Area</h2>
+        
+        <p class="deferred temporal-content" data-defer="2000" 
+           data-margin-left="This text emerges from temporal delay" 
+           data-margin-right="But delay is never simple deferral">
+            This paragraph demonstrates the intersection of différance and marginalia. 
+            It loads with delay while accumulating marginal voices that question its authority.
+        </p>
+        
+        <div class="palimpsest under-erasure" 
+             data-erased="The original argument was much simpler"
+             data-erased-2="The first draft said something completely different">
+            The final text after multiple revisions, carrying traces of what came before.
+        </div>
+        
+        <p class="temporal-fade presence-flicker" data-fade="8000" data-flicker="true"
+           data-margin-left="Fading reveals the impermanence of digital text"
+           data-margin-right="But what does it mean for text to 'fade'?">
+            This text will gradually fade away while flickering in and out of presence, 
+            demonstrating the instability of digital existence.
+        </p>
+        
+        <div class="supplement-target" id="supplement-demo">
+            <h3>Original Content</h3>
+            <p>This content will be gradually supplemented and potentially replaced by marginal additions.</p>
+        </div>
+        
+        <div class="margin-voice margin-left speaker-critic" data-voice-id="integration-critic">
+            But what authority does this "integration" have? Who decides what systems should work together?
+        </div>
+        
+        <div class="margin-voice margin-right speaker-translator" data-voice-id="integration-translator">
+            The word "integration" implies a wholeness that may be impossible to achieve.
+        </div>
+        
+        <div class="pharmakon-element" id="integration-pharmakon">
+            <h3>Integration Tool (Pharmakon)</h3>
+            <button onclick="triggerIntegrationPharmakon()">Integrate All Systems</button>
+            <div id="integration-effects"></div>
+        </div>
+        
+        <div class="temporal-revision" data-revise="true">
+            This text will revise itself to demonstrate temporal instability in integrated systems.
+        </div>
+        
+        <p class="glitch" data-glitch="true"
+           data-margin-left="Glitches reveal the violence of digital mediation"
+           data-margin-right="System errors become philosophical statements">
+            Text subject to random glitches that expose the digital medium's instability.
+        </p>
+    </div>
+    
+    <div class="test-area" id="interaction-area">
+        <h2>System Interaction Zone</h2>
+        
+        <div id="interaction-log">
+            <h3>Interaction Log</h3>
+            <div class="reading-time-dynamic">Session time: 0:00</div>
+            <div id="log-content">Interactions will be logged here...</div>
+        </div>
+        
+        <div id="complexity-meter">
+            <h3>Complexity Meter</h3>
+            <div style="width: 100%; height: 20px; border: 1px solid #333; background: #f0f0f0;">
+                <div id="complexity-bar" style="width: 0%; height: 100%; background: linear-gradient(to right, green, yellow, red); transition: width 0.5s ease;"></div>
+            </div>
+            <p>Current complexity: <span id="complexity-value">0%</span></p>
+        </div>
+        
+        <div id="philosophical-validation">
+            <h3>Philosophical Validation</h3>
+            <ul id="validation-checklist">
+                <li>✓ Text hierarchy challenged: <span id="hierarchy-status">Unknown</span></li>
+                <li>✓ Temporal linearity disrupted: <span id="temporal-status">Unknown</span></li>
+                <li>✓ Supplement mechanics active: <span id="supplement-status-detail">Unknown</span></li>
+                <li>✓ Pharmakon effects functioning: <span id="pharmakon-status-detail">Unknown</span></li>
+                <li>✓ Reader agency questioned: <span id="agency-status">Unknown</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Load all systems -->
+    <script src="../assets/js/marginalia.js"></script>
+    <script src="../assets/js/differance.js"></script>
+    <script src="../assets/js/supplement.js"></script>
+    <script src="../assets/js/pharmakon.js"></script>
+    
+    <script>
+        let integrationState = {
+            systemsActive: 0,
+            complexityLevel: 0,
+            chaosMode: false,
+            philosophicalCrisis: false,
+            interactionCount: 0,
+            startTime: Date.now()
+        };
+        
+        // System monitoring
+        function updateSystemStatus() {
+            const systems = [
+                { name: 'marginalia', available: window.MarginaliaSystemInstance, element: 'marginalia-status' },
+                { name: 'differance', available: window.Differance, element: 'differance-status' },
+                { name: 'supplement', available: window.SupplementSystem, element: 'supplement-status' },
+                { name: 'pharmakon', available: window.PharmakonSystem, element: 'pharmakon-status' }
+            ];
+            
+            integrationState.systemsActive = 0;
+            
+            systems.forEach(system => {
+                const element = document.getElementById(system.element);
+                const statusDiv = element.querySelector('.status');
+                
+                if (system.available) {
+                    element.classList.add('status-active');
+                    element.classList.remove('status-inactive');
+                    statusDiv.textContent = 'Active';
+                    integrationState.systemsActive++;
+                } else {
+                    element.classList.add('status-inactive');
+                    element.classList.remove('status-active');
+                    statusDiv.textContent = 'Inactive';
+                }
+            });
+            
+            updateControlPanel();
+        }
+        
+        function updateControlPanel() {
+            const stats = document.getElementById('system-stats');
+            stats.innerHTML = `
+                Systems: ${integrationState.systemsActive}/4<br>
+                Complexity: ${integrationState.complexityLevel}%<br>
+                Interactions: ${integrationState.interactionCount}<br>
+                Session: ${Math.floor((Date.now() - integrationState.startTime) / 1000)}s
+            `;
+        }
+        
+        function activateAllSystems() {
+            logInteraction('Manual activation of all systems');
+            
+            // Force initialization if needed
+            if (!window.MarginaliaSystemInstance && window.MarginaliaSystem) {
+                window.MarginaliaSystemInstance = new window.MarginaliaSystem();
+            }
+            
+            // Trigger activities in each system
+            if (window.MarginaliaSystemInstance) {
+                window.MarginaliaSystemInstance.switchMode('invasive');
+                setTimeout(() => window.MarginaliaSystemInstance.switchMode('choral'), 2000);
+            }
+            
+            if (window.Differance) {
+                window.Differance.disrupt();
+            }
+            
+            // Update complexity
+            integrationState.complexityLevel = Math.min(100, integrationState.complexityLevel + 25);
+            updateComplexityMeter();
+        }
+        
+        function triggerChaosMode() {
+            logInteraction('Chaos mode activated');
+            integrationState.chaosMode = !integrationState.chaosMode;
+            
+            const mainArea = document.getElementById('main-test-area');
+            
+            if (integrationState.chaosMode) {
+                mainArea.classList.add('chaos-mode');
+                
+                // Trigger random effects
+                setInterval(() => {
+                    if (integrationState.chaosMode) {
+                        const effects = [
+                            () => window.MarginaliaSystemInstance?.immediateInvasion(),
+                            () => window.Differance?.disrupt(),
+                            () => triggerRandomGlitch(),
+                            () => addChaosMarginalia()
+                        ];
+                        
+                        const randomEffect = effects[Math.floor(Math.random() * effects.length)];
+                        randomEffect();
+                    }
+                }, 3000);
+                
+                integrationState.complexityLevel = 100;
+            } else {
+                mainArea.classList.remove('chaos-mode');
+                integrationState.complexityLevel = Math.max(0, integrationState.complexityLevel - 30);
+            }
+            
+            updateComplexityMeter();
+        }
+        
+        function triggerPhilosophicalCrisis() {
+            logInteraction('Philosophical crisis triggered');
+            integrationState.philosophicalCrisis = !integrationState.philosophicalCrisis;
+            
+            const body = document.body;
+            
+            if (integrationState.philosophicalCrisis) {
+                body.classList.add('philosophical-crisis');
+                
+                // Add crisis commentary
+                const crisis = document.createElement('div');
+                crisis.innerHTML = `
+                    <h2 style="color: red; text-align: center;">PHILOSOPHICAL CRISIS</h2>
+                    <p style="text-align: center; font-style: italic;">
+                    What if the integration is impossible? What if the systems contradict each other fundamentally?
+                    What if testing philosophy destroys the philosophy being tested?
+                    </p>
+                `;
+                crisis.style.position = 'fixed';
+                crisis.style.top = '50%';
+                crisis.style.left = '50%';
+                crisis.style.transform = 'translate(-50%, -50%)';
+                crisis.style.background = 'rgba(255, 255, 255, 0.95)';
+                crisis.style.border = '3px solid red';
+                crisis.style.padding = '2em';
+                crisis.style.zIndex = '10001';
+                crisis.id = 'crisis-notice';
+                
+                document.body.appendChild(crisis);
+                
+                // Auto-remove after 8 seconds
+                setTimeout(() => {
+                    const notice = document.getElementById('crisis-notice');
+                    if (notice) notice.remove();
+                }, 8000);
+                
+            } else {
+                body.classList.remove('philosophical-crisis');
+            }
+        }
+        
+        function resetAllSystems() {
+            logInteraction('All systems reset');
+            
+            // Reset visual states
+            document.body.classList.remove('chaos-mode', 'philosophical-crisis', 'system-overload');
+            document.getElementById('main-test-area').classList.remove('chaos-mode', 'invasion-in-progress');
+            
+            // Reset integration state
+            integrationState.chaosMode = false;
+            integrationState.philosophicalCrisis = false;
+            integrationState.complexityLevel = 0;
+            
+            // Clear added elements
+            document.querySelectorAll('#crisis-notice, .chaos-marginalia').forEach(el => el.remove());
+            
+            // Reset marginalia mode
+            if (window.MarginaliaSystemInstance) {
+                window.MarginaliaSystemInstance.switchMode('traditional');
+            }
+            
+            updateComplexityMeter();
+        }
+        
+        function measureComplexity() {
+            logInteraction('Complexity measurement');
+            
+            const complexity = {
+                domElements: document.querySelectorAll('*').length,
+                marginVoices: document.querySelectorAll('.margin-voice').length,
+                deferredElements: document.querySelectorAll('.deferred').length,
+                temporalEffects: document.querySelectorAll('.temporal-fade, .temporal-revision, .presence-flicker').length,
+                activeAnimations: document.querySelectorAll('[style*="animation"]').length
+            };
+            
+            const totalComplexity = Object.values(complexity).reduce((sum, val) => sum + val, 0);
+            integrationState.complexityLevel = Math.min(100, (totalComplexity / 50) * 100);
+            
+            updateComplexityMeter();
+            
+            logInteraction(`Complexity: ${JSON.stringify(complexity)}`);
+        }
+        
+        function documentInteractions() {
+            logInteraction('Interaction documentation');
+            
+            const documentation = {
+                systemsActive: integrationState.systemsActive,
+                complexityLevel: integrationState.complexityLevel,
+                sessionTime: Date.now() - integrationState.startTime,
+                interactions: integrationState.interactionCount,
+                chaosMode: integrationState.chaosMode,
+                crisis: integrationState.philosophicalCrisis
+            };
+            
+            console.log('Integration Test Documentation:', documentation);
+            
+            // Save to localStorage for analysis
+            let testDocs = JSON.parse(localStorage.getItem('integration-test-docs') || '[]');
+            testDocs.push({
+                ...documentation,
+                timestamp: Date.now()
+            });
+            localStorage.setItem('integration-test-docs', JSON.stringify(testDocs));
+        }
+        
+        function validatePhilosophy() {
+            logInteraction('Philosophical validation');
+            
+            const validationResults = {
+                hierarchyChallenged: document.querySelectorAll('.margin-voice').length > 0,
+                temporalDisrupted: integrationState.complexityLevel > 30,
+                supplementActive: document.querySelectorAll('.supplement-target').length > 0,
+                pharmakonFunctioning: integrationState.interactionCount > 5,
+                agencyQuestioned: integrationState.chaosMode || integrationState.philosophicalCrisis
+            };
+            
+            // Update validation display
+            document.getElementById('hierarchy-status').textContent = validationResults.hierarchyChallenged ? 'Yes' : 'No';
+            document.getElementById('temporal-status').textContent = validationResults.temporalDisrupted ? 'Yes' : 'No';
+            document.getElementById('supplement-status-detail').textContent = validationResults.supplementActive ? 'Yes' : 'No';
+            document.getElementById('pharmakon-status-detail').textContent = validationResults.pharmakonFunctioning ? 'Yes' : 'No';
+            document.getElementById('agency-status').textContent = validationResults.agencyQuestioned ? 'Yes' : 'No';
+            
+            const overallSuccess = Object.values(validationResults).filter(Boolean).length >= 3;
+            
+            if (overallSuccess) {
+                logInteraction('Philosophical validation: SUCCESS - Philosophy is being performed');
+            } else {
+                logInteraction('Philosophical validation: PARTIAL - Some concepts need strengthening');
+            }
+        }
+        
+        function triggerIntegrationPharmakon() {
+            const effects = document.getElementById('integration-effects');
+            
+            // Remedy effect
+            effects.innerHTML = '<div style="color: green">✓ All systems working together harmoniously</div>';
+            
+            // Poison effect
+            setTimeout(() => {
+                effects.innerHTML += '<div style="color: red">✗ But integration destroys the independence of each system</div>';
+            }, 1500);
+            
+            // Meta effect
+            setTimeout(() => {
+                effects.innerHTML += '<div style="color: purple"><strong>The pharmakon of integration: unity that fragments</strong></div>';
+            }, 3000);
+        }
+        
+        function updateComplexityMeter() {
+            const bar = document.getElementById('complexity-bar');
+            const value = document.getElementById('complexity-value');
+            
+            bar.style.width = integrationState.complexityLevel + '%';
+            value.textContent = integrationState.complexityLevel + '%';
+            
+            // Visual warning states
+            const mainArea = document.getElementById('main-test-area');
+            if (integrationState.complexityLevel > 80) {
+                mainArea.classList.add('system-overload');
+            } else {
+                mainArea.classList.remove('system-overload');
+            }
+        }
+        
+        function logInteraction(message) {
+            integrationState.interactionCount++;
+            
+            const log = document.getElementById('log-content');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            log.innerHTML = `[${timestamp}] ${message}<br>` + log.innerHTML;
+            
+            // Keep only last 10 entries
+            const lines = log.innerHTML.split('<br>');
+            if (lines.length > 10) {
+                log.innerHTML = lines.slice(0, 10).join('<br>');
+            }
+            
+            updateControlPanel();
+        }
+        
+        function triggerRandomGlitch() {
+            const glitchTargets = document.querySelectorAll('p, h2, h3');
+            const target = glitchTargets[Math.floor(Math.random() * glitchTargets.length)];
+            
+            if (target) {
+                const originalText = target.textContent;
+                target.textContent = originalText.split('').map(c => Math.random() > 0.9 ? '█' : c).join('');
+                target.style.color = 'red';
+                
+                setTimeout(() => {
+                    target.textContent = originalText;
+                    target.style.color = '';
+                }, 200);
+            }
+        }
+        
+        function addChaosMarginalia() {
+            const chaosTexts = [
+                'CHAOS INTERRUPTS',
+                'SYSTEM OVERLOAD',
+                'MEANING UNSTABLE',
+                'INTEGRATION FAILING',
+                'PHILOSOPHY GLITCHING'
+            ];
+            
+            const chaos = document.createElement('div');
+            chaos.className = 'margin-voice chaos-marginalia';
+            chaos.textContent = chaosTexts[Math.floor(Math.random() * chaosTexts.length)];
+            chaos.style.position = 'fixed';
+            chaos.style.top = Math.random() * window.innerHeight + 'px';
+            chaos.style.left = Math.random() * window.innerWidth + 'px';
+            chaos.style.background = 'red';
+            chaos.style.color = 'white';
+            chaos.style.padding = '0.5em';
+            chaos.style.zIndex = '9999';
+            chaos.style.fontSize = '0.8em';
+            chaos.style.border = '1px solid darkred';
+            
+            document.body.appendChild(chaos);
+            
+            // Remove after 3 seconds
+            setTimeout(() => chaos.remove(), 3000);
+        }
+        
+        // Initialize integration testing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Integration test initialized');
+            logInteraction('Integration test page loaded');
+            
+            // Check systems every second
+            setInterval(updateSystemStatus, 1000);
+            
+            // Update reading time
+            setInterval(() => {
+                const elapsed = Date.now() - integrationState.startTime;
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                document.querySelector('.reading-time-dynamic').textContent = 
+                    `Session time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+            
+            // Gradually increase complexity over time
+            setInterval(() => {
+                if (!integrationState.chaosMode && integrationState.complexityLevel < 100) {
+                    integrationState.complexityLevel += 2;
+                    updateComplexityMeter();
+                }
+            }, 5000);
+            
+            // Initial system check
+            setTimeout(updateSystemStatus, 2000);
+        });
+    </script>
+</body>
+</html>
