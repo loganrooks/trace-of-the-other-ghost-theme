@@ -1,0 +1,759 @@
+/**
+ * Traces.css - Strikethrough, fading, gaps
+ * The visual evidence of violence: deletion, erasure, revision
+ * Every mark on the page tells a story of what was removed
+ */
+
+/* Strikethrough variations - Different kinds of deletion */
+.struck-through,
+.deleted,
+.erased {
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 0, 0, 0.6);
+    text-decoration-thickness: 2px;
+    position: relative;
+}
+
+.struck-through--gentle {
+    text-decoration-color: rgba(0, 0, 0, 0.3);
+    text-decoration-thickness: 1px;
+    opacity: 0.7;
+}
+
+.struck-through--violent {
+    text-decoration-color: rgba(255, 0, 0, 0.8);
+    text-decoration-thickness: 3px;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 0, 0, 0.05) 2px,
+        rgba(255, 0, 0, 0.05) 4px
+    );
+}
+
+.struck-through--uncertain {
+    text-decoration-style: wavy;
+    text-decoration-color: rgba(128, 128, 128, 0.5);
+    animation: uncertain-deletion 3s infinite;
+}
+
+@keyframes uncertain-deletion {
+    0%, 100% { 
+        text-decoration-thickness: 1px;
+        opacity: 0.8;
+    }
+    50% { 
+        text-decoration-thickness: 2px;
+        opacity: 0.5;
+    }
+}
+
+/* Fading effects - Text losing presence */
+.fading {
+    animation: fade-in-out 8s infinite;
+}
+
+.fading-slow {
+    animation: fade-slow 15s infinite;
+}
+
+.fading-irregular {
+    animation: fade-irregular 6s infinite;
+}
+
+@keyframes fade-in-out {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes fade-slow {
+    0%, 80%, 100% { opacity: 1; }
+    90% { opacity: 0.2; }
+}
+
+@keyframes fade-irregular {
+    0% { opacity: 1; }
+    15% { opacity: 0.8; }
+    30% { opacity: 1; }
+    45% { opacity: 0.4; }
+    60% { opacity: 0.9; }
+    75% { opacity: 0.2; }
+    90% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Blur effects - Text becoming uncertain */
+.blurring {
+    filter: blur(0px);
+    animation: blur-cycle 10s infinite;
+}
+
+.blur-on-hover:hover {
+    filter: blur(2px);
+    transition: filter 0.3s ease;
+}
+
+@keyframes blur-cycle {
+    0%, 100% { filter: blur(0px); }
+    25% { filter: blur(0.5px); }
+    50% { filter: blur(1px); }
+    75% { filter: blur(0.3px); }
+}
+
+/* Gaps and ellipses - The spaces between */
+.gap {
+    position: relative;
+    margin: 0 1em;
+}
+
+.gap::before {
+    content: '...';
+    color: rgba(0, 0, 0, 0.3);
+    font-style: italic;
+}
+
+.gap--large {
+    margin: 0 2em;
+}
+
+.gap--large::before {
+    content: '[ ... ]';
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.gap--suspicious {
+    margin: 0 1.5em;
+    animation: gap-pulse 4s infinite;
+}
+
+.gap--suspicious::before {
+    content: '[REDACTED]';
+    color: rgba(255, 0, 0, 0.6);
+    font-family: monospace;
+    font-size: 0.8em;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0.2em 0.5em;
+    border-radius: 3px;
+}
+
+@keyframes gap-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* Missing text indicators */
+.missing-text {
+    position: relative;
+    display: inline-block;
+    min-width: 3ch;
+    height: 1.2em;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.1) 3px,
+        rgba(0, 0, 0, 0.1) 6px
+    );
+    vertical-align: baseline;
+    border-radius: 2px;
+}
+
+.missing-text::after {
+    content: attr(data-length) ' chars missing';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7em;
+    color: rgba(255, 0, 0, 0.8);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    font-family: monospace;
+}
+
+.missing-text:hover::after {
+    opacity: 1;
+}
+
+/* Revision scars - Marks where text was cut */
+.revision-scar {
+    border-top: 2px dashed rgba(255, 0, 0, 0.6);
+    border-bottom: 2px dashed rgba(255, 0, 0, 0.6);
+    margin: 1em 0;
+    padding: 0.5em;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 8px,
+        rgba(255, 0, 0, 0.03) 8px,
+        rgba(255, 0, 0, 0.03) 16px
+    );
+    position: relative;
+}
+
+.revision-scar::before {
+    content: '✂ REVISION ✂';
+    display: block;
+    text-align: center;
+    font-family: monospace;
+    font-size: 0.8em;
+    color: rgba(255, 0, 0, 0.7);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5em;
+}
+
+.revision-scar--major {
+    border-color: rgba(255, 0, 0, 0.8);
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 0, 0, 0.02),
+        rgba(255, 0, 0, 0.02) 8px,
+        rgba(255, 0, 0, 0.06) 8px,
+        rgba(255, 0, 0, 0.06) 16px
+    );
+}
+
+.revision-scar--minor {
+    border-color: rgba(128, 128, 128, 0.4);
+    border-style: dotted;
+}
+
+.revision-scar--minor::before {
+    content: '- minor edit -';
+    color: rgba(128, 128, 128, 0.6);
+}
+
+/* Palimpsest layers - Text showing through */
+.palimpsest {
+    position: relative;
+    isolation: isolate;
+}
+
+.palimpsest::before {
+    content: attr(data-erased);
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: rgba(180, 0, 0, 0.25);
+    text-decoration: line-through;
+    text-decoration-color: rgba(180, 0, 0, 0.4);
+    text-decoration-thickness: 1px;
+    z-index: -1;
+    filter: blur(0.3px);
+    transform: translateY(1px) rotate(-0.2deg);
+    animation: palimpsest-bleed 12s infinite;
+}
+
+.palimpsest::after {
+    content: attr(data-erased-2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: rgba(0, 0, 180, 0.15);
+    text-decoration: line-through;
+    text-decoration-color: rgba(0, 0, 180, 0.3);
+    z-index: -2;
+    filter: blur(0.5px);
+    transform: translateY(2px) rotate(0.3deg);
+    font-size: 0.98em;
+}
+
+@keyframes palimpsest-bleed {
+    0%, 90%, 100% { opacity: 0.25; }
+    95% { opacity: 0.4; }
+}
+
+.palimpsest--deep::before,
+.palimpsest--deep::after {
+    animation-duration: 8s;
+}
+
+.palimpsest--shallow::before {
+    opacity: 0.15;
+    filter: blur(0.1px);
+}
+
+/* Ghost text - Barely visible traces */
+.ghost-text {
+    color: rgba(0, 0, 0, 0.1);
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.ghost-text:hover {
+    color: rgba(0, 0, 0, 0.4);
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.ghost-text--flickering {
+    animation: ghost-flicker 5s infinite;
+}
+
+@keyframes ghost-flicker {
+    0%, 95%, 100% { 
+        color: rgba(0, 0, 0, 0.1);
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+    97% { 
+        color: rgba(0, 0, 0, 0.3);
+        text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Traces of editing - Different editorial marks */
+.editorial-trace {
+    position: relative;
+    border-left: 2px solid rgba(0, 100, 255, 0.3);
+    padding-left: 0.5em;
+    margin-left: 1em;
+}
+
+.editorial-trace::before {
+    content: attr(data-editor) ' ' attr(data-date);
+    position: absolute;
+    top: -1.5em;
+    left: -0.5em;
+    font-size: 0.7em;
+    color: rgba(0, 100, 255, 0.6);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    white-space: nowrap;
+}
+
+.editorial-trace--addition {
+    border-left-color: rgba(0, 150, 0, 0.5);
+    background: rgba(0, 150, 0, 0.02);
+}
+
+.editorial-trace--addition::before {
+    color: rgba(0, 150, 0, 0.7);
+    content: '+ added by ' attr(data-editor);
+}
+
+.editorial-trace--deletion {
+    border-left-color: rgba(255, 0, 0, 0.5);
+    background: rgba(255, 0, 0, 0.02);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 0, 0, 0.4);
+}
+
+.editorial-trace--deletion::before {
+    color: rgba(255, 0, 0, 0.7);
+    content: '- removed by ' attr(data-editor);
+}
+
+.editorial-trace--query {
+    border-left-color: rgba(255, 150, 0, 0.5);
+    background: rgba(255, 150, 0, 0.02);
+}
+
+.editorial-trace--query::before {
+    color: rgba(255, 150, 0, 0.7);
+    content: '? query from ' attr(data-editor);
+}
+
+/* Version overlays - Multiple versions visible simultaneously */
+.version-overlay {
+    position: relative;
+}
+
+.version-overlay .version-1 {
+    opacity: 1;
+    z-index: 3;
+}
+
+.version-overlay .version-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+    color: rgba(255, 0, 0, 0.6);
+    z-index: 2;
+    transform: translateY(1px);
+}
+
+.version-overlay .version-3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.2;
+    color: rgba(0, 0, 255, 0.5);
+    z-index: 1;
+    transform: translateY(2px);
+    font-size: 0.98em;
+}
+
+.version-overlay:hover .version-2 {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.version-overlay:hover .version-3 {
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+
+/* Dissolution effects - Text breaking down */
+.dissolving {
+    animation: dissolve 20s infinite;
+}
+
+@keyframes dissolve {
+    0%, 80% { 
+        filter: blur(0px);
+        opacity: 1;
+        letter-spacing: 0;
+    }
+    85% { 
+        filter: blur(0.5px);
+        opacity: 0.9;
+        letter-spacing: 0.05em;
+    }
+    90% { 
+        filter: blur(1px);
+        opacity: 0.7;
+        letter-spacing: 0.1em;
+    }
+    95% { 
+        filter: blur(2px);
+        opacity: 0.4;
+        letter-spacing: 0.2em;
+    }
+    100% { 
+        filter: blur(0px);
+        opacity: 1;
+        letter-spacing: 0;
+    }
+}
+
+.dissolving-fast {
+    animation: dissolve-fast 8s infinite;
+}
+
+@keyframes dissolve-fast {
+    0%, 70% { filter: blur(0px); opacity: 1; }
+    75% { filter: blur(1px); opacity: 0.8; }
+    80% { filter: blur(3px); opacity: 0.3; }
+    85% { filter: blur(5px); opacity: 0.1; }
+    90% { filter: blur(3px); opacity: 0.4; }
+    95% { filter: blur(1px); opacity: 0.8; }
+    100% { filter: blur(0px); opacity: 1; }
+}
+
+/* Textual scars - Permanent marks of change */
+.textual-scar {
+    position: relative;
+    display: inline;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 0, 0, 0.05) 20%,
+        rgba(255, 0, 0, 0.1) 50%,
+        rgba(255, 0, 0, 0.05) 80%,
+        transparent 100%
+    );
+    border-radius: 2px;
+}
+
+.textual-scar::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.4) 0px,
+        rgba(255, 0, 0, 0.4) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+}
+
+/* Traces that appear on interaction */
+.trace-on-hover {
+    position: relative;
+}
+
+.trace-on-hover::before {
+    content: attr(data-trace);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    font-size: 0.8em;
+    color: rgba(255, 0, 0, 0.7);
+    font-style: italic;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.3em 0.5em;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-family: monospace;
+}
+
+.trace-on-hover:hover::before {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Reading traces - Marks of having been read */
+.reading-trace {
+    transition: all 0.5s ease;
+}
+
+.reading-trace.read {
+    opacity: 0.8;
+    color: rgba(0, 0, 0, 0.7);
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.reading-trace.read::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(0, 100, 255, 0.2);
+    transform: scaleX(0);
+    animation: reading-mark 3s ease forwards;
+}
+
+@keyframes reading-mark {
+    to { transform: scaleX(1); }
+}
+
+/* Trace intensity levels */
+.trace-subtle {
+    filter: opacity(0.3);
+}
+
+.trace-moderate {
+    filter: opacity(0.6);
+}
+
+.trace-strong {
+    filter: opacity(0.9);
+    font-weight: 500;
+}
+
+.trace-overwhelming {
+    filter: contrast(1.2) saturate(1.5);
+    animation: overwhelm-pulse 2s infinite;
+}
+
+@keyframes overwhelm-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.01); }
+}
+
+/* Responsive trace behavior */
+@media (max-width: 768px) {
+    .palimpsest::before,
+    .palimpsest::after {
+        display: none; /* Simplify on mobile */
+    }
+    
+    .version-overlay .version-2,
+    .version-overlay .version-3 {
+        display: none; /* Reduce complexity on small screens */
+    }
+    
+    .editorial-trace::before {
+        font-size: 0.6em;
+        max-width: 10ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Print behavior for traces */
+@media print {
+    .struck-through,
+    .deleted,
+    .erased {
+        text-decoration: line-through;
+        color: inherit;
+    }
+    
+    .fading,
+    .blurring,
+    .ghost-text {
+        opacity: 0.6 !important;
+        filter: none !important;
+        animation: none !important;
+    }
+    
+    .gap::before {
+        content: '[OMITTED]';
+        color: black;
+    }
+    
+    .missing-text {
+        background: repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            black 2px,
+            black 3px
+        );
+    }
+    
+    .missing-text::after {
+        display: none;
+    }
+    
+    .revision-scar {
+        border: 2px solid black;
+        background: none;
+    }
+    
+    .palimpsest::before,
+    .palimpsest::after {
+        position: relative !important;
+        display: block !important;
+        color: #666 !important;
+        filter: none !important;
+        transform: none !important;
+        margin-bottom: 0.5em;
+    }
+    
+    .palimpsest::before {
+        content: '[PREVIOUS VERSION]: ' attr(data-erased);
+    }
+    
+    .palimpsest::after {
+        content: '[EARLIER VERSION]: ' attr(data-erased-2);
+    }
+    
+    .editorial-trace::before {
+        position: relative !important;
+        display: block !important;
+        color: black !important;
+        background: none !important;
+        margin-bottom: 0.3em;
+    }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+    .struck-through,
+    .deleted,
+    .erased {
+        text-decoration-color: #000;
+    }
+    
+    .ghost-text {
+        color: rgba(0, 0, 0, 0.3);
+    }
+    
+    .gap--suspicious::before {
+        color: #000;
+        background: #fff;
+        border: 1px solid #000;
+    }
+    
+    .missing-text {
+        background: repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 3px,
+            #000 3px,
+            #000 4px
+        );
+    }
+    
+    .revision-scar {
+        border-color: #000;
+        background: none;
+    }
+}
+
+/* Reduced motion adjustments */
+@media (prefers-reduced-motion: reduce) {
+    .fading,
+    .fading-slow,
+    .fading-irregular,
+    .blurring,
+    .gap--suspicious,
+    .ghost-text--flickering,
+    .dissolving,
+    .dissolving-fast,
+    .trace-overwhelming {
+        animation: none !important;
+    }
+    
+    .trace-on-hover::before {
+        transition: none;
+        opacity: 1;
+        transform: none;
+    }
+    
+    .reading-trace.read::after {
+        animation: none;
+        transform: scaleX(1);
+    }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .struck-through,
+    .deleted,
+    .erased {
+        text-decoration-color: rgba(255, 100, 100, 0.6);
+    }
+    
+    .gap--suspicious::before {
+        color: rgba(255, 100, 100, 0.8);
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .missing-text::after {
+        color: rgba(255, 100, 100, 0.9);
+        background: rgba(0, 0, 0, 0.9);
+    }
+    
+    .revision-scar {
+        border-color: rgba(255, 100, 100, 0.6);
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 8px,
+            rgba(255, 100, 100, 0.02) 8px,
+            rgba(255, 100, 100, 0.02) 16px
+        );
+    }
+    
+    .ghost-text {
+        color: rgba(255, 255, 255, 0.1);
+        text-shadow: 0 0 2px rgba(255, 255, 255, 0.1);
+    }
+    
+    .ghost-text:hover {
+        color: rgba(255, 255, 255, 0.4);
+        text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+    
+    .palimpsest::before {
+        color: rgba(255, 150, 150, 0.25);
+        text-decoration-color: rgba(255, 150, 150, 0.4);
+    }
+    
+    .palimpsest::after {
+        color: rgba(150, 150, 255, 0.15);
+        text-decoration-color: rgba(150, 150, 255, 0.3);
+    }
+}

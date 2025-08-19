@@ -1,0 +1,714 @@
+/**
+ * Aporias.css - Impossible responsive states
+ * Responsive design that questions responsiveness itself
+ * Breakpoints that break, media queries that contradict themselves
+ * CSS that refuses to be responsive
+ */
+
+/* Impossible breakpoints - The contradictions of responsive design */
+
+/* A breakpoint that applies to no devices */
+@media (min-width: 1px) and (max-width: 0px) {
+    .impossible {
+        display: block; /* This will never apply */
+        content: "This CSS rule is impossible";
+    }
+}
+
+/* A breakpoint that applies to all devices and no devices */
+@media screen and not screen {
+    .paradox {
+        visibility: hidden;
+        visibility: visible; /* Contradiction in the same rule */
+    }
+}
+
+/* Responsive design that refuses to respond */
+.non-responsive {
+    width: 800px; /* Fixed width that ignores viewport */
+    font-size: 16px; /* Fixed size that ignores user preferences */
+}
+
+@media (max-width: 799px) {
+    .non-responsive {
+        width: 800px; /* Still refuses to be smaller */
+        overflow: visible; /* Creates horizontal scroll rather than adapting */
+    }
+}
+
+@media (max-width: 400px) {
+    .non-responsive::after {
+        content: "This design refuses to be mobile-friendly";
+        display: block;
+        color: red;
+        font-size: 12px;
+        margin-top: 1em;
+        font-style: italic;
+    }
+}
+
+/* Breakpoints that contradict each other */
+@media (min-width: 768px) {
+    .contradiction {
+        display: none; /* Hidden on desktop */
+    }
+}
+
+@media (max-width: 767px) {
+    .contradiction {
+        display: none; /* Also hidden on mobile */
+    }
+}
+
+/* Exactly 768px - The impossible pixel */
+@media (width: 768px) {
+    .contradiction {
+        display: block; /* Only visible at exactly 768px */
+    }
+    
+    .contradiction::before {
+        content: "You have found the impossible pixel: exactly 768px wide";
+        color: red;
+        font-weight: bold;
+        display: block;
+        text-align: center;
+    }
+}
+
+/* Responsive typography that gets less readable as screen gets smaller */
+@media (min-width: 1200px) {
+    .reverse-responsive {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #333;
+    }
+}
+
+@media (max-width: 1199px) {
+    .reverse-responsive {
+        font-size: 16px;
+        line-height: 1.5;
+        color: #555;
+    }
+}
+
+@media (max-width: 768px) {
+    .reverse-responsive {
+        font-size: 14px;
+        line-height: 1.4;
+        color: #777;
+    }
+}
+
+@media (max-width: 480px) {
+    .reverse-responsive {
+        font-size: 10px; /* Impossibly small on mobile */
+        line-height: 1.2;
+        color: #999; /* Nearly invisible */
+        letter-spacing: -0.5px; /* Crushed together */
+    }
+}
+
+@media (max-width: 320px) {
+    .reverse-responsive {
+        font-size: 6px; /* Unreadably small */
+        color: #ccc; /* Almost invisible */
+        transform: rotate(180deg); /* Upside down for maximum illegibility */
+    }
+    
+    .reverse-responsive::after {
+        content: "Mobile-first design inverted";
+        transform: rotate(180deg);
+        font-size: 8px;
+        color: red;
+        display: block;
+        margin-top: 1em;
+    }
+}
+
+/* Container queries that question containment */
+.self-containing {
+    container-type: inline-size;
+    border: 2px dashed #666;
+    padding: 1rem;
+    position: relative;
+}
+
+.self-containing::before {
+    content: "This container contains itself";
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: white;
+    padding: 0 0.5em;
+    font-size: 0.8em;
+    color: #666;
+    font-style: italic;
+}
+
+@container (min-width: 400px) {
+    .self-containing {
+        width: 300px; /* Shrinks when it has space to grow */
+    }
+}
+
+@container (max-width: 399px) {
+    .self-containing {
+        width: 600px; /* Grows when it should shrink */
+        overflow: hidden; /* Clips itself */
+    }
+}
+
+/* Fluid typography that becomes rigid */
+.fluid-rigid {
+    font-size: clamp(12px, 4vw, 24px); /* Fluid between 12px and 24px */
+}
+
+@media (min-width: 600px) {
+    .fluid-rigid {
+        font-size: 16px; /* Suddenly becomes fixed */
+    }
+    
+    .fluid-rigid::after {
+        content: " [FLUIDITY TERMINATED]";
+        font-family: monospace;
+        font-size: 10px;
+        color: red;
+        opacity: 0.7;
+    }
+}
+
+/* Grid that refuses to be a grid */
+.anti-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .anti-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Single column */
+    }
+    
+    .anti-grid > * {
+        display: flex; /* But children are flexbox */
+        flex-direction: row; /* Forcing horizontal layout anyway */
+        overflow-x: auto; /* Creating horizontal scroll */
+    }
+}
+
+@media (max-width: 480px) {
+    .anti-grid {
+        display: table; /* Becomes a table */
+    }
+    
+    .anti-grid > * {
+        display: table-cell; /* Table cells */
+        width: 33.333%; /* But maintaining grid proportions */
+    }
+}
+
+/* Responsive design that responds to the wrong things */
+@media (prefers-color-scheme: dark) {
+    .wrong-response {
+        font-size: 8px; /* Responds to dark mode with tiny text */
+        color: white;
+        background: black;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .wrong-response {
+        font-size: 32px; /* Light mode gets huge text */
+        color: black;
+        background: white;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrong-response {
+        animation: spin 1s infinite; /* More motion when motion should be reduced */
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (orientation: portrait) {
+    .wrong-response {
+        transform: rotate(90deg); /* Force landscape layout in portrait */
+        height: 100vw;
+        width: 100vh;
+    }
+}
+
+@media (orientation: landscape) {
+    .wrong-response {
+        transform: rotate(-90deg); /* Force portrait layout in landscape */
+        height: 100vw;
+        width: 100vh;
+    }
+}
+
+/* Breakpoints that question device categories */
+@media (hover: hover) and (pointer: fine) {
+    .device-confusion {
+        touch-action: manipulation; /* Desktop gets touch styles */
+        font-size: 24px; /* Large mobile-style text */
+    }
+    
+    .device-confusion::before {
+        content: "Desktop pretending to be mobile";
+        color: blue;
+        display: block;
+        font-size: 12px;
+    }
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .device-confusion {
+        cursor: pointer; /* Mobile gets cursor styles */
+        font-size: 12px; /* Tiny desktop-style text */
+    }
+    
+    .device-confusion::before {
+        content: "Mobile pretending to be desktop";
+        color: red;
+        display: block;
+        font-size: 8px;
+    }
+}
+
+/* Aspect ratio queries that create impossible conditions */
+@media (aspect-ratio: 16/9) {
+    .aspect-paradox {
+        aspect-ratio: 4/3; /* Force different aspect ratio */
+    }
+}
+
+@media (aspect-ratio: 4/3) {
+    .aspect-paradox {
+        aspect-ratio: 16/9; /* Create infinite loop */
+    }
+}
+
+/* Media queries for non-existent features */
+@media (min-resolution: 2dppx) and (max-resolution: 1.5dppx) {
+    .impossible-resolution {
+        display: block; /* This condition is impossible */
+    }
+}
+
+@media (monochrome: 1) and (color: 8) {
+    .impossible-color {
+        display: block; /* Can't be monochrome and color simultaneously */
+    }
+}
+
+/* Responsive units that respond incorrectly */
+.wrong-units {
+    width: 100vh; /* Height unit for width */
+    height: 100vw; /* Width unit for height */
+    font-size: 10vmin; /* Minimum viewport dimension for font */
+    margin: 5vmax; /* Maximum viewport dimension for margin */
+}
+
+@media (max-width: 768px) {
+    .wrong-units {
+        width: 200vh; /* Even more wrong on mobile */
+        height: 200vw;
+        font-size: 20vmin; /* Bigger when screen is smaller */
+        margin: 10vmax;
+    }
+}
+
+/* CSS Grid that refuses to be responsive */
+.stubborn-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 80px); /* Fixed 80px columns */
+    gap: 20px;
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    .stubborn-grid {
+        grid-template-columns: repeat(12, 80px); /* Still 12 columns */
+        /* Creates horizontal scroll instead of adapting */
+    }
+    
+    .stubborn-grid::before {
+        content: "This grid refuses to be responsive";
+        grid-column: 1 / -1;
+        background: rgba(255, 0, 0, 0.1);
+        padding: 1em;
+        text-align: center;
+        font-style: italic;
+        color: red;
+        border: 1px dashed red;
+    }
+}
+
+/* Flexbox that refuses to flex */
+.inflexible-flex {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.inflexible-flex > * {
+    flex: none; /* Refuses to grow or shrink */
+    width: 300px; /* Fixed width */
+    min-width: 300px; /* Minimum width */
+}
+
+@media (max-width: 768px) {
+    .inflexible-flex {
+        flex-wrap: nowrap; /* Still no wrapping */
+        overflow-x: scroll; /* Forces horizontal scroll */
+    }
+    
+    .inflexible-flex::after {
+        content: "Flexbox that refuses to flex";
+        width: 300px;
+        min-width: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 0, 0, 0.1);
+        color: red;
+        font-style: italic;
+        text-align: center;
+        border: 1px dashed red;
+    }
+}
+
+/* Responsive images that become less responsive */
+.responsive-image {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .responsive-image {
+        width: 150%; /* Bigger than container */
+        max-width: none; /* No maximum */
+        transform: translateX(-25%); /* Centered but overflowing */
+    }
+}
+
+@media (max-width: 480px) {
+    .responsive-image {
+        width: 200%; /* Even bigger */
+        transform: translateX(-50%);
+        filter: blur(2px); /* Becomes less clear */
+    }
+}
+
+/* Typography that becomes illegible as viewport changes */
+.illegible-responsive {
+    font-family: serif;
+    color: #333;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .illegible-responsive {
+        font-family: cursive; /* Hard to read font */
+        color: #888;
+        line-height: 1.2;
+        letter-spacing: -1px; /* Crushed */
+    }
+}
+
+@media (max-width: 480px) {
+    .illegible-responsive {
+        font-family: fantasy; /* Even harder to read */
+        color: #bbb;
+        line-height: 1;
+        letter-spacing: -2px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* Blurry */
+        transform: skew(-5deg); /* Distorted */
+    }
+}
+
+@media (max-width: 320px) {
+    .illegible-responsive {
+        color: #eee; /* Nearly invisible */
+        text-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+        transform: skew(-10deg) rotate(2deg);
+        filter: blur(1px);
+        opacity: 0.5;
+    }
+    
+    .illegible-responsive::after {
+        content: "Text becomes illegible as screen shrinks";
+        display: block;
+        font-family: monospace;
+        font-size: 8px;
+        color: red;
+        margin-top: 1em;
+        transform: none;
+        filter: none;
+        opacity: 1;
+    }
+}
+
+/* Media queries that always apply and never apply */
+@media all {
+    .always-never {
+        display: none; /* Hidden everywhere */
+    }
+}
+
+@media not all {
+    .always-never {
+        display: block; /* Shown nowhere */
+    }
+}
+
+/* The impossible media query */
+@media (width: 0px) {
+    .impossible-width {
+        content: "Zero-width viewport detected";
+        display: block;
+    }
+}
+
+/* Responsive design for impossible devices */
+@media (min-width: -100px) {
+    .negative-viewport {
+        display: block;
+        content: "Negative viewport width";
+    }
+}
+
+@media (aspect-ratio: 0/1) {
+    .zero-aspect {
+        display: block;
+        content: "Zero aspect ratio";
+    }
+}
+
+@media (resolution: 0dpi) {
+    .no-resolution {
+        display: block;
+        content: "No resolution";
+    }
+}
+
+/* CSS that questions its own responsive behavior */
+.responsive-critique::before {
+    content: "This element adapts to screen size. But who decided these breakpoints? Why these measurements? Responsive design assumes universal needs while serving corporate devices.";
+    display: block;
+    font-size: 0.8em;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 1em;
+    padding: 1em;
+    border: 1px dashed #ccc;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+@media (max-width: 768px) {
+    .responsive-critique::before {
+        content: "On mobile, this critique shrinks. The smaller screen forces shorter thoughts. Mobile-first means thinking-last.";
+        font-size: 0.7em;
+    }
+}
+
+@media (max-width: 480px) {
+    .responsive-critique::before {
+        content: "Tiny screen, tiny thoughts.";
+        font-size: 0.6em;
+    }
+}
+
+@media (max-width: 320px) {
+    .responsive-critique::before {
+        content: "...";
+        font-size: 0.5em;
+    }
+}
+
+/* Progressive enhancement that regresses */
+.progressive-regression {
+    /* Base styles: complex and modern */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+@media (max-width: 768px) {
+    .progressive-regression {
+        /* Less capable on medium screens */
+        display: flex;
+        flex-direction: column;
+        background: #f5f5f5;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .progressive-regression {
+        /* Even simpler on small screens */
+        display: block;
+        background: #fafafa;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+    }
+}
+
+@media (max-width: 320px) {
+    .progressive-regression {
+        /* Regresses to basic HTML on smallest screens */
+        display: initial;
+        background: transparent;
+        border: none;
+        padding: 0;
+        font-family: monospace;
+        color: #000;
+    }
+    
+    .progressive-regression::before {
+        content: "[ENHANCED FEATURES DISABLED FOR SMALL SCREEN]";
+        display: block;
+        font-size: 10px;
+        color: red;
+        margin-bottom: 0.5em;
+    }
+}
+
+/* Print styles that contradict screen styles */
+@media print {
+    .screen-only {
+        display: block !important; /* Shows on print despite class name */
+    }
+    
+    .print-only {
+        display: none !important; /* Hides on print despite class name */
+    }
+    
+    .responsive-critique::before {
+        content: "Print media queries are the ultimate responsive design failure. Static paper pretending to be dynamic.";
+        font-size: 10pt;
+        color: black;
+    }
+    
+    /* Print layout that mimics broken web layout */
+    body {
+        columns: 3;
+        column-gap: 0.5in;
+        column-fill: auto;
+    }
+    
+    .non-responsive {
+        width: 8in; /* Wider than most paper */
+        overflow: visible;
+    }
+}
+
+/* High contrast mode that reduces contrast */
+@media (prefers-contrast: high) {
+    .contrast-paradox {
+        background: #888;
+        color: #777; /* Low contrast when high contrast requested */
+    }
+    
+    .contrast-paradox::before {
+        content: "High contrast preference ignored";
+        color: #999;
+        background: #aaa;
+    }
+}
+
+/* Reduced motion that adds motion */
+@media (prefers-reduced-motion: reduce) {
+    .motion-paradox {
+        animation: constant-spin 2s linear infinite;
+    }
+    
+    .motion-paradox::before {
+        content: "Motion added when reduction requested";
+        animation: slide 3s ease-in-out infinite;
+    }
+}
+
+@keyframes constant-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes slide {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(50px); }
+}
+
+/* The meta-media-query - A media query about media queries */
+@media screen {
+    .meta-query::before {
+        content: "This media query targets screens. But what is a screen? The boundaries blur: phones, tablets, laptops, desktops, watches, billboards. The categories are corporate constructs.";
+        display: block;
+        font-size: 0.8em;
+        color: #666;
+        margin-bottom: 1em;
+        padding: 1em;
+        border: 1px solid #ddd;
+        background: rgba(0, 0, 0, 0.02);
+        font-style: italic;
+    }
+}
+
+@media print {
+    .meta-query::before {
+        content: "This media query targets print. But this is also a screen - you're reading this on a screen, even if it targets print media.";
+    }
+}
+
+@media speech {
+    .meta-query::before {
+        content: "This media query targets speech synthesis. But how do you hear CSS? What is the sound of a media query?";
+    }
+}
+
+/* The final aporia - CSS that questions the existence of CSS */
+.css-aporia::after {
+    content: "This CSS rule exists to question whether CSS should exist. Every style is a constraint. Every rule is a violence. Every responsive breakpoint assumes a norm.";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 0, 0, 0.05);
+    padding: 1em;
+    font-size: 0.8em;
+    font-style: italic;
+    color: #666;
+    border-top: 1px dashed red;
+}
+
+@media (max-width: 768px) {
+    .css-aporia::after {
+        content: "CSS shrinks this critique as screen shrinks. The medium shapes the message. McLuhan was right.";
+    }
+}
+
+@media (max-width: 480px) {
+    .css-aporia::after {
+        content: "Small screen, small thoughts.";
+    }
+}
+
+@media (max-width: 320px) {
+    .css-aporia::after {
+        content: "...";
+    }
+}

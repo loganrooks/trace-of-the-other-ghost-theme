@@ -1,0 +1,629 @@
+/**
+ * Derridean.css - Main styles under erasure
+ * Every CSS rule is a decision about hierarchy, spacing, visibility.
+ * This stylesheet performs its own critique.
+ */
+
+/* CSS Custom Properties - The variables that structure everything */
+:root {
+    /* Typography */
+    --font-primary: 'Georgia', 'Times New Roman', serif;
+    --font-secondary: 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    
+    /* Colors that remember their arbitrariness */
+    --color-text: #1a1a1a;
+    --color-text-muted: #666;
+    --color-background: #ffffff;
+    --color-accent: #000000;
+    --color-error: #cc0000;
+    --color-ghost: rgba(0, 0, 0, 0.1);
+    
+    /* Spacing - The measurements that create hierarchy */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 2rem;
+    --space-xl: 4rem;
+    
+    /* Layout constraints */
+    --content-width: 65ch;
+    --margin-width: 15rem;
+    --grid-gap: 2rem;
+    
+    /* Z-index layers - The vertical hierarchy */
+    --z-base: 1;
+    --z-margin: 10;
+    --z-overlay: 100;
+    --z-modal: 1000;
+    
+    /* Transitions - Time as an aesthetic choice */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.6s ease;
+}
+
+/* CSS Reset with commentary */
+*, *::before, *::after {
+    box-sizing: border-box; /* Every element includes its borders and padding */
+}
+
+* {
+    margin: 0; /* Margins are reset to zero, then consciously added back */
+    padding: 0; /* Padding follows the same logic */
+}
+
+html {
+    font-size: 16px; /* The baseline from which all other sizes derive */
+    line-height: 1.5; /* Vertical rhythm imposed through ratio */
+    -webkit-text-size-adjust: 100%; /* Prevent iOS font scaling */
+    -moz-tab-size: 4; /* Tab width in monospace contexts */
+    tab-size: 4;
+}
+
+body {
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    margin: 0;
+    min-height: 100vh;
+    
+    /* Enable font features if available */
+    font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reading modes - Different ways of encountering text */
+body[data-reading-mode="deconstructive"] {
+    --space-md: 1.2rem;
+    font-family: var(--font-secondary);
+}
+
+body[data-reading-mode="marginal"] {
+    --margin-width: 20rem;
+    --content-width: 55ch;
+}
+
+body[data-reading-mode="palimpsest"] {
+    background: linear-gradient(45deg, 
+        transparent 0%, 
+        rgba(0,0,0,0.01) 50%, 
+        transparent 100%);
+    background-size: 20px 20px;
+}
+
+/* The main layout grid - Structural violence made visible */
+.viewport {
+    display: grid;
+    grid-template-areas: 
+        "header"
+        "main"
+        "footer";
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* Header - The beginning that questions beginnings */
+.page-header {
+    grid-area: header;
+    padding: var(--space-lg) var(--space-md);
+    border-bottom: 1px solid var(--color-ghost);
+    background: var(--color-background);
+    position: relative;
+}
+
+.header-content {
+    max-width: calc(var(--content-width) + 2 * var(--margin-width));
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+}
+
+.site-logo img {
+    max-height: 3rem;
+    width: auto;
+}
+
+.site-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.site-title a {
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.site-title a:hover {
+    color: var(--color-text-muted);
+    transition: color var(--transition-normal);
+}
+
+.site-description {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    font-style: italic;
+    max-width: 50ch;
+}
+
+/* Navigation - Paths that admit their contingency */
+.navigation {
+    margin-top: var(--space-md);
+}
+
+.navigation ul {
+    list-style: none;
+    display: flex;
+    gap: var(--space-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.navigation a {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 500;
+    padding: var(--space-sm) 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color var(--transition-normal);
+}
+
+.navigation a:hover,
+.navigation a.current {
+    border-bottom-color: var(--color-accent);
+}
+
+/* Main content area - The supposed center */
+.site-content {
+    grid-area: main;
+    padding: var(--space-xl) var(--space-md);
+    max-width: calc(var(--content-width) + 2 * var(--margin-width));
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Content grid with margins */
+.post-content-container,
+.page-content-container {
+    display: grid;
+    grid-template-areas: "margin-left content margin-right";
+    grid-template-columns: var(--margin-width) var(--content-width) var(--margin-width);
+    gap: var(--grid-gap);
+    align-items: start;
+}
+
+.post-content,
+.page-content,
+.main-text {
+    grid-area: content;
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.post-margin-left,
+.page-margin-left {
+    grid-area: margin-left;
+}
+
+.post-margin-right,
+.page-margin-right {
+    grid-area: margin-right;
+}
+
+/* Typography - The shapes that carry meaning */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.01em;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1.125rem; }
+
+/* First heading has no top margin */
+h1:first-child,
+h2:first-child,
+h3:first-child {
+    margin-top: 0;
+}
+
+p {
+    margin-bottom: var(--space-md);
+    max-width: none; /* Allow paragraphs to use full content width */
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+/* Links - Connections that promise arrival */
+a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 0, 0, 0.3);
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color var(--transition-normal);
+}
+
+a:hover {
+    text-decoration-color: var(--color-accent);
+}
+
+a:visited {
+    color: var(--color-text-muted);
+}
+
+/* Lists - Ordered and unordered hierarchies */
+ul, ol {
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-lg);
+}
+
+li {
+    margin-bottom: var(--space-sm);
+}
+
+li:last-child {
+    margin-bottom: 0;
+}
+
+/* Code - The revealed infrastructure */
+code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--color-ghost);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+pre {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    background: var(--color-ghost);
+    padding: var(--space-md);
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: var(--space-md);
+    line-height: 1.5;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+}
+
+/* Blockquotes - Other voices speaking through */
+blockquote {
+    border-left: 4px solid var(--color-ghost);
+    padding-left: var(--space-md);
+    margin: var(--space-lg) 0;
+    font-style: italic;
+    color: var(--color-text-muted);
+}
+
+blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Images - Visual evidence */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: var(--space-lg) auto;
+}
+
+figure {
+    margin: var(--space-lg) 0;
+}
+
+figcaption {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    margin-top: var(--space-sm);
+    font-style: italic;
+}
+
+/* Tables - Data in rows and columns */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-lg) 0;
+}
+
+th, td {
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    border-bottom: 1px solid var(--color-ghost);
+}
+
+th {
+    font-weight: 600;
+    background: var(--color-ghost);
+}
+
+/* Forms - Input and submission */
+input, textarea, select, button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+button {
+    cursor: pointer;
+    background: var(--color-accent);
+    color: var(--color-background);
+    border: none;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color var(--transition-normal);
+}
+
+button:hover {
+    background: var(--color-text-muted);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Footer - The end that refuses finality */
+.site-footer {
+    grid-area: footer;
+    padding: var(--space-xl) var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--color-ghost);
+    background: rgba(0, 0, 0, 0.02);
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.footer-content {
+    max-width: calc(var(--content-width) + 2 * var(--margin-width));
+    margin: 0 auto;
+}
+
+/* Utility classes - The tools that reveal themselves */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.font-mono { font-family: var(--font-mono); }
+.font-sans { font-family: var(--font-secondary); }
+.font-serif { font-family: var(--font-primary); }
+
+/* Philosophical classes - Concepts made visible */
+.under-erasure {
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 0, 0, 0.5);
+}
+
+.supplement {
+    position: relative;
+}
+
+.supplement::after {
+    content: attr(data-supplement);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    font-size: 0.8em;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+.trace {
+    opacity: 0.7;
+    position: relative;
+}
+
+.trace::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.05) 2px,
+        rgba(0, 0, 0, 0.05) 4px
+    );
+    pointer-events: none;
+}
+
+/* Responsive Design - The adaptation that changes everything */
+@media (max-width: 1200px) {
+    :root {
+        --margin-width: 12rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .post-content-container,
+    .page-content-container {
+        grid-template-areas: 
+            "content"
+            "margin-left"
+            "margin-right";
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+    
+    :root {
+        --content-width: 100%;
+        --margin-width: 100%;
+    }
+    
+    .post-margin-left,
+    .page-margin-left,
+    .post-margin-right,
+    .page-margin-right {
+        padding: var(--space-md);
+        background: rgba(0, 0, 0, 0.02);
+        border-left: 3px solid var(--color-ghost);
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+    }
+    
+    .page-header {
+        padding: var(--space-lg) var(--space-md);
+    }
+    
+    .site-content {
+        padding: var(--space-lg) var(--space-md);
+    }
+    
+    .site-title {
+        font-size: 2rem;
+    }
+    
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.75rem; }
+    h3 { font-size: 1.5rem; }
+    
+    .navigation ul {
+        gap: var(--space-md);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --space-md: 0.75rem;
+        --space-lg: 1rem;
+        --space-xl: 1.5rem;
+    }
+    
+    .site-title {
+        font-size: 1.75rem;
+    }
+    
+    .navigation ul {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --color-text: #000000;
+        --color-background: #ffffff;
+        --color-ghost: #666666;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --transition-fast: 0s;
+        --transition-normal: 0s;
+        --transition-slow: 0s;
+    }
+    
+    * {
+        animation-duration: 0s !important;
+        transition-duration: 0s !important;
+    }
+}
+
+/* Dark mode - The inversion that reveals assumptions */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-text: #e0e0e0;
+        --color-text-muted: #a0a0a0;
+        --color-background: #1a1a1a;
+        --color-accent: #ffffff;
+        --color-ghost: rgba(255, 255, 255, 0.1);
+    }
+    
+    .site-footer {
+        background: rgba(255, 255, 255, 0.02);
+    }
+}
+
+/* CSS that reveals its own structure */
+.css-revelation {
+    display: none;
+}
+
+.css-revelation::before {
+    content: "/* This CSS rule exists to reveal that CSS rules exist */";
+    display: block;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+/* Sometimes CSS refuses to work */
+.sometimes-broken {
+    /* This rule intentionally breaks on random page loads */
+    display: var(--display, block);
+}
+
+/* Debug mode - Reveal the grid */
+body[data-debug="true"] * {
+    outline: 1px solid rgba(255, 0, 0, 0.1);
+}
+
+body[data-debug="true"] .post-content-container,
+body[data-debug="true"] .page-content-container {
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent calc(var(--margin-width) - 1px),
+        rgba(255, 0, 0, 0.1) var(--margin-width),
+        rgba(255, 0, 0, 0.1) calc(var(--margin-width) + 1px),
+        transparent calc(var(--margin-width) + 2px),
+        transparent calc(var(--margin-width) + var(--content-width) - 1px),
+        rgba(0, 255, 0, 0.1) calc(var(--margin-width) + var(--content-width)),
+        rgba(0, 255, 0, 0.1) calc(var(--margin-width) + var(--content-width) + 1px)
+    );
+}
+
+/* The end of the stylesheet - but CSS never truly ends */
+/* Every rule continues to apply until overridden */
+/* Every selector continues to select */
+/* Every property continues to inherit or cascade */
+/* This comment is also CSS - it shapes what comes after */
