@@ -18,17 +18,6 @@
 
     <div class="page-content">
         {{content}}
-        
-        {{!-- Example marginalia for demonstration - these should be added via HTML cards in the content --}}
-        {{#if @custom.show_marginalia}}
-        {{!-- Sample marginalia voices (normally added via HTML cards in Ghost editor) --}}
-        <div class="marginalia-voice" data-position="left" data-voice="4" data-scroll-trigger="30">
-            /* ERROR: Static pages question their own stasis */
-        </div>
-        <div class="marginalia-voice" data-position="right" data-voice="5" data-scroll-trigger="50">
-            # Pages pretend to be outside the temporal flow
-        </div>
-        {{/if}}
     </div>
 </article>
 {{/post}}

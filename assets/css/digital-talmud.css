@@ -1,58 +1,113 @@
 /* ===== DIGITAL TALMUD LAYOUT SYSTEM ===== */
 
-/* ===== CORE TALMUDIC GRID ===== */
+/* ===== CORE TALMUDIC INTRUSION LAYOUT ===== */
 .post-content, .page-content {
-  display: grid;
-  grid-template-areas: 
-    "margin-tl    margin-top    margin-tr"
-    "margin-left  main-text     margin-right" 
-    "margin-bl    margin-bottom margin-br";
-  grid-template-columns: 0fr 1fr 0fr; /* Start collapsed, expand as marginalia appears */
-  grid-template-rows: auto 1fr auto;
-  gap: 1rem;
-  transition: grid-template-columns 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 60vh;
   position: relative;
-  padding: 2rem 0;
-}
-
-/* Main text area */
-.main-text-flow {
-  grid-area: main-text;
-  font-size: 1rem;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 4rem; /* Extra padding for marginalia space */
   line-height: 1.8;
-  color: var(--text-primary);
-  transition: font-size 0.6s ease;
+  
+  /* Always stay block layout for text flow */
+  display: block;
 }
 
-/* ===== MARGINALIA POSITIONING ===== */
+/* Text flows naturally around floated marginalia */
+.post-content p, .page-content p,
+.post-content h1, .page-content h1,
+.post-content h2, .page-content h2,
+.post-content h3, .page-content h3,
+.post-content blockquote, .page-content blockquote {
+  /* Text flows around floated marginalia */
+  clear: none;
+}
+
+/* Main text flows normally, marginalia positions absolutely relative to it */
+
+/* ===== MARGINALIA INTRUSION POSITIONING ===== */
 .marginalia-voice {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  padding: 1rem;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  padding: 0.6rem;
   border: 1px solid var(--hacker-green-dark);
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   
-  /* Initial state - invisible */
+  /* Much smaller, content-adaptive boxes */
+  width: fit-content;
+  min-width: 100px;
+  max-width: 150px; /* Dramatically reduced from 250px */
+  
+  /* Initially hidden */
+  display: none;
   opacity: 0;
-  transform: translateY(20px) scale(0.8);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.8) translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
   
-  /* Glitch preparation */
+  /* Float for text wrapping */
   position: relative;
-  overflow: hidden;
+  z-index: 10;
+  margin: 0.8rem 1rem;
+  
+  /* CSS Shapes for precise text flow */
+  shape-outside: margin-box;
+  shape-margin: 0.8rem;
 }
 
-/* Position-based grid assignment */
-.marginalia-voice[data-position="top-left"] { grid-area: margin-tl; }
-.marginalia-voice[data-position="top"] { grid-area: margin-top; }
-.marginalia-voice[data-position="top-right"] { grid-area: margin-tr; }
-.marginalia-voice[data-position="left"] { grid-area: margin-left; }
-.marginalia-voice[data-position="right"] { grid-area: margin-right; }
-.marginalia-voice[data-position="bottom-left"] { grid-area: margin-bl; }
-.marginalia-voice[data-position="bottom"] { grid-area: margin-bottom; }
-.marginalia-voice[data-position="bottom-right"] { grid-area: margin-br; }
+/* Float positioning for text wrapping */
+.marginalia-voice[data-position="left"],
+.marginalia-voice[data-position="top-left"],
+.marginalia-voice[data-position="bottom-left"] { 
+  float: left;
+  clear: left;
+  text-align: right;
+  margin-right: 1rem;
+  margin-left: -3rem; /* Pull into left margin */
+}
+
+.marginalia-voice[data-position="right"],
+.marginalia-voice[data-position="top-right"], 
+.marginalia-voice[data-position="bottom-right"] { 
+  float: right;
+  clear: right;
+  text-align: left;
+  margin-left: 1rem;
+  margin-right: -3rem; /* Pull into right margin */
+}
+
+/* Materialized state */
+.marginalia-voice.intruding {
+  display: block;
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* FLIP animation classes */
+.flip-preparing {
+  transition: none !important;
+}
+
+.flip-animating {
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Size variations - much smaller overall */
+.marginalia-voice[data-size="small"] {
+  max-width: 120px;
+  font-size: 0.65rem;
+  padding: 0.5rem;
+}
+
+.marginalia-voice[data-size="large"] {
+  max-width: 180px; /* Reduced from 300px */
+  font-size: 0.75rem;
+}
+
+/* Content-length based sizing */
+.marginalia-voice {
+  font-size: calc(0.75rem - (var(--content-length, 0) * 0.05rem));
+}
 
 /* ===== VOICE DIFFERENTIATION ===== */
 .marginalia-voice[data-voice="1"] {
@@ -99,156 +154,83 @@
   text-decoration-color: rgba(255, 107, 157, 0.3);
 }
 
-/* ===== LAYOUT STATES ===== */
-/* No marginalia - main text takes full width */
-.talmud-layout-none {
-  grid-template-columns: 0fr 1fr 0fr;
-}
-
-/* Left marginalia active */
-.talmud-layout-left {
-  grid-template-columns: 200px 1fr 0fr;
-}
-
-/* Right marginalia active */
-.talmud-layout-right {
-  grid-template-columns: 0fr 1fr 200px;
-}
-
-/* Both sides active */
-.talmud-layout-both {
-  grid-template-columns: 200px 400px 200px;
-}
-
-/* Full marginalia (all positions) */
-.talmud-layout-full {
-  grid-template-columns: 180px 300px 180px;
-}
-
-/* Intense marginalia - main text squeezed further */
-.talmud-layout-intense {
-  grid-template-columns: 220px 200px 220px;
-}
-
 /* ===== MATERIALIZATION EFFECTS ===== */
-.marginalia-voice.materializing {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  animation: marginalia-glitch-in 0.6s ease-out;
+.marginalia-voice.materialized {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
 }
 
-@keyframes marginalia-glitch-in {
-  0% { 
-    filter: hue-rotate(180deg) brightness(2);
-    text-shadow: 
-      2px 0 var(--glitch-cyan),
-      -2px 0 var(--glitch-magenta);
-    transform: scale(0.8) skew(2deg);
-  }
-  25% {
-    filter: hue-rotate(90deg) brightness(1.5);
-    text-shadow: 
-      1px 0 var(--glitch-cyan),
-      -1px 0 var(--glitch-magenta);
-    transform: scale(1.05) skew(-1deg);
-  }
-  50% {
-    filter: hue-rotate(45deg) brightness(1.2);
-    text-shadow: 
-      3px 0 var(--glitch-cyan),
-      -3px 0 var(--glitch-magenta);
-    transform: scale(0.95) skew(0.5deg);
-  }
-  100% { 
-    filter: none;
-    text-shadow: none;
-    transform: scale(1) skew(0deg);
-  }
+/* ===== HOVER EFFECTS ===== */
+.marginalia-voice:hover {
+  transform: scale(1.02) !important;
+  border-left-width: 5px;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  z-index: 20;
 }
 
-/* ===== MAIN TEXT ADAPTATION ===== */
-/* As marginalia appears, main text adjusts */
-.main-text-squeezed-light .main-text-flow {
-  font-size: 0.95rem;
-  line-height: 1.7;
-}
-
-.main-text-squeezed-medium .main-text-flow {
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
-
-.main-text-squeezed-heavy .main-text-flow {
-  font-size: 0.85rem;
-  line-height: 1.5;
-  opacity: 0.9;
-}
-
-/* ===== RESPONSIVE TALMUDIC LAYOUT ===== */
+/* ===== RESPONSIVE LAYOUT ===== */
 @media (max-width: 1400px) {
-  .talmud-layout-both {
-    grid-template-columns: 160px 1fr 160px;
+  .post-content, .page-content {
+    padding: 2rem 3rem; /* Smaller side padding */
   }
   
-  .talmud-layout-full {
-    grid-template-columns: 140px 1fr 140px;
-  }
-  
-  .talmud-layout-intense {
-    grid-template-columns: 180px 1fr 180px;
+  .marginalia-voice {
+    max-width: 140px; /* Even smaller on smaller screens */
+    font-size: 0.65rem;
+    padding: 0.5rem;
   }
 }
 
 @media (max-width: 1024px) {
   .post-content, .page-content {
-    grid-template-columns: 120px 1fr 120px;
-    gap: 0.8rem;
-  }
-  
-  .talmud-layout-both {
-    grid-template-columns: 120px 1fr 120px;
+    padding: 2rem 2.5rem;
   }
   
   .marginalia-voice {
-    font-size: 0.75rem;
-    padding: 0.8rem;
+    max-width: 120px;
+    font-size: 0.6rem;
+    padding: 0.4rem;
+    min-width: 80px;
   }
 }
 
 @media (max-width: 768px) {
   .post-content, .page-content {
-    grid-template-areas: 
-      "margin-top"
-      "margin-left"
-      "main-text"
-      "margin-right"
-      "margin-bottom";
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr auto auto;
-    gap: 1.5rem;
+    padding: 2rem;
+    max-width: 600px;
   }
   
   .marginalia-voice {
+    /* On mobile, marginalia becomes inline blocks */
+    float: none !important;
+    display: inline-block;
     max-width: 100%;
-    font-size: 0.8rem;
-    margin: 0;
+    width: auto;
+    margin: 1rem auto;
+    font-size: 0.75rem;
+    text-align: center;
+    shape-outside: none; /* Disable shapes on mobile */
   }
   
-  .main-text-flow {
-    font-size: 1rem !important;
-    line-height: 1.8 !important;
+  /* Clear floats on mobile */
+  .marginalia-voice::after {
+    content: "";
+    display: table;
+    clear: both;
   }
 }
 
 @media (max-width: 480px) {
   .post-content, .page-content {
-    padding: 1rem 0;
-    gap: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding: 1rem;
   }
   
   .marginalia-voice {
     font-size: 0.75rem;
-    padding: 0.6rem;
+    padding: 0.8rem;
+    margin: 0.8rem auto;
   }
 }
 
@@ -269,17 +251,14 @@
 }
 
 /* ===== TALMUDIC FLOW EFFECTS ===== */
-/* Text flow around marginalia */
-.main-text-flow p {
+/* Text flows naturally around marginalia */
+.post-content p, .page-content p {
   margin-bottom: 1.5rem;
-  transition: all 0.6s ease;
-}
-
-/* When marginalia is heavy, create more fragmented text flow */
-.talmud-layout-intense .main-text-flow p {
-  margin-bottom: 2rem;
   text-align: justify;
   hyphens: auto;
+  /* Enable text wrapping around floated elements */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* ===== MARGINALIA INTERACTION EFFECTS ===== */
@@ -324,7 +303,7 @@
 }
 
 /* ===== IMAGES WITHIN TALMUDIC LAYOUT ===== */
-/* Ensure images don't break the grid system */
+/* Images flow with text around marginalia */
 .post-content img,
 .page-content img,
 .post-content .kg-image,
@@ -332,15 +311,9 @@
   max-width: 100%;
   height: auto;
   object-fit: contain;
-}
-
-/* Main text area images need to respect column constraints */
-.main-text-flow img,
-.main-text-flow .kg-image-card,
-.main-text-flow .kg-gallery-card {
-  max-width: 100%;
-  width: 100% !important;
   margin: 1.5rem 0;
+  /* Let images flow around floated marginalia */
+  clear: none;
 }
 
 /* Adjust image sizing based on layout compression */
@@ -359,31 +332,34 @@
   max-width: 100%;
 }
 
-/* Wide/full width content within talmudic grid */
-.post-content .kg-width-wide,
-.page-content .kg-width-wide {
-  grid-column: 1 / -1; /* Span entire grid */
+/* Wide/full width content clears floated marginalia */
+.kg-width-wide, .kg-width-full {
+  clear: both; /* Clear any floated marginalia */
   margin: 2rem 0;
 }
 
-.post-content .kg-width-full,
-.page-content .kg-width-full {
-  grid-column: 1 / -1; /* Span entire grid */
-  margin: 2rem 0;
+/* Gallery flows around marginalia */
+.kg-gallery-container {
+  clear: none; /* Allow flowing around marginalia */
 }
 
-/* Gallery adjustments for tight layouts */
-.main-text-squeezed-medium .kg-gallery-container {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+/* ===== FLOAT CLEARING ===== */
+.post-content::after, .page-content::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
-.main-text-squeezed-heavy .kg-gallery-container {
-  grid-template-columns: 1fr; /* Single column in heavy squeeze */
+/* Ensure paragraphs can flow around floated marginalia */
+.post-content p, .page-content p {
+  overflow: visible;
+  display: block;
 }
 
 /* ===== PERFORMANCE OPTIMIZATIONS ===== */
 .marginalia-voice,
-.main-text-flow {
+.post-content,
+.page-content {
   will-change: transform, opacity;
   transform: translateZ(0); /* Force GPU acceleration */
 }

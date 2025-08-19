@@ -11,14 +11,7 @@
         "email": "author@example.com"
     },
     "config": {
-        "posts_per_page": 10,
-        "custom": {
-            "show_marginalia": {
-                "type": "boolean",
-                "default": true,
-                "description": "Show marginal commentary"
-            }
-        }
+        "posts_per_page": 10
     },
     "keywords": [
         "ghost",

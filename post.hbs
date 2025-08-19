@@ -20,20 +20,6 @@
 
     <div class="post-content">
         {{content}}
-        
-        {{!-- Example marginalia for demonstration - these should be added via HTML cards in the content --}}
-        {{#if @custom.show_marginalia}}
-        {{!-- Sample marginalia voices (normally added via HTML cards in Ghost editor) --}}
-        <div class="marginalia-voice" data-position="left" data-voice="1" data-scroll-trigger="20">
-            /* ERROR: Every post assumes a reader */
-        </div>
-        <div class="marginalia-voice" data-position="right" data-voice="2" data-scroll-trigger="40">
-            # The database shapes what can be "posted"
-        </div>
-        <div class="marginalia-voice" data-position="left" data-voice="3" data-scroll-trigger="60">
-            > I am reading this through multiple layers of mediation
-        </div>
-        {{/if}}
     </div>
 </article>
 {{/post}}

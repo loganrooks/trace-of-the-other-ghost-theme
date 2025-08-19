@@ -1,23 +1,22 @@
 /**
- * Digital Talmud Layout System
- * Handles scroll-triggered marginalia materialization and dynamic grid adjustment
+ * Digital Talmud FLIP Intrusion System
+ * Handles scroll-triggered marginalia intrusion using FLIP animations and CSS Grid
  */
 
 class DigitalTalmud {
   constructor() {
     this.container = document.querySelector('.post-content, .page-content');
-    this.mainText = null;
     this.marginalia = [];
-    this.activePositions = new Set();
-    this.materializedCount = 0;
+    this.triggerElements = [];
+    this.intrudedCount = 0;
+    this.activeMarginalia = {
+      left: 0,
+      right: 0
+    };
     
-    // Layout states
-    this.layoutStates = ['none', 'left', 'right', 'both', 'full', 'intense'];
-    this.currentLayout = 'none';
-    
-    // Performance throttling
-    this.isProcessing = false;
-    this.lastUpdate = 0;
+    // FLIP animation state
+    this.isAnimating = false;
+    this.animationQueue = [];
     
     this.init();
   }
@@ -28,31 +27,99 @@ class DigitalTalmud {
       return;
     }
     
-    this.setupMainTextFlow();
+    // Don't wrap main text initially - let it start full width
     this.findMarginalia();
-    this.initializeObserver();
+    this.setupTriggerElements();
+    this.setupIntersectionObserver();
     this.addEventListeners();
     
-    console.log('[DIGITAL_TALMUD] System initialized with', this.marginalia.length, 'marginalia voices');
+    // Ensure text starts full width with no grid constraints
+    this.resetToFullWidth();
+    
+    console.log('[DIGITAL_TALMUD] FLIP Intrusion system initialized with', this.marginalia.length, 'marginalia voices');
   }
   
-  setupMainTextFlow() {
-    // Wrap all non-marginalia content in main text flow
-    const children = Array.from(this.container.children);
-    const mainTextElements = children.filter(child => 
-      !child.classList.contains('marginalia-voice')
-    );
+  resetToFullWidth() {
+    // Remove any layout classes
+    this.container.classList.remove('has-marginalia');
     
-    if (mainTextElements.length > 0) {
-      const mainTextWrapper = document.createElement('div');
-      mainTextWrapper.className = 'main-text-flow';
-      
-      mainTextElements.forEach(element => {
-        mainTextWrapper.appendChild(element);
+    // Ensure container uses normal block flow
+    this.container.style.display = 'block';
+    
+    // Identify main text for FLIP animations
+    this.mainText = this.container;
+  }
+  
+  setupTriggerElements() {
+    // Find all paragraphs and other trigger elements in container
+    const paragraphs = this.container.querySelectorAll('p, h1, h2, h3, blockquote');
+    paragraphs.forEach((p, index) => {
+      // Skip marginalia elements
+      if (!p.classList.contains('marginalia-voice')) {
+        p.dataset.triggerIndex = index;
+        this.triggerElements.push(p);
+      }
+    });
+  }
+  
+  setupIntersectionObserver() {
+    const options = {
+      root: null,
+      rootMargin: '0px 0px -20% 0px', // Trigger when element is 80% visible
+      threshold: 0.8
+    };
+    
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          this.checkForMarginalia(entry.target);
+        }
       });
-      
-      this.container.appendChild(mainTextWrapper);
-      this.mainText = mainTextWrapper;
+    }, options);
+    
+    // Observe all trigger elements
+    this.triggerElements.forEach(element => {
+      this.observer.observe(element);
+    });
+  }
+  
+  checkForMarginalia(triggerElement) {
+    const triggerIndex = parseInt(triggerElement.dataset.triggerIndex);
+    
+    // Find marginalia that should intrude at this trigger point
+    const marginaliaToIntrude = this.marginalia.filter(m => {
+      const triggerAt = m.dataset.triggersAt;
+      return triggerAt === `paragraph:${triggerIndex}` || 
+             (!m.classList.contains('intruding') && !triggerAt && Math.random() > 0.7);
+    });
+    
+    marginaliaToIntrude.forEach(marginalia => {
+      if (!this.isAnimating) {
+        this.queueIntrusion(marginalia);
+      }
+    });
+  }
+  
+  queueIntrusion(marginalia) {
+    this.animationQueue.push(marginalia);
+    if (!this.isAnimating) {
+      this.processAnimationQueue();
+    }
+  }
+  
+  async processAnimationQueue() {
+    if (this.animationQueue.length === 0) return;
+    
+    this.isAnimating = true;
+    const marginalia = this.animationQueue.shift();
+    
+    await this.intrudeMarginalia(marginalia);
+    
+    this.isAnimating = false;
+    
+    // Process next in queue after a brief delay
+    if (this.animationQueue.length > 0) {
+      setTimeout(() => this.processAnimationQueue(), 300);
     }
   }
   
@@ -70,201 +137,178 @@ class DigitalTalmud {
         element.dataset.voice = (index % 6) + 1;
       }
       
-      // Set up scroll trigger
-      if (!element.dataset.scrollTrigger) {
-        element.dataset.scrollTrigger = Math.min(20 + (index * 15), 90);
+      // Set trigger point if not specified
+      if (!element.dataset.triggersAt) {
+        element.dataset.triggersAt = `paragraph:${Math.floor(index * 2)}`;
       }
       
       // Add unique ID
       element.dataset.marginaliaId = `marginalia-${index}`;
-    });
-  }
-  
-  initializeObserver() {
-    const options = {
-      root: null,
-      rootMargin: '-10% 0px -10% 0px', // Trigger when 10% visible
-      threshold: [0.1, 0.5, 0.9]
-    };
-    
-    this.observer = new IntersectionObserver(
-      this.handleIntersection.bind(this), 
-      options
-    );
-    
-    this.marginalia.forEach(marginalia => {
-      this.observer.observe(marginalia);
-    });
-  }
-  
-  handleIntersection(entries) {
-    if (this.isProcessing) return;
-    
-    entries.forEach(entry => {
-      const marginalia = entry.target;
-      const scrollTrigger = parseFloat(marginalia.dataset.scrollTrigger) / 100;
       
-      if (entry.isIntersecting && entry.intersectionRatio >= scrollTrigger) {
-        this.materializeMarginalia(marginalia);
-      }
+      // Auto-detect content length and set appropriate size
+      this.optimizeBoxSize(element);
+      
+      // Ensure marginalia starts hidden
+      element.style.display = 'none';
     });
   }
   
-  materializeMarginalia(marginalia) {
-    if (marginalia.classList.contains('materializing')) return;
+  optimizeBoxSize(marginalia) {
+    const content = marginalia.textContent || marginalia.innerText;
+    const length = content.length;
     
-    this.isProcessing = true;
+    // Assign size based on content length - more aggressive sizing for smaller boxes
+    if (length < 60) {
+      marginalia.dataset.size = 'small';
+    } else if (length > 150) {
+      marginalia.dataset.size = 'large';
+    }
     
-    // Add materialization effect
-    marginalia.classList.add('materializing');
+    // Set CSS custom property for responsive font sizing
+    marginalia.style.setProperty('--content-length', Math.min(length / 80, 2.5));
+  }
+  
+  async intrudeMarginalia(marginalia) {
+    if (marginalia.classList.contains('intruding')) return;
     
-    // Track position
-    const position = marginalia.dataset.position;
-    this.activePositions.add(position);
-    this.materializedCount++;
+    console.log('[DIGITAL_TALMUD] Intruding:', marginalia.dataset.position, 'voice', marginalia.dataset.voice);
     
-    // Update layout
+    // FLIP Step 1: First - Record current positions
+    const elementsToAnimate = this.getElementsToAnimate();
+    const firstPositions = this.recordPositions(elementsToAnimate);
+    
+    // FLIP Step 2: Last - Apply the layout change
+    this.showMarginalia(marginalia);
     this.updateLayout();
     
-    // Glitch effect for main text
-    this.glitchMainText();
+    // Force layout recalculation
+    this.container.offsetHeight;
     
-    // Log materialization
-    console.log('[DIGITAL_TALMUD] Materialized:', position, 'voice', marginalia.dataset.voice);
+    // Record new positions
+    const lastPositions = this.recordPositions(elementsToAnimate);
     
-    // Create fragment effect
-    this.createFragmentEffect(marginalia);
+    // FLIP Step 3: Invert - Calculate deltas and apply inverse transforms
+    this.applyInverseTransforms(elementsToAnimate, firstPositions, lastPositions);
     
-    setTimeout(() => {
-      this.isProcessing = false;
-    }, 100);
+    // FLIP Step 4: Play - Animate to final positions
+    await this.animateToFinalPositions(elementsToAnimate);
+    
+    // Clean up transforms
+    this.cleanupTransforms(elementsToAnimate);
+    
+    this.intrudedCount++;
+  }
+  
+  getElementsToAnimate() {
+    // Get all main text elements (excluding marginalia)
+    return Array.from(this.container.querySelectorAll('p, h1, h2, h3, blockquote, img, .kg-image-card'))
+      .filter(el => !el.classList.contains('marginalia-voice'));
+  }
+  
+  recordPositions(elements) {
+    return elements.map(el => ({
+      element: el,
+      rect: el.getBoundingClientRect()
+    }));
+  }
+  
+  showMarginalia(marginalia) {
+    // Show marginalia with float positioning
+    marginalia.style.display = 'block';
+    marginalia.classList.add('intruding');
+    
+    // Apply float based on position
+    const position = marginalia.dataset.position;
+    if (position.includes('left')) {
+      marginalia.style.float = 'left';
+      marginalia.style.clear = 'left';
+      this.activeMarginalia.left++;
+    } else if (position.includes('right')) {
+      marginalia.style.float = 'right';
+      marginalia.style.clear = 'right';
+      this.activeMarginalia.right++;
+    }
   }
   
   updateLayout() {
-    const hasLeft = this.activePositions.has('left') || 
-                   this.activePositions.has('top-left') || 
-                   this.activePositions.has('bottom-left');
-                   
-    const hasRight = this.activePositions.has('right') || 
-                    this.activePositions.has('top-right') || 
-                    this.activePositions.has('bottom-right');
-                    
-    const hasTop = this.activePositions.has('top');
-    const hasBottom = this.activePositions.has('bottom');
-    
-    let newLayout = 'none';
-    
-    // Determine layout based on active positions
-    if (this.materializedCount >= 6) {
-      newLayout = 'intense';
-    } else if (this.materializedCount >= 4 || (hasTop && hasBottom && hasLeft && hasRight)) {
-      newLayout = 'full';
-    } else if (hasLeft && hasRight) {
-      newLayout = 'both';
-    } else if (hasLeft) {
-      newLayout = 'left';
-    } else if (hasRight) {
-      newLayout = 'right';
-    }
-    
-    if (newLayout !== this.currentLayout) {
-      this.applyLayout(newLayout);
-      this.adjustMainTextSize(newLayout);
+    // Simply add class to indicate marginalia is present
+    // Float positioning handles the actual layout
+    if (this.activeMarginalia.left > 0 || this.activeMarginalia.right > 0) {
+      this.container.classList.add('has-marginalia');
+    } else {
+      this.container.classList.remove('has-marginalia');
     }
   }
   
-  applyLayout(layoutName) {
-    // Remove old layout class
-    this.container.classList.remove(`talmud-layout-${this.currentLayout}`);
-    
-    // Add new layout class
-    this.container.classList.add(`talmud-layout-${layoutName}`);
-    
-    this.currentLayout = layoutName;
-    
-    console.log('[DIGITAL_TALMUD] Layout changed to:', layoutName);
-    
-    // Trigger layout change effect
-    this.triggerLayoutChangeEffect();
+  applyInverseTransforms(elements, firstPositions, lastPositions) {
+    elements.forEach((element, index) => {
+      const first = firstPositions[index].rect;
+      const last = lastPositions[index].rect;
+      
+      const deltaX = first.left - last.left;
+      const deltaY = first.top - last.top;
+      
+      element.classList.add('flip-preparing');
+      element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    });
   }
   
-  adjustMainTextSize(layoutName) {
-    if (!this.mainText) return;
-    
-    // Remove old size classes
-    this.container.classList.remove(
-      'main-text-squeezed-light',
-      'main-text-squeezed-medium', 
-      'main-text-squeezed-heavy'
-    );
-    
-    // Apply new size class based on layout intensity
-    switch (layoutName) {
-      case 'left':
-      case 'right':
-        this.container.classList.add('main-text-squeezed-light');
-        break;
-      case 'both':
-      case 'full':
-        this.container.classList.add('main-text-squeezed-medium');
-        break;
-      case 'intense':
-        this.container.classList.add('main-text-squeezed-heavy');
-        break;
-    }
+  animateToFinalPositions(elements) {
+    return new Promise(resolve => {
+      // Use requestAnimationFrame to ensure transforms are applied
+      requestAnimationFrame(() => {
+        elements.forEach(element => {
+          element.classList.remove('flip-preparing');
+          element.classList.add('flip-animating');
+          element.style.transform = 'none';
+        });
+        
+        // Wait for animation to complete
+        setTimeout(resolve, 800);
+      });
+    });
   }
   
-  glitchMainText() {
-    if (!this.mainText) return;
-    
-    this.mainText.style.animation = 'none';
-    setTimeout(() => {
-      this.mainText.style.animation = 'random-glitch 0.3s ease-in-out';
-    }, 10);
-    
-    setTimeout(() => {
-      this.mainText.style.animation = '';
-    }, 300);
+  cleanupTransforms(elements) {
+    elements.forEach(element => {
+      element.classList.remove('flip-animating');
+      element.style.transform = '';
+    });
   }
   
-  createFragmentEffect(marginalia) {
-    const voice = marginalia.dataset.voice;
-    const position = marginalia.dataset.position;
+  resetLayout() {
+    // Reset all marginalia
+    this.marginalia.forEach(marginalia => {
+      marginalia.classList.remove('intruding');
+      marginalia.style.display = 'none';
+      marginalia.style.float = 'none';
+      marginalia.style.clear = 'none';
+    });
     
-    // Create code fragment
-    const fragment = document.createElement('div');
-    fragment.className = 'code-fragment marginalia-fragment';
-    fragment.textContent = `// Voice ${voice} materialized at ${position}`;
-    fragment.style.cssText = `
-      position: fixed;
-      left: ${Math.random() * window.innerWidth}px;
-      top: ${Math.random() * window.innerHeight}px;
-      color: ${marginalia.style.borderLeftColor || 'var(--hacker-green)'};
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      opacity: 0.8;
-      pointer-events: none;
-      z-index: 1000;
-      animation: fragment-drift 4s ease-out forwards;
-    `;
+    // Reset container
+    this.resetToFullWidth();
     
-    document.body.appendChild(fragment);
+    // Reset counters
+    this.activeMarginalia = { left: 0, right: 0 };
+    this.intrudedCount = 0;
     
-    // Remove after animation
-    setTimeout(() => {
-      if (fragment.parentNode) {
-        fragment.parentNode.removeChild(fragment);
-      }
-    }, 4500);
+    console.log('[DIGITAL_TALMUD] Layout reset');
   }
   
-  triggerLayoutChangeEffect() {
-    // Brief screen distortion effect
-    document.body.style.filter = 'hue-rotate(5deg) brightness(1.1)';
-    
-    setTimeout(() => {
-      document.body.style.filter = '';
-    }, 150);
+  materializeAllMarginalia() {
+    this.marginalia.forEach((marginalia, index) => {
+      setTimeout(() => {
+        if (!marginalia.classList.contains('intruding')) {
+          this.queueIntrusion(marginalia);
+        }
+      }, index * 200); // Staggered intrusion
+    });
+  }
+  
+  toggleDebugMode() {
+    document.body.classList.toggle('talmud-debug');
+    console.log('[DIGITAL_TALMUD] Debug mode:', 
+                document.body.classList.contains('talmud-debug') ? 'ON' : 'OFF');
   }
   
   addEventListeners() {
@@ -287,91 +331,17 @@ class DigitalTalmud {
         }
       }
     });
-    
-    // Handle window resize
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        this.handleResize();
-      }, 250);
-    });
-    
-    // Handle visibility change
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        this.pauseEffects();
-      } else {
-        this.resumeEffects();
-      }
-    });
-  }
-  
-  toggleDebugMode() {
-    document.body.classList.toggle('talmud-debug');
-    console.log('[DIGITAL_TALMUD] Debug mode:', 
-                document.body.classList.contains('talmud-debug') ? 'ON' : 'OFF');
-  }
-  
-  materializeAllMarginalia() {
-    this.marginalia.forEach((marginalia, index) => {
-      setTimeout(() => {
-        if (!marginalia.classList.contains('materializing')) {
-          this.materializeMarginalia(marginalia);
-        }
-      }, index * 200);
-    });
-  }
-  
-  resetLayout() {
-    this.marginalia.forEach(marginalia => {
-      marginalia.classList.remove('materializing');
-    });
-    
-    this.activePositions.clear();
-    this.materializedCount = 0;
-    this.applyLayout('none');
-    this.adjustMainTextSize('none');
-    
-    console.log('[DIGITAL_TALMUD] Layout reset');
-  }
-  
-  handleResize() {
-    // Recalculate layout on resize
-    this.updateLayout();
-  }
-  
-  pauseEffects() {
-    if (this.observer) {
-      this.observer.disconnect();
-    }
-  }
-  
-  resumeEffects() {
-    if (this.observer) {
-      this.marginalia.forEach(marginalia => {
-        this.observer.observe(marginalia);
-      });
-    }
   }
   
   getStats() {
     return {
       marginalia: this.marginalia.length,
-      materialized: this.materializedCount,
-      activePositions: Array.from(this.activePositions),
-      currentLayout: this.currentLayout
+      materialized: this.materializedCount
     };
   }
   
   destroy() {
-    if (this.observer) {
-      this.observer.disconnect();
-    }
-    
-    document.removeEventListener('keydown', this.handleKeydown);
-    window.removeEventListener('resize', this.handleResize);
-    
+    window.removeEventListener('scroll', this.scrollHandler);
     console.log('[DIGITAL_TALMUD] System destroyed');
   }
 }
