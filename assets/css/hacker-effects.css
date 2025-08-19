@@ -1,0 +1,473 @@
+/* ===== ANIMATED HACKER EFFECTS ===== */
+
+/* ===== MATRIX BACKGROUND SYSTEM ===== */
+.matrix-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bg-primary);
+}
+
+.matrix-column {
+  position: absolute;
+  top: -100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--hacker-green);
+  opacity: 0.7;
+  animation: matrix-fall linear infinite;
+  text-shadow: 0 0 5px var(--hacker-green);
+  white-space: pre;
+  line-height: 1.2;
+  font-weight: 300;
+}
+
+@keyframes matrix-fall {
+  0% {
+    transform: translateY(-100vh);
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Different matrix column speeds and delays */
+.matrix-column:nth-child(odd) {
+  animation-duration: 8s;
+  color: var(--hacker-green-bright);
+}
+
+.matrix-column:nth-child(even) {
+  animation-duration: 12s;
+  color: var(--hacker-green-dim);
+}
+
+.matrix-column:nth-child(3n) {
+  animation-duration: 15s;
+  opacity: 0.5;
+}
+
+/* ===== CODE FRAGMENT SYSTEM ===== */
+.code-fragment {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--hacker-green);
+  opacity: 0.8;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 0 3px var(--hacker-green-dim);
+  z-index: -1;
+}
+
+@keyframes fragment-drift {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.8);
+  }
+  10% {
+    opacity: 0.8;
+    transform: translateY(-10px) scale(1);
+  }
+  90% {
+    opacity: 0.4;
+    transform: translateY(-40px) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scale(0.7);
+  }
+}
+
+/* Different fragment types */
+.code-fragment.error {
+  color: var(--accent-red);
+  text-shadow: 0 0 5px var(--accent-red);
+}
+
+.code-fragment.warning {
+  color: #ffaa00;
+  text-shadow: 0 0 5px #ffaa00;
+}
+
+.code-fragment.comment {
+  color: var(--accent-grey);
+  opacity: 0.6;
+}
+
+.code-fragment.function {
+  color: var(--accent-cyan);
+  text-shadow: 0 0 3px var(--accent-cyan);
+}
+
+/* ===== GLITCH EFFECTS ===== */
+.glitch-text {
+  position: relative;
+  color: var(--text-primary);
+  display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.glitch-text::before {
+  color: var(--glitch-cyan);
+  animation: glitch-1 0.8s infinite linear alternate-reverse;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+}
+
+.glitch-text::after {
+  color: var(--glitch-magenta);
+  animation: glitch-2 0.8s infinite linear alternate-reverse;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch-1 {
+  0%, 98% {
+    transform: translate(0);
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  }
+  1% {
+    transform: translate(-2px, 1px);
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  }
+  2% {
+    transform: translate(2px, -1px);
+    clip-path: polygon(0 0, 100% 0, 100% 25%, 0 25%);
+  }
+  3% {
+    transform: translate(-1px, 2px);
+    clip-path: polygon(0 0, 100% 0, 100% 55%, 0 55%);
+  }
+  4% {
+    transform: translate(1px, -2px);
+    clip-path: polygon(0 0, 100% 0, 100% 15%, 0 15%);
+  }
+}
+
+@keyframes glitch-2 {
+  0%, 98% {
+    transform: translate(0);
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+  1% {
+    transform: translate(2px, -1px);
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  }
+  2% {
+    transform: translate(-2px, 1px);
+    clip-path: polygon(0 75%, 100% 75%, 100% 100%, 0 100%);
+  }
+  3% {
+    transform: translate(1px, 2px);
+    clip-path: polygon(0 45%, 100% 45%, 100% 100%, 0 100%);
+  }
+  4% {
+    transform: translate(-1px, -2px);
+    clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%);
+  }
+}
+
+/* ===== RANDOM GLITCH ACTIVATION ===== */
+.glitch-random {
+  animation: random-glitch 0.3s ease-in-out;
+}
+
+@keyframes random-glitch {
+  0%, 100% { 
+    transform: translate(0); 
+    filter: hue-rotate(0deg);
+    text-shadow: 0 0 5px var(--hacker-green-dim);
+  }
+  25% { 
+    transform: translate(-2px, 1px); 
+    filter: hue-rotate(90deg);
+    text-shadow: 
+      2px 0 var(--glitch-cyan),
+      -2px 0 var(--glitch-magenta);
+  }
+  50% { 
+    transform: translate(1px, -1px); 
+    filter: hue-rotate(180deg);
+    text-shadow: 
+      1px 0 var(--glitch-cyan),
+      -1px 0 var(--glitch-magenta);
+  }
+  75% { 
+    transform: translate(-1px, 2px); 
+    filter: hue-rotate(270deg);
+    text-shadow: 
+      3px 0 var(--glitch-cyan),
+      -3px 0 var(--glitch-magenta);
+  }
+}
+
+/* ===== TERMINAL CURSOR EFFECTS ===== */
+.terminal-cursor::after {
+  content: "█";
+  color: var(--hacker-green);
+  animation: cursor-blink 1s infinite;
+  margin-left: 2px;
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ===== SCANLINE EFFECTS ===== */
+.scanlines {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  animation: scanlines-move 0.1s linear infinite;
+  z-index: 1;
+}
+
+@keyframes scanlines-move {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* ===== SCREEN FLICKER EFFECTS ===== */
+.screen-flicker {
+  animation: screen-flicker 0.15s ease-in-out infinite alternate;
+}
+
+@keyframes screen-flicker {
+  0% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  100% {
+    opacity: 0.98;
+    filter: brightness(1.02) contrast(1.05);
+  }
+}
+
+/* ===== DIGITAL NOISE ===== */
+.digital-noise {
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 20% 50%, transparent 20%, rgba(0, 255, 0, 0.1) 21%, rgba(0, 255, 0, 0.1) 34%, transparent 35%, transparent),
+    linear-gradient(0deg, rgba(0, 255, 0, 0.05) 50%, transparent 50%);
+  animation: noise 0.2s infinite;
+}
+
+@keyframes noise {
+  0% { transform: translate(0px, 0px); }
+  10% { transform: translate(-1px, -1px); }
+  20% { transform: translate(-1px, 0px); }
+  30% { transform: translate(1px, 1px); }
+  40% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  60% { transform: translate(-1px, 1px); }
+  70% { transform: translate(1px, 0px); }
+  80% { transform: translate(-1px, -1px); }
+  90% { transform: translate(1px, 1px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+/* ===== HOVER EFFECTS ===== */
+.post-card-title:hover {
+  animation: title-corruption 0.6s ease-in-out;
+}
+
+@keyframes title-corruption {
+  0%, 100% { 
+    filter: none;
+    text-shadow: 0 0 5px var(--hacker-green-dim);
+  }
+  10% { 
+    filter: hue-rotate(90deg);
+    text-shadow: 
+      2px 0 var(--glitch-cyan),
+      -2px 0 var(--glitch-magenta),
+      0 0 10px var(--hacker-green);
+  }
+  20% { 
+    filter: hue-rotate(180deg);
+    text-shadow: 
+      1px 0 var(--glitch-cyan),
+      -1px 0 var(--glitch-magenta),
+      0 0 15px var(--hacker-green-bright);
+  }
+  30% { 
+    filter: hue-rotate(270deg);
+    text-shadow: 
+      3px 0 var(--glitch-cyan),
+      -3px 0 var(--glitch-magenta),
+      0 0 20px var(--hacker-green);
+  }
+}
+
+/* ===== LOADING STATES ===== */
+.loading-dots::after {
+  content: "";
+  animation: loading-dots 1.5s infinite;
+}
+
+@keyframes loading-dots {
+  0%, 20% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+  100% { content: ""; }
+}
+
+/* ===== SYSTEM STATUS INDICATORS ===== */
+.system-status {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--hacker-green-dim);
+  z-index: 1000;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.system-status::before {
+  content: "[SYS: ACTIVE] [MEM: " attr(data-memory) "] [CPU: " attr(data-cpu) "]";
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.5rem;
+  border: 1px solid var(--hacker-green-dark);
+}
+
+/* ===== ACCESSIBILITY - REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .matrix-background,
+  .code-fragment,
+  .glitch-text::before,
+  .glitch-text::after,
+  .scanlines::before,
+  .screen-flicker,
+  .digital-noise {
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  .matrix-background {
+    display: none;
+  }
+  
+  .glitch-text::before,
+  .glitch-text::after {
+    display: none;
+  }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+.matrix-column,
+.code-fragment,
+.glitch-text,
+.scanlines::before {
+  will-change: transform, opacity;
+  transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Limit animations on low-end devices */
+@media (max-width: 768px) {
+  .matrix-column:nth-child(n+6) {
+    display: none;
+  }
+  
+  .scanlines::before,
+  .digital-noise,
+  .screen-flicker {
+    animation: none;
+  }
+}
+
+/* ===== INTERACTIVE ELEMENTS ===== */
+.interactive-terminal {
+  background: var(--terminal-bg);
+  border: 1px solid var(--hacker-green-dark);
+  padding: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  position: relative;
+}
+
+.interactive-terminal::before {
+  content: "user@ghost:~$ ";
+  color: var(--hacker-green);
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+}
+
+.terminal-input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  margin-left: 7rem;
+  outline: none;
+  width: calc(100% - 8rem);
+}
+
+/* ===== GLITCH TRANSITIONS ===== */
+.page-transition {
+  animation: page-glitch-in 0.5s ease-out;
+}
+
+@keyframes page-glitch-in {
+  0% {
+    opacity: 0;
+    filter: hue-rotate(180deg) brightness(2);
+    transform: scale(1.02) skew(0.5deg);
+  }
+  25% {
+    opacity: 0.7;
+    filter: hue-rotate(90deg) brightness(1.5);
+    transform: scale(1.01) skew(-0.3deg);
+  }
+  50% {
+    opacity: 0.9;
+    filter: hue-rotate(45deg) brightness(1.2);
+    transform: scale(1.005) skew(0.1deg);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}

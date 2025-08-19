@@ -8,7 +8,7 @@ ZIP_NAME="${THEME_NAME}-$(date +%Y%m%d-%H%M).zip"
 
 echo "Building $ZIP_NAME..."
 
-# Create zip with only essential files
+# Create zip with hacker theme files
 zip -r "$ZIP_NAME" \
     package.json \
     default.hbs \
@@ -16,6 +16,8 @@ zip -r "$ZIP_NAME" \
     post.hbs \
     page.hbs \
     assets/css/main.css \
+    assets/css/hacker-effects.css \
+    assets/js/hacker-effects.js \
     -x "*.DS_Store" \
     -x "__MACOSX/*" \
     -x "*.git*" \

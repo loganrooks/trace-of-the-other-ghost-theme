@@ -1,7 +1,8 @@
 {{!< default}}
 
+{{#post}}
 <article class="page {{post_class}}">
-    {{#if @page.show_title_and_feature_image}}
+    {{#match @page.show_title_and_feature_image}}
     <header class="page-header">
         {{#if feature_image}}
         <div class="page-feature-image">
@@ -9,10 +10,26 @@
         </div>
         {{/if}}
         <h1 class="page-title">{{title}}</h1>
+        <div class="page-meta">
+            <time datetime="{{date format="YYYY-MM-DD"}}">{{date}}</time>
+        </div>
     </header>
-    {{/if}}
+    {{/match}}
 
     <div class="page-content">
         {{content}}
     </div>
+    
+    {{#if @custom.show_marginalia}}
+    <aside class="page-marginalia">
+        {{!-- Marginal voices for pages --}}
+        <div class="margin-voice margin-left voice-critic">
+            /* ERROR: Static pages question their own stasis */
+        </div>
+        <div class="margin-voice margin-right voice-translator">
+            # Pages pretend to be outside the temporal flow
+        </div>
+    </aside>
+    {{/if}}
 </article>
+{{/post}}
