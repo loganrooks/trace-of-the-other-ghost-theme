@@ -1,0 +1,769 @@
+{{!-- Layers of erasure --}}
+<div class="palimpsest-system" data-depth="{{@custom.palimpsest_depth}}">
+    {{!-- Palimpsest content will be processed by JavaScript --}}
+    <div class="palimpsest-container">
+        {{!-- This partial provides the structure for palimpsest text --}}
+        {{!-- Actual content layers are added dynamically --}}
+    </div>
+
+    {{!-- Palimpsest controls --}}
+    <div class="palimpsest-controls">
+        <h4>Text Archaeology:</h4>
+        <div class="revelation-modes">
+            <button data-mode="archaeological" class="revelation-btn active">Archaeological</button>
+            <button data-mode="temporal" class="revelation-btn">Temporal</button>
+            <button data-mode="violent" class="revelation-btn">Show Cuts</button>
+            <button data-mode="excavation" class="revelation-btn">Reader Excavation</button>
+        </div>
+        
+        <div class="palimpsest-info">
+            <p class="layer-count">Layers detected: <span id="layer-count">0</span></p>
+            <p class="revelation-mode">Mode: <span id="current-mode">archaeological</span></p>
+        </div>
+    </div>
+
+    {{!-- Temporal scrubber for time-based viewing --}}
+    <div class="temporal-interface" style="display: none;">
+        <div class="temporal-controls">
+            <label for="time-scrubber">Navigate through time:</label>
+            <input type="range" id="time-scrubber" class="time-scrubber" min="0" max="0" value="0">
+            <div class="time-markers"></div>
+        </div>
+        <div class="temporal-display">
+            <!-- Temporal state will be shown here -->
+        </div>
+    </div>
+
+    {{!-- Excavation toolkit --}}
+    <div class="excavation-toolkit" style="display: none;">
+        <h4>Archaeological Tools:</h4>
+        <div class="tool-selection">
+            <button data-tool="brush" class="tool-btn active">🖌️ Brush</button>
+            <button data-tool="pick" class="tool-btn">⛏️ Pick</button>
+            <button data-tool="hammer" class="tool-btn">🔨 Hammer</button>
+            <button data-tool="restore" class="tool-btn">♻️ Restore</button>
+        </div>
+        <div class="excavation-instructions">
+            <p>Use tools to reveal buried text layers. Each tool works differently:</p>
+            <ul>
+                <li><strong>Brush:</strong> Gentle revelation through hovering</li>
+                <li><strong>Pick:</strong> Chip away at surface layer by clicking</li>
+                <li><strong>Hammer:</strong> Violent exposure of all layers</li>
+                <li><strong>Restore:</strong> Return all dirt layers</li>
+            </ul>
+        </div>
+    </div>
+
+    {{!-- Palimpsest metadata display --}}
+    <div class="palimpsest-metadata">
+        <div class="version-history" style="display: none;">
+            <h4>Version History:</h4>
+            <div class="version-list">
+                <!-- Version list will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="ghost-limitation-notice">
+            <p class="limitation-text">
+                <em>Note: Ghost CMS provides no public revision history. 
+                These layers are reconstructed, synthetic, or manually created. 
+                The absence of true version control is itself significant.</em>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Palimpsest partial initialization
+(function() {
+    'use strict';
+    
+    let currentPalimpsestMode = 'archaeological';
+    let currentTool = 'brush';
+    let palimpsestDepth = parseInt(document.querySelector('.palimpsest-system')?.dataset.depth) || 3;
+
+    // Initialize palimpsest system
+    document.addEventListener('DOMContentLoaded', function() {
+        initializePalimpsestElements();
+        setupEventListeners();
+        processExistingContent();
+    });
+
+    function initializePalimpsestElements() {
+        // Find all elements with palimpsest data attributes
+        const palimpsestElements = document.querySelectorAll('[data-layer-1], .palimpsest');
+        
+        palimpsestElements.forEach(element => {
+            processPalimpsestElement(element);
+        });
+
+        updateLayerCount(palimpsestElements.length);
+    }
+
+    function processPalimpsestElement(element) {
+        const layers = extractLayers(element);
+        if (layers.length > 1) {
+            createPalimpsestContainer(element, layers);
+        }
+    }
+
+    function extractLayers(element) {
+        const layers = [];
+        const currentText = element.textContent.trim();
+        const currentTimestamp = element.dataset.timestampCurrent || new Date().toISOString();
+        
+        // Extract data-layer-N attributes
+        for (let i = 1; i <= palimpsestDepth; i++) {
+            const layerText = element.dataset[`layer${i}`];
+            const timestamp = element.dataset[`timestamp${i}`];
+            
+            if (layerText) {
+                layers.push({
+                    text: layerText,
+                    timestamp: timestamp || 'unknown',
+                    index: i
+                });
+            }
+        }
+
+        // Add current text as the top layer
+        layers.push({
+            text: currentText,
+            timestamp: currentTimestamp,
+            index: layers.length + 1,
+            current: true
+        });
+
+        return layers;
+    }
+
+    function createPalimpsestContainer(originalElement, layers) {
+        const container = document.createElement('div');
+        container.className = 'palimpsest-stack archaeological';
+        container.dataset.originalId = Math.random().toString(36).substr(2, 9);
+
+        // Create layer elements
+        layers.forEach((layer, index) => {
+            const layerElement = document.createElement('div');
+            layerElement.className = `palimpsest-layer depth-${layers.length - index - 1}`;
+            layerElement.textContent = layer.text;
+            layerElement.dataset.timestamp = layer.timestamp;
+            layerElement.dataset.layerIndex = layer.index;
+            
+            if (layer.current) {
+                layerElement.classList.add('current-layer');
+            }
+
+            applyLayerStyles(layerElement, layers.length - index - 1);
+            container.appendChild(layerElement);
+        });
+
+        // Replace original element
+        originalElement.replaceWith(container);
+    }
+
+    function applyLayerStyles(layerElement, depth) {
+        if (depth === 0) {
+            // Current layer
+            layerElement.style.position = 'relative';
+            layerElement.style.zIndex = '10';
+            layerElement.style.opacity = '1';
+        } else {
+            // Buried layers
+            layerElement.style.position = 'absolute';
+            layerElement.style.top = `${depth * 2}px`;
+            layerElement.style.left = `${depth * 1}px`;
+            layerElement.style.opacity = `${Math.max(0.1, 1 - (depth * 0.2))}`;
+            layerElement.style.filter = `blur(${depth * 0.3}px)`;
+            layerElement.style.color = `rgba(0, 0, 0, ${Math.max(0.3, 1 - (depth * 0.15))})`;
+            layerElement.style.zIndex = `${10 - depth}`;
+            layerElement.style.transform = `rotate(${depth * 0.2}deg)`;
+            layerElement.style.textDecoration = 'line-through';
+            layerElement.style.textDecorationColor = `rgba(180, 0, 0, ${Math.max(0.2, 0.5 - depth * 0.1)})`;
+        }
+    }
+
+    function setupEventListeners() {
+        // Revelation mode buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('revelation-btn')) {
+                const mode = e.target.dataset.mode;
+                switchRevelationMode(mode);
+                updateActiveButton(e.target, '.revelation-btn');
+            }
+
+            if (e.target.classList.contains('tool-btn')) {
+                currentTool = e.target.dataset.tool;
+                updateActiveButton(e.target, '.tool-btn');
+                updateExcavationCursor();
+            }
+        });
+
+        // Time scrubber
+        const timeScrubber = document.getElementById('time-scrubber');
+        if (timeScrubber) {
+            timeScrubber.addEventListener('input', function(e) {
+                showTemporalState(parseInt(e.target.value));
+            });
+        }
+    }
+
+    function switchRevelationMode(mode) {
+        currentPalimpsestMode = mode;
+        document.getElementById('current-mode').textContent = mode;
+
+        // Hide all interfaces first
+        document.querySelectorAll('.temporal-interface, .excavation-toolkit').forEach(el => {
+            el.style.display = 'none';
+        });
+
+        // Apply mode-specific behavior
+        switch(mode) {
+            case 'archaeological':
+                enableArchaeologicalMode();
+                break;
+            case 'temporal':
+                enableTemporalMode();
+                break;
+            case 'violent':
+                enableViolentMode();
+                break;
+            case 'excavation':
+                enableExcavationMode();
+                break;
+        }
+    }
+
+    function enableArchaeologicalMode() {
+        document.querySelectorAll('.palimpsest-stack').forEach(stack => {
+            stack.className = 'palimpsest-stack archaeological';
+            const layers = stack.querySelectorAll('.palimpsest-layer');
+            layers.forEach((layer, index) => {
+                const depth = layers.length - index - 1;
+                applyLayerStyles(layer, depth);
+            });
+        });
+    }
+
+    function enableTemporalMode() {
+        document.querySelector('.temporal-interface').style.display = 'block';
+        setupTemporalInterface();
+    }
+
+    function enableViolentMode() {
+        document.querySelectorAll('.palimpsest-stack').forEach(stack => {
+            const layers = Array.from(stack.querySelectorAll('.palimpsest-layer'));
+            
+            layers.forEach((layer, index) => {
+                if (index > 0) {
+                    // Add revision scars between layers
+                    const scar = document.createElement('div');
+                    scar.className = 'revision-scar';
+                    
+                    const prevLayer = layers[index - 1];
+                    const changes = analyzeChanges(prevLayer.textContent, layer.textContent);
+                    
+                    scar.innerHTML = `
+                        <span class="scar-mark">✂ CUT HERE ✂</span>
+                        <span class="violence-description">${changes.description}</span>
+                        <span class="deleted-words">[DELETED: ${changes.deleted.join(', ')}]</span>
+                    `;
+                    
+                    layer.insertAdjacentElement('beforebegin', scar);
+                }
+                
+                // Mark surviving words
+                if (index > 0) {
+                    const prevText = layers[index - 1].textContent;
+                    layer.innerHTML = markSurvivingWords(layer.textContent, prevText);
+                }
+            });
+        });
+    }
+
+    function enableExcavationMode() {
+        document.querySelector('.excavation-toolkit').style.display = 'block';
+        
+        document.querySelectorAll('.palimpsest-stack').forEach(stack => {
+            convertToExcavationSite(stack);
+        });
+    }
+
+    function convertToExcavationSite(stack) {
+        const layers = Array.from(stack.querySelectorAll('.palimpsest-layer'));
+        const surface = layers[layers.length - 1]; // Current layer
+        
+        // Create dirt layers covering older text
+        layers.slice(0, -1).reverse().forEach((layer, index) => {
+            const dirt = document.createElement('div');
+            dirt.className = `dirt-layer depth-${index}`;
+            dirt.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(101, 67, 33, ${0.8 - index * 0.1});
+                z-index: ${20 - index};
+                cursor: crosshair;
+            `;
+            dirt.dataset.hiddenText = layer.textContent;
+            dirt.dataset.depth = index;
+            
+            dirt.addEventListener('mousemove', handleExcavation);
+            dirt.addEventListener('click', (e) => handleExcavation(e, true));
+            
+            surface.appendChild(dirt);
+        });
+    }
+
+    function handleExcavation(event, aggressive = false) {
+        const tool = aggressive ? 'hammer' : currentTool;
+        const dirt = event.target;
+        
+        if (!dirt.classList.contains('dirt-layer')) return;
+        
+        const x = event.offsetX;
+        const y = event.offsetY;
+        
+        switch(tool) {
+            case 'brush':
+                gentleReveal(dirt, x, y);
+                break;
+            case 'pick':
+                chipAway(dirt, x, y);
+                break;
+            case 'hammer':
+                violentExposure(dirt);
+                break;
+            case 'restore':
+                restoreAllLayers();
+                break;
+        }
+    }
+
+    function gentleReveal(dirt, x, y) {
+        const reveal = document.createElement('div');
+        reveal.className = 'gentle-reveal';
+        reveal.style.cssText = `
+            position: absolute;
+            left: ${x - 25}px;
+            top: ${y - 25}px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent 0%, transparent 40%, ${dirt.style.backgroundColor} 70%);
+            pointer-events: none;
+        `;
+        
+        dirt.appendChild(reveal);
+        
+        const currentOpacity = parseFloat(dirt.style.opacity) || 0.8;
+        dirt.style.opacity = Math.max(0, currentOpacity - 0.02);
+    }
+
+    function chipAway(dirt, x, y) {
+        const hole = document.createElement('div');
+        hole.className = 'chip-hole';
+        hole.style.cssText = `
+            position: absolute;
+            left: ${x - 10}px;
+            top: ${y - 10}px;
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border: 2px solid rgba(101, 67, 33, 0.5);
+            border-radius: 30%;
+            transform: rotate(${Math.random() * 360}deg);
+        `;
+        
+        dirt.appendChild(hole);
+        
+        if (dirt.querySelectorAll('.chip-hole').length > 5) {
+            const text = document.createElement('div');
+            text.className = 'revealed-text';
+            text.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                opacity: 0.7;
+                color: #333;
+                pointer-events: none;
+                background: rgba(255, 255, 255, 0.8);
+                padding: 0.5em;
+            `;
+            text.textContent = dirt.dataset.hiddenText;
+            dirt.appendChild(text);
+        }
+    }
+
+    function violentExposure(dirt) {
+        dirt.style.animation = 'shatter 0.5s forwards';
+        setTimeout(() => {
+            dirt.style.display = 'none';
+        }, 500);
+    }
+
+    function restoreAllLayers() {
+        document.querySelectorAll('.dirt-layer').forEach(layer => {
+            layer.style.opacity = '0.8';
+            layer.style.display = 'block';
+            layer.innerHTML = ''; // Remove holes and reveals
+        });
+    }
+
+    function analyzeChanges(oldText, newText) {
+        const oldWords = oldText.split(/\s+/);
+        const newWords = newText.split(/\s+/);
+        
+        const deleted = oldWords.filter(w => !newWords.includes(w));
+        const added = newWords.filter(w => !oldWords.includes(w));
+        
+        let description = '';
+        if (deleted.length > added.length) {
+            description = 'Violent erasure';
+        } else if (added.length > deleted.length) {
+            description = 'Supplementary violence';
+        } else {
+            description = 'Substitutional violence';
+        }
+        
+        return { deleted, added, description };
+    }
+
+    function markSurvivingWords(text, previousText) {
+        const survivors = text.split(/\s+/).filter(word => 
+            previousText.includes(word)
+        );
+        
+        let markedText = text;
+        survivors.forEach(word => {
+            const regex = new RegExp(`\\b${word}\\b`, 'g');
+            markedText = markedText.replace(
+                regex,
+                `<span class="survivor" title="This word survived revision">${word}</span>`
+            );
+        });
+        
+        return markedText;
+    }
+
+    function setupTemporalInterface() {
+        // Implementation would set up the temporal scrubber
+        console.log('Temporal interface setup - showing revision timeline');
+    }
+
+    function updateActiveButton(clickedBtn, selector) {
+        document.querySelectorAll(selector).forEach(btn => 
+            btn.classList.remove('active')
+        );
+        clickedBtn.classList.add('active');
+    }
+
+    function updateLayerCount(count) {
+        const layerCountSpan = document.getElementById('layer-count');
+        if (layerCountSpan) {
+            layerCountSpan.textContent = count;
+        }
+    }
+
+    function updateExcavationCursor() {
+        const cursor = {
+            'brush': 'url(data:image/svg+xml;base64,...) 4 20, auto',
+            'pick': 'url(data:image/svg+xml;base64,...) 8 8, auto',
+            'hammer': 'url(data:image/svg+xml;base64,...) 12 12, auto',
+            'restore': 'url(data:image/svg+xml;base64,...) 8 8, auto'
+        };
+        
+        document.querySelectorAll('.dirt-layer').forEach(layer => {
+            layer.style.cursor = cursor[currentTool] || 'crosshair';
+        });
+    }
+
+    function processExistingContent() {
+        // Process any existing content that might need palimpsest treatment
+        const contentElement = document.querySelector('.post-content, .page-content');
+        if (contentElement) {
+            // Mark potentially palimpsestuous elements
+            const paragraphs = contentElement.querySelectorAll('p');
+            paragraphs.forEach((p, index) => {
+                if (Math.random() > 0.8) { // Randomly add synthetic history
+                    addSyntheticHistory(p, index);
+                }
+            });
+        }
+    }
+
+    function addSyntheticHistory(element, index) {
+        // Add synthetic revision history to demonstrate the palimpsest system
+        const originalText = element.textContent;
+        const words = originalText.split(' ');
+        
+        // Create a "previous version" that's 70% of the current text
+        const shorterVersion = words.slice(0, Math.floor(words.length * 0.7)).join(' ') + '...';
+        
+        // Add palimpsest data
+        element.dataset.layer1 = shorterVersion;
+        element.dataset.timestamp1 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        element.classList.add('palimpsest');
+        
+        // Process this element as a palimpsest
+        processPalimpsestElement(element);
+    }
+
+    // Export functions for external use
+    window.PalimpsestPartial = {
+        switchMode: switchRevelationMode,
+        getCurrentMode: () => currentPalimpsestMode,
+        addLayer: function(element, layerText, timestamp) {
+            // Function to add new layers programmatically
+            const existingLayers = extractLayers(element);
+            const newLayerNum = existingLayers.length + 1;
+            element.dataset[`layer${newLayerNum}`] = layerText;
+            element.dataset[`timestamp${newLayerNum}`] = timestamp;
+            processPalimpsestElement(element);
+        }
+    };
+
+    console.log('Palimpsest partial initialized');
+})();
+</script>
+
+<style>
+/* Palimpsest partial styles */
+.palimpsest-system {
+    margin: 2em 0;
+}
+
+.palimpsest-stack {
+    position: relative;
+    min-height: 2em;
+    margin: 2em 0;
+    padding: 1em;
+    border: 1px dashed #ccc;
+}
+
+.palimpsest-layer {
+    line-height: 1.6;
+    transition: all 0.3s ease;
+}
+
+.palimpsest-controls {
+    background: rgba(240, 240, 240, 0.9);
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+}
+
+.revelation-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin: 0.5em 0;
+}
+
+.revelation-btn,
+.tool-btn {
+    padding: 0.5em 1em;
+    border: 1px solid #999;
+    background: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 3px;
+}
+
+.revelation-btn:hover,
+.tool-btn:hover,
+.revelation-btn.active,
+.tool-btn.active {
+    background: #333;
+    color: white;
+}
+
+.palimpsest-info {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid #ddd;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Temporal interface */
+.temporal-interface {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+}
+
+.time-scrubber {
+    width: 100%;
+    margin: 0.5em 0;
+}
+
+.time-markers {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8em;
+    color: #666;
+}
+
+/* Excavation toolkit */
+.excavation-toolkit {
+    background: rgba(101, 67, 33, 0.1);
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+    border: 2px dashed #8B4513;
+}
+
+.tool-selection {
+    display: flex;
+    gap: 0.5em;
+    margin: 0.5em 0;
+}
+
+.excavation-instructions {
+    margin-top: 1em;
+    font-size: 0.9em;
+}
+
+.excavation-instructions ul {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+/* Dirt and excavation effects */
+.dirt-layer {
+    transition: opacity 0.3s ease;
+}
+
+.gentle-reveal,
+.chip-hole {
+    animation: reveal-fade 2s forwards;
+}
+
+@keyframes reveal-fade {
+    to { opacity: 0; }
+}
+
+.revealed-text {
+    animation: text-emerge 1s forwards;
+}
+
+@keyframes text-emerge {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+}
+
+/* Violence mode styles */
+.revision-scar {
+    border-top: 2px dashed red;
+    border-bottom: 2px dashed red;
+    margin: 1em 0;
+    padding: 0.5em;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 0, 0, 0.05) 10px,
+        rgba(255, 0, 0, 0.05) 20px
+    );
+}
+
+.scar-mark {
+    color: red;
+    font-family: monospace;
+    letter-spacing: 0.2em;
+    opacity: 0.6;
+}
+
+.deleted-words {
+    font-size: 0.8em;
+    color: #666;
+    text-decoration: line-through;
+}
+
+.survivor {
+    background: rgba(0, 255, 0, 0.1);
+    border-bottom: 1px dotted green;
+}
+
+/* Limitation notice */
+.ghost-limitation-notice {
+    margin-top: 2em;
+    padding: 1em;
+    background: rgba(255, 0, 0, 0.05);
+    border-left: 4px solid red;
+}
+
+.limitation-text {
+    font-style: italic;
+    color: #666;
+    margin: 0;
+}
+
+/* Shatter animation for violent exposure */
+@keyframes shatter {
+    0% { 
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1) rotate(5deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(0.1) rotate(360deg);
+        opacity: 0;
+        filter: blur(10px);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .revelation-modes,
+    .tool-selection {
+        flex-direction: column;
+    }
+    
+    .palimpsest-controls {
+        position: relative;
+        margin: 1em 0;
+    }
+}
+
+/* Print styles */
+@media print {
+    .palimpsest-controls,
+    .temporal-interface,
+    .excavation-toolkit {
+        display: none !important;
+    }
+    
+    .palimpsest-layer {
+        display: block !important;
+        position: relative !important;
+        opacity: 1 !important;
+        filter: none !important;
+        transform: none !important;
+        border-left: 2px solid #999;
+        padding-left: 1em;
+        margin: 0.5em 0;
+    }
+    
+    .palimpsest-layer:not(.current-layer)::before {
+        content: "[PREVIOUS VERSION]: ";
+        font-weight: bold;
+        font-size: 0.8em;
+    }
+}
+</style>
