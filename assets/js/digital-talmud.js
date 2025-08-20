@@ -86,33 +86,26 @@ class DigitalTalmud {
     // Observe marginalia directly at their natural Ghost card positions
     const options = {
       root: null,
-      rootMargin: '-5% 0px -5% 0px', // Small margins for better control - activate in middle 90% of viewport
+      rootMargin: '-15% 0px -15% 0px', // Smaller activation window - middle 70% of viewport for precise control
       threshold: [0, 0.01, 0.1, 0.3] // Reduced thresholds for better performance
     };
     
-    console.log('[DIGITAL_TALMUD] Setting up direct observer with 90% viewport detection zone');
+    console.log('[DIGITAL_TALMUD] Setting up direct observer with 70% viewport detection zone');
     
     this.observer = new IntersectionObserver((entries) => {
-      // Reduced logging for performance - only log significant events
-      if (document.body.classList.contains('talmud-debug')) {
-        const significantEntries = entries.filter(e => e.isIntersecting || e.intersectionRatio > 0.1);
-        if (significantEntries.length > 0) {
-          console.log(`[DIGITAL_TALMUD] 🔍 ${significantEntries.length} significant intersection changes`);
-        }
-      }
+      // Skip processing if scrolling too fast to reduce lag
+      if (this.scrollTracker.velocity > 50) return;
       
       entries.forEach(entry => {
         const marginalia = entry.target;
         
-        // Only log important intersection events to reduce console spam
-        if (document.body.classList.contains('talmud-debug') && (entry.isIntersecting || entry.intersectionRatio > 0.1)) {
-          console.log(`[DIGITAL_TALMUD] 📊 ${marginalia.dataset.marginaliaId}: intersecting=${entry.isIntersecting}, ratio=${entry.intersectionRatio.toFixed(3)}`);
+        // Only process significant intersection changes to reduce CPU load
+        if (entry.isIntersecting || entry.intersectionRatio > 0.05) {
+          // Update marginalia state based on its actual position
+          this.updateMarginaliaState(marginalia, entry);
         }
         
-        // Update marginalia state based on its actual position
-        this.updateMarginaliaState(marginalia, entry);
-        
-        // Update debug state attribute for visual debugging
+        // Update debug state attribute only when in debug mode (minimal performance impact)
         if (document.body.classList.contains('talmud-debug')) {
           marginalia.dataset.debugState = marginalia.state;
         }
@@ -167,37 +160,24 @@ class DigitalTalmud {
   setupScrollTracking() {
     let scrollTimeout;
     let lastScrollTime = 0;
-    const SCROLL_THROTTLE = 16; // ~60fps throttling
+    const SCROLL_THROTTLE = 32; // ~30fps throttling for better performance
     
     window.addEventListener('scroll', () => {
       const now = Date.now();
       
-      // Throttle scroll events for better performance
+      // Aggressive throttling for smooth scrolling
       if (now - lastScrollTime < SCROLL_THROTTLE) return;
       lastScrollTime = now;
       
       const currentScrollY = window.scrollY;
       
-      // Update scroll state
+      // Update scroll state efficiently
       this.scrollTracker.direction = currentScrollY > this.scrollTracker.lastScrollY ? 'down' : 'up';
       this.scrollTracker.velocity = Math.abs(currentScrollY - this.scrollTracker.lastScrollY);
       this.scrollTracker.isScrolling = true;
       this.scrollTracker.lastScrollY = currentScrollY;
       
-      // Reduced debugging - only log when scroll stops (for performance)
-      if (document.body.classList.contains('talmud-debug') && this.marginalia.length > 0 && this.scrollTracker.velocity < 5) {
-        // Only log when scrolling slowly to reduce console spam
-        this.marginalia.forEach(marginalia => {
-          const rect = marginalia.getBoundingClientRect();
-          const viewportHeight = window.innerHeight;
-          const inObservationZone = rect.top <= viewportHeight * 0.95 && rect.bottom >= viewportHeight * 0.05;
-          if (inObservationZone && marginalia.state === this.STATES.INACTIVE) {
-            console.log(`🎯 ${marginalia.dataset.marginaliaId} should activate soon (slow scroll)`);
-          }
-        });
-      }
-      
-      // Performance: Add scrolling class to pause heavy animations
+      // Performance: Add scrolling class to pause heavy animations immediately
       document.body.classList.add('scrolling');
       
       // Clear previous timeout and set new one
@@ -206,28 +186,23 @@ class DigitalTalmud {
         this.scrollTracker.isScrolling = false;
         // Remove scrolling class to resume animations
         document.body.classList.remove('scrolling');
-      }, 150);
+      }, 100); // Shorter timeout for more responsive animation resumption
       
-      // Update hysteresis for active marginalia
-      this.updateHysteresis();
+      // Only update hysteresis occasionally for better performance
+      if (this.scrollTracker.velocity < 20) { // Only when scrolling slowly
+        this.updateHysteresis();
+      }
     }, { passive: true });
   }
   
   updateMarginaliaState(marginalia, entry) {
-    const rect = marginalia.getBoundingClientRect();
     const currentTime = Date.now();
-    const isInReadingZone = entry.isIntersecting && entry.intersectionRatio > 0.001; // Ultra-low threshold
+    const isInReadingZone = entry.isIntersecting && entry.intersectionRatio > 0.01; // Reasonable threshold
     const isScrollingDown = this.scrollTracker.direction === 'down';
-    const hasMinimumIntersection = entry.intersectionRatio > 0.001; // Ultra-low fallback threshold
     
-    // Debug logging for visibility issues
-    if (entry.isIntersecting) {
-      console.log(`[DIGITAL_TALMUD] 👀 ${marginalia.dataset.marginaliaId} is intersecting:`);
-      console.log(`  Intersection ratio: ${entry.intersectionRatio.toFixed(3)}`);
-      console.log(`  In reading zone: ${isInReadingZone}`);
-      console.log(`  Minimum intersection: ${hasMinimumIntersection}`);
-      console.log(`  Scrolling down: ${isScrollingDown}`);
-      console.log(`  Current state: ${marginalia.state}`);
+    // Minimal debug logging only when absolutely necessary
+    if (document.body.classList.contains('talmud-debug') && entry.isIntersecting && entry.intersectionRatio > 0.1) {
+      console.log(`[DIGITAL_TALMUD] ${marginalia.dataset.marginaliaId}: ratio=${entry.intersectionRatio.toFixed(2)}, state=${marginalia.state}`);
     }
     
     switch (marginalia.state) {
@@ -287,13 +262,8 @@ class DigitalTalmud {
       if (marginalia.state === this.STATES.ACTIVE && marginalia.activationScrollY) {
         const scrolledDistance = this.scrollTracker.lastScrollY - marginalia.activationScrollY;
         
-        // Also check if marginalia has scrolled significantly out of view
-        const rect = marginalia.getBoundingClientRect();
-        const isWellAboveViewport = rect.bottom < -50; // 50px above viewport
-        
-        // Deactivate if scrolled past hysteresis distance OR if marginalia is well above viewport
-        if (scrolledDistance > this.config.HYSTERESIS_DISTANCE || isWellAboveViewport) {
-          console.log(`[DIGITAL_TALMUD] ${marginalia.dataset.marginaliaId} entering DEACTIVATING state (scrolled ${scrolledDistance}px past, aboveViewport: ${isWellAboveViewport})`);
+        // Simple distance-based deactivation without expensive DOM queries
+        if (scrolledDistance > this.config.HYSTERESIS_DISTANCE) {
           marginalia.state = this.STATES.DEACTIVATING;
           marginalia.stateChangeTime = Date.now();
         }
@@ -406,8 +376,11 @@ class DigitalTalmud {
       // Auto-detect content length and set appropriate size + width
       this.optimizeBoxSize(element);
       
-      // Apply font size if specified
+      // CRITICAL: Apply font size FIRST, before any styling, to prevent jumping
       this.applyFontSize(element);
+      
+      // Force immediate style application to prevent font size jumping
+      element.offsetHeight; // Force reflow to apply font size immediately
       
       // Start marginalia invisible but observable (NOT display:none!)
       element.style.opacity = '0';
