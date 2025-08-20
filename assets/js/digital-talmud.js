@@ -438,15 +438,15 @@ class DigitalTalmud {
       if (!marginalia.dataset.width) marginalia.dataset.width = '20';
     }
     
-    // Calculate optimal max width based on container
-    const containerWidth = this.container.offsetWidth;
-    const maxAllowedWidth = Math.floor(containerWidth * 0.3); // Never more than 30%
+    // Calculate optimal max width based on viewport
+    const viewportWidth = window.innerWidth;
+    const maxAllowedWidth = Math.floor(viewportWidth * 0.7); // Up to 70% of viewport on desktop
     
     // Set CSS custom property for dynamic width control
     marginalia.style.setProperty('--marginalia-max-width', `${maxAllowedWidth}px`);
     marginalia.style.setProperty('--content-length', Math.min(length / 80, 2.5));
     
-    console.log(`[DIGITAL_TALMUD] Optimized ${marginalia.dataset.marginaliaId}: ${length} chars, ${marginalia.dataset.width}vw, max ${maxAllowedWidth}px`);
+    console.log(`[DIGITAL_TALMUD] Optimized ${marginalia.dataset.marginaliaId}: ${length} chars, ${marginalia.dataset.width}vw, max ${maxAllowedWidth}px (70% viewport)`);
   }
   
   async intrudeMarginalia(marginalia) {

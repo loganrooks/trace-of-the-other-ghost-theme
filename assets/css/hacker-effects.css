@@ -413,13 +413,13 @@
   transform: translateZ(0); /* Force GPU acceleration */
 }
 
-/* Performance optimization - pause heavy animations during scroll */
-.scrolling .matrix-column,
+/* Performance optimization - only pause subtle effects, keep matrix flowing */
 .scrolling .scanlines::before,
-.scrolling .digital-noise,
-.scrolling .screen-flicker {
+.scrolling .digital-noise {
   animation-play-state: paused;
 }
+
+/* Keep matrix and screen effects running for atmosphere */
 
 /* Limit animations on low-end devices */
 @media (max-width: 768px) {

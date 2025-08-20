@@ -34,10 +34,10 @@
   border: 1px solid var(--hacker-green-dark);
   background: rgba(0, 0, 0, 0.95);
   
-  /* Responsive width control - never more than 25% of container */
+  /* Responsive width control - generous on desktop, constrained on mobile */
   width: fit-content;
   min-width: 80px;
-  max-width: min(var(--marginalia-max-width, 120px), 25vw);
+  max-width: min(var(--marginalia-max-width, 200px), 70vw); /* Very wide on desktop - up to 70% */
   
   /* Initially hidden but observable */
   display: block;
@@ -139,17 +139,23 @@
   font-size: 0.75rem;
 }
 
-/* Width percentage control via data attributes */
-.marginalia-voice[data-width="15"] { max-width: min(var(--marginalia-max-width, 120px), 15vw); }
-.marginalia-voice[data-width="20"] { max-width: min(var(--marginalia-max-width, 120px), 20vw); }
-.marginalia-voice[data-width="25"] { max-width: min(var(--marginalia-max-width, 120px), 25vw); }
-.marginalia-voice[data-width="30"] { max-width: min(var(--marginalia-max-width, 120px), 30vw); }
+/* Width percentage control via data attributes - very generous desktop widths up to 70% */
+.marginalia-voice[data-width="15"] { max-width: min(var(--marginalia-max-width, 200px), 15vw); }
+.marginalia-voice[data-width="20"] { max-width: min(var(--marginalia-max-width, 200px), 20vw); }
+.marginalia-voice[data-width="25"] { max-width: min(var(--marginalia-max-width, 200px), 25vw); }
+.marginalia-voice[data-width="30"] { max-width: min(var(--marginalia-max-width, 200px), 30vw); }
+.marginalia-voice[data-width="35"] { max-width: min(var(--marginalia-max-width, 200px), 35vw); }
+.marginalia-voice[data-width="40"] { max-width: min(var(--marginalia-max-width, 200px), 40vw); }
+.marginalia-voice[data-width="45"] { max-width: min(var(--marginalia-max-width, 200px), 45vw); }
+.marginalia-voice[data-width="50"] { max-width: min(var(--marginalia-max-width, 200px), 50vw); }
+.marginalia-voice[data-width="60"] { max-width: min(var(--marginalia-max-width, 200px), 60vw); }
+.marginalia-voice[data-width="70"] { max-width: min(var(--marginalia-max-width, 200px), 70vw); }
 
 /* Content-length based sizing with width limits */
 .marginalia-voice {
   font-size: calc(0.75rem - (var(--content-length, 0) * 0.05rem));
-  /* Ensure text can always wrap - marginalia never exceeds 30% width */
-  max-width: min(var(--marginalia-max-width, 120px), 30vw) !important;
+  /* Ensure text can always wrap - very generous desktop width allowance */
+  max-width: min(var(--marginalia-max-width, 200px), 70vw) !important;
 }
 
 /* Numerical font scale system (0.4 - 2.5 range) */
@@ -228,12 +234,56 @@
   transform: translateY(0) scale(1) !important;
 }
 
+/* ===== GLITCH EFFECTS ===== */
+.marginalia-voice.intruding {
+  animation: marginalia-glitch 15s infinite; /* Subtle glitch every 15 seconds */
+}
+
+@keyframes marginalia-glitch {
+  0%, 98% { 
+    transform: translateY(0) scale(1);
+    filter: none;
+    text-shadow: none;
+  }
+  98.5% {
+    transform: translateY(-1px) scale(1.01) skew(0.5deg);
+    filter: hue-rotate(90deg);
+    text-shadow: 
+      -1px 0 0 var(--hacker-green),
+      1px 0 0 var(--accent-cyan);
+  }
+  99% {
+    transform: translateY(1px) scale(0.99) skew(-0.3deg);
+    filter: hue-rotate(-45deg);
+    text-shadow: 
+      1px 0 0 var(--hacker-green),
+      -1px 0 0 var(--accent-red);
+  }
+  99.5% {
+    transform: translateY(0) scale(1.005) skew(0.1deg);
+    filter: hue-rotate(180deg);
+  }
+  100% { 
+    transform: translateY(0) scale(1);
+    filter: none;
+    text-shadow: none;
+  }
+}
+
+/* Different glitch timing for different voices */
+.marginalia-voice[data-voice="2"].intruding { animation-delay: 3s; }
+.marginalia-voice[data-voice="3"].intruding { animation-delay: 7s; }
+.marginalia-voice[data-voice="4"].intruding { animation-delay: 11s; }
+.marginalia-voice[data-voice="5"].intruding { animation-delay: 2s; }
+.marginalia-voice[data-voice="6"].intruding { animation-delay: 9s; }
+
 /* ===== HOVER EFFECTS ===== */
 .marginalia-voice:hover {
   transform: scale(1.02) !important;
   border-left-width: 5px;
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
   z-index: 20;
+  animation-play-state: paused; /* Pause glitch during hover */
 }
 
 /* ===== RESPONSIVE LAYOUT ===== */
@@ -708,5 +758,10 @@
   .marginalia-voice.materializing {
     opacity: 1;
     transform: none;
+  }
+  
+  /* Disable glitch effects for reduced motion */
+  .marginalia-voice.intruding {
+    animation: none !important;
   }
 }
