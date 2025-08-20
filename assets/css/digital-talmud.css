@@ -251,7 +251,8 @@
 
 @media (max-width: 1024px) {
   .post-content, .page-content {
-    padding: 2rem 2.5rem;
+    padding: 2rem 2rem; /* Reduced padding for tablets */
+    max-width: 900px; /* Slightly wider on tablets */
   }
   
   .marginalia-voice {
@@ -262,12 +263,28 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Tablet portrait / large phone landscape */
+@media (max-width: 900px) {
   .post-content, .page-content {
-    padding: 1.5rem;
-    max-width: 100%;
-    margin: 0 auto; /* Center the content */
+    padding: 1.5rem 1rem; /* Transition to mobile spacing */
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Override site-wrapper constraints for full width mobile experience */
+  .site-wrapper {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .post-content, .page-content {
+    padding: 1rem 0.75rem; /* Much thinner side margins */
+    max-width: none; /* Remove width constraint */
+    margin: 0; /* No auto margin constraint */
     width: 100%;
+    box-sizing: border-box;
   }
   
   .marginalia-voice {
@@ -309,10 +326,18 @@
 }
 
 @media (max-width: 480px) {
+  /* Override site-wrapper constraints for full width on small screens */
+  .site-wrapper {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
   .post-content, .page-content {
-    margin-left: 1rem;
-    margin-right: 1rem;
-    padding: 1rem;
+    padding: 0.75rem 0.5rem; /* Even thinner margins on small screens */
+    margin: 0; /* No side margins */
+    width: 100%;
+    max-width: none;
   }
   
   .marginalia-voice {
