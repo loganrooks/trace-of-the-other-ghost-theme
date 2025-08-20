@@ -34,10 +34,10 @@
   border: 1px solid var(--hacker-green-dark);
   background: rgba(0, 0, 0, 0.95);
   
-  /* Responsive width control - generous on desktop, constrained on mobile */
+  /* Responsive width control - based on content area for proper text flow */
   width: fit-content;
   min-width: 80px;
-  max-width: min(var(--marginalia-max-width, 200px), 70vw); /* Very wide on desktop - up to 70% */
+  max-width: var(--marginalia-max-width, 200px); /* Calculated from content area */
   
   /* Initially hidden but observable */
   display: block;
@@ -139,23 +139,20 @@
   font-size: 0.75rem;
 }
 
-/* Width percentage control via data attributes - very generous desktop widths up to 70% */
-.marginalia-voice[data-width="15"] { max-width: min(var(--marginalia-max-width, 200px), 15vw); }
-.marginalia-voice[data-width="20"] { max-width: min(var(--marginalia-max-width, 200px), 20vw); }
-.marginalia-voice[data-width="25"] { max-width: min(var(--marginalia-max-width, 200px), 25vw); }
-.marginalia-voice[data-width="30"] { max-width: min(var(--marginalia-max-width, 200px), 30vw); }
-.marginalia-voice[data-width="35"] { max-width: min(var(--marginalia-max-width, 200px), 35vw); }
-.marginalia-voice[data-width="40"] { max-width: min(var(--marginalia-max-width, 200px), 40vw); }
-.marginalia-voice[data-width="45"] { max-width: min(var(--marginalia-max-width, 200px), 45vw); }
-.marginalia-voice[data-width="50"] { max-width: min(var(--marginalia-max-width, 200px), 50vw); }
-.marginalia-voice[data-width="60"] { max-width: min(var(--marginalia-max-width, 200px), 60vw); }
-.marginalia-voice[data-width="70"] { max-width: min(var(--marginalia-max-width, 200px), 70vw); }
+/* Width percentage control via data attributes - based on content area for proper text flow */
+.marginalia-voice[data-width="15"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.33); } /* ~15% of content area */
+.marginalia-voice[data-width="20"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.44); } /* ~20% of content area */
+.marginalia-voice[data-width="25"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.56); } /* ~25% of content area */
+.marginalia-voice[data-width="30"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.67); } /* ~30% of content area */
+.marginalia-voice[data-width="35"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.78); } /* ~35% of content area */
+.marginalia-voice[data-width="40"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.89); } /* ~40% of content area */
+.marginalia-voice[data-width="45"] { max-width: var(--marginalia-max-width, 200px); } /* Full available margin space */
 
 /* Content-length based sizing with width limits */
 .marginalia-voice {
   font-size: calc(0.75rem - (var(--content-length, 0) * 0.05rem));
-  /* Ensure text can always wrap - very generous desktop width allowance */
-  max-width: min(var(--marginalia-max-width, 200px), 70vw) !important;
+  /* Ensure text can always wrap - based on content area calculations */
+  max-width: var(--marginalia-max-width, 200px) !important;
 }
 
 /* Numerical font scale system (0.4 - 2.5 range) */
