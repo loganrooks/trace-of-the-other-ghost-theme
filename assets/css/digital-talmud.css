@@ -264,20 +264,25 @@
 
 @media (max-width: 768px) {
   .post-content, .page-content {
-    padding: 2rem;
-    max-width: 600px;
+    padding: 1.5rem;
+    max-width: 100%;
+    margin: 0 auto; /* Center the content */
+    width: 100%;
   }
   
   .marginalia-voice {
-    /* On mobile, marginalia becomes inline blocks */
+    /* On mobile, marginalia takes full width */
     float: none !important;
-    display: inline-block;
-    max-width: 100%;
-    width: auto;
-    margin: 1rem auto;
-    font-size: 0.75rem;
-    text-align: center;
+    display: block !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 1.5rem 0 !important;
+    padding: 1rem !important;
+    font-size: 0.8rem;
+    text-align: left;
     shape-outside: none; /* Disable shapes on mobile */
+    border-radius: 8px;
+    box-sizing: border-box;
   }
   
   /* Clear floats on mobile */
@@ -486,7 +491,7 @@
 
 /* Enhanced debug info panel */
 .talmud-debug::before {
-  content: 'DEBUG MODE: NO rootMargin | Threshold: 0.001 (ultra-low) | Fallback: ANY intersection | Hysteresis: 300px | States: ⚫Inactive 🟡Activating ✅Active 🟠Deactivating | Ctrl+Shift: I=Info C=Check M=Force D=Debug';
+  content: 'DEBUG MODE: 5% rootMargin (90% active zone) | Optimized thresholds + 60fps throttling | Mobile: full width | Heavy animations paused during scroll | States: ⚫Inactive 🟡Activating ✅Active 🟠Deactivating | Ctrl+Shift: I=Info C=Check M=Force D=Debug';
   position: fixed;
   top: 10px;
   right: 10px;
@@ -498,17 +503,17 @@
   z-index: 1000;
   font-family: 'JetBrains Mono', monospace;
   border: 2px solid green;
-  max-width: 520px;
+  max-width: 600px;
   line-height: 1.3;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Debug observation zone visualization - FULL VIEWPORT */
+/* Debug observation zone visualization - 90% VIEWPORT */
 .talmud-debug::after {
   content: '';
   position: fixed;
-  top: 0%; /* Full viewport observation */
-  bottom: 0%; /* Full viewport observation */
+  top: 5%; /* 90% viewport observation zone */
+  bottom: 5%; /* 90% viewport observation zone */
   left: 0;
   right: 0;
   background: linear-gradient(180deg, 

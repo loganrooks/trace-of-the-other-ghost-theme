@@ -413,6 +413,14 @@
   transform: translateZ(0); /* Force GPU acceleration */
 }
 
+/* Performance optimization - pause heavy animations during scroll */
+.scrolling .matrix-column,
+.scrolling .scanlines::before,
+.scrolling .digital-noise,
+.scrolling .screen-flicker {
+  animation-play-state: paused;
+}
+
 /* Limit animations on low-end devices */
 @media (max-width: 768px) {
   .matrix-column:nth-child(n+6) {

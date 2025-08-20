@@ -86,23 +86,28 @@ class DigitalTalmud {
     // Observe marginalia directly at their natural Ghost card positions
     const options = {
       root: null,
-      rootMargin: '0px 0px 0px 0px', // No margins - observe any intersection with viewport
-      threshold: [0, 0.001, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5] // Even lower thresholds
+      rootMargin: '-5% 0px -5% 0px', // Small margins for better control - activate in middle 90% of viewport
+      threshold: [0, 0.01, 0.1, 0.3] // Reduced thresholds for better performance
     };
     
-    console.log('[DIGITAL_TALMUD] Setting up direct observer with 80% viewport detection zone');
+    console.log('[DIGITAL_TALMUD] Setting up direct observer with 90% viewport detection zone');
     
     this.observer = new IntersectionObserver((entries) => {
-      console.log(`[DIGITAL_TALMUD] 🔍 IntersectionObserver callback fired with ${entries.length} entries`);
+      // Reduced logging for performance - only log significant events
+      if (document.body.classList.contains('talmud-debug')) {
+        const significantEntries = entries.filter(e => e.isIntersecting || e.intersectionRatio > 0.1);
+        if (significantEntries.length > 0) {
+          console.log(`[DIGITAL_TALMUD] 🔍 ${significantEntries.length} significant intersection changes`);
+        }
+      }
       
       entries.forEach(entry => {
         const marginalia = entry.target;
         
-        console.log(`[DIGITAL_TALMUD] 📊 Processing entry for ${marginalia.dataset.marginaliaId}:`);
-        console.log(`  isIntersecting: ${entry.isIntersecting}`);
-        console.log(`  intersectionRatio: ${entry.intersectionRatio.toFixed(4)}`);
-        console.log(`  target bounds: top=${entry.boundingClientRect.top.toFixed(0)}, bottom=${entry.boundingClientRect.bottom.toFixed(0)}`);
-        console.log(`  root bounds: top=${entry.rootBounds.top}, bottom=${entry.rootBounds.bottom}`);
+        // Only log important intersection events to reduce console spam
+        if (document.body.classList.contains('talmud-debug') && (entry.isIntersecting || entry.intersectionRatio > 0.1)) {
+          console.log(`[DIGITAL_TALMUD] 📊 ${marginalia.dataset.marginaliaId}: intersecting=${entry.isIntersecting}, ratio=${entry.intersectionRatio.toFixed(3)}`);
+        }
         
         // Update marginalia state based on its actual position
         this.updateMarginaliaState(marginalia, entry);
@@ -161,9 +166,16 @@ class DigitalTalmud {
   
   setupScrollTracking() {
     let scrollTimeout;
-    let debugLogInterval;
+    let lastScrollTime = 0;
+    const SCROLL_THROTTLE = 16; // ~60fps throttling
     
     window.addEventListener('scroll', () => {
+      const now = Date.now();
+      
+      // Throttle scroll events for better performance
+      if (now - lastScrollTime < SCROLL_THROTTLE) return;
+      lastScrollTime = now;
+      
       const currentScrollY = window.scrollY;
       
       // Update scroll state
@@ -172,31 +184,28 @@ class DigitalTalmud {
       this.scrollTracker.isScrolling = true;
       this.scrollTracker.lastScrollY = currentScrollY;
       
-      // Enhanced debugging - log marginalia positions during scroll
-      if (document.body.classList.contains('talmud-debug') && this.marginalia.length > 0) {
-        console.log(`[DIGITAL_TALMUD] 📍 SCROLL EVENT: y=${currentScrollY}, direction=${this.scrollTracker.direction}, velocity=${this.scrollTracker.velocity}`);
-        
-        // Log current position of each marginalia relative to viewport
+      // Reduced debugging - only log when scroll stops (for performance)
+      if (document.body.classList.contains('talmud-debug') && this.marginalia.length > 0 && this.scrollTracker.velocity < 5) {
+        // Only log when scrolling slowly to reduce console spam
         this.marginalia.forEach(marginalia => {
           const rect = marginalia.getBoundingClientRect();
           const viewportHeight = window.innerHeight;
-          const topPercentage = (rect.top / viewportHeight * 100).toFixed(1);
-          const bottomPercentage = (rect.bottom / viewportHeight * 100).toFixed(1);
-          
-          console.log(`  ${marginalia.dataset.marginaliaId}: top=${topPercentage}%, bottom=${bottomPercentage}%, state=${marginalia.state}`);
-          
-          // Check if marginalia should be in observation zone
-          const inObservationZone = rect.top <= viewportHeight * 0.9 && rect.bottom >= viewportHeight * 0.1;
-          if (inObservationZone) {
-            console.log(`    🎯 ${marginalia.dataset.marginaliaId} IS IN OBSERVATION ZONE (10%-90%)`);
+          const inObservationZone = rect.top <= viewportHeight * 0.95 && rect.bottom >= viewportHeight * 0.05;
+          if (inObservationZone && marginalia.state === this.STATES.INACTIVE) {
+            console.log(`🎯 ${marginalia.dataset.marginaliaId} should activate soon (slow scroll)`);
           }
         });
       }
+      
+      // Performance: Add scrolling class to pause heavy animations
+      document.body.classList.add('scrolling');
       
       // Clear previous timeout and set new one
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         this.scrollTracker.isScrolling = false;
+        // Remove scrolling class to resume animations
+        document.body.classList.remove('scrolling');
       }, 150);
       
       // Update hysteresis for active marginalia
