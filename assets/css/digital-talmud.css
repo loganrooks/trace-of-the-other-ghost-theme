@@ -269,6 +269,16 @@
     padding: 1.5rem 1rem; /* Transition to mobile spacing */
     max-width: none;
   }
+  
+  /* Header transition for tablets */
+  .site-header, .page-header {
+    padding: 1.75rem 1rem !important; /* Match content margins */
+    max-width: none !important;
+  }
+  
+  .site-title {
+    font-size: 1.75rem !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -285,6 +295,53 @@
     margin: 0; /* No auto margin constraint */
     width: 100%;
     box-sizing: border-box;
+  }
+
+  /* Header and navigation mobile optimization */
+  .site-header {
+    padding: 1.5rem 0.75rem 1.5rem 0.75rem !important; /* Match post content margins */
+    margin: 0 !important;
+    width: 100%;
+    max-width: none !important;
+  }
+  
+  .page-header {
+    padding: 1.5rem 0.75rem !important; /* Match post content margins */
+    margin: 0 !important;
+    width: 100%;
+    max-width: none !important;
+  }
+  
+  .header-content {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .site-title {
+    font-size: 1.5rem !important;
+    margin: 0 !important;
+  }
+  
+  .site-nav, .navigation {
+    margin: 1rem 0 0 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Ensure navigation links flow properly on mobile */
+  .nav, .navigation ul {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  
+  .nav-item, .navigation li {
+    margin: 0 !important;
+  }
+  
+  .nav-link, .navigation a {
+    font-size: 0.95rem !important;
+    padding: 0.5rem 0.75rem !important;
   }
   
   .marginalia-voice {
@@ -338,6 +395,32 @@
     margin: 0; /* No side margins */
     width: 100%;
     max-width: none;
+  }
+
+  /* Header and navigation small screen optimization */
+  .site-header {
+    padding: 1.25rem 0.5rem 1.25rem 0.5rem !important; /* Match ultra-thin margins */
+    margin: 0 !important;
+  }
+  
+  .page-header {
+    padding: 1.25rem 0.5rem !important; /* Match ultra-thin margins */
+    margin: 0 !important;
+  }
+  
+  .site-title {
+    font-size: 1.25rem !important; /* Slightly smaller on very small screens */
+  }
+  
+  .nav, .navigation ul {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    margin-top: 1rem !important;
+  }
+  
+  .nav-link, .navigation a {
+    padding: 0.5rem 0 !important; /* Reduce link padding */
+    font-size: 0.9rem !important;
   }
   
   .marginalia-voice {
