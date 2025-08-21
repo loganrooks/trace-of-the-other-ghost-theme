@@ -44,7 +44,7 @@ class DigitalTalmud {
     // Configuration
     this.config = {
       READING_ZONE: 0.25,        // 25% down viewport (more permissive)
-      HYSTERESIS_DISTANCE: 300,  // pixels
+      HYSTERESIS_DISTANCE: 1200,  // pixels - allow marginalia to persist longer for Digital Talmud experience
       ACTIVATION_DELAY: 50,      // ms (faster activation)
       DEACTIVATION_DELAY: 500    // ms
     };
@@ -207,6 +207,11 @@ class DigitalTalmud {
     
     switch (marginalia.state) {
       case this.STATES.INACTIVE:
+        // REACTIVATION DEBUG: Always log intersection attempts for inactive marginalia
+        if (entry.isIntersecting && entry.intersectionRatio > 0.01) {
+          console.log(`[DIGITAL_TALMUD] 🔍 ${marginalia.dataset.marginaliaId} REACTIVATION ATTEMPT: ratio=${entry.intersectionRatio.toFixed(2)}, scrollDir=${this.scrollTracker.direction}`);
+        }
+        
         // Primary activation: reading zone + scrolling down
         if (isInReadingZone && isScrollingDown) {
           console.log(`[DIGITAL_TALMUD] 🟡 ${marginalia.dataset.marginaliaId} entering ACTIVATING state (primary trigger)`);
@@ -258,12 +263,29 @@ class DigitalTalmud {
   // Simplified - no longer need complex zone calculations since we observe marginalia directly
   
   updateHysteresis() {
+    const currentTime = Date.now();
+    
     this.marginalia.forEach(marginalia => {
       if (marginalia.state === this.STATES.ACTIVE && marginalia.activationScrollY) {
+        // GRACE PERIOD - don't deactivate immediately after activation
+        const timeSinceActivation = currentTime - marginalia.stateChangeTime;
+        if (timeSinceActivation < 1000) { // 1 second grace period
+          if (marginalia.dataset.marginaliaId === 'marginalia-0' || marginalia.dataset.marginaliaId === 'marginalia-1') {
+            console.log(`[HYSTERESIS DEBUG] ${marginalia.dataset.marginaliaId}: GRACE PERIOD - ${timeSinceActivation}ms since activation`);
+          }
+          return; // Skip hysteresis check during grace period
+        }
+        
         const scrolledDistance = this.scrollTracker.lastScrollY - marginalia.activationScrollY;
+        
+        // HYSTERESIS DEBUG - log distance calculations for active marginalia
+        if (marginalia.dataset.marginaliaId === 'marginalia-0' || marginalia.dataset.marginaliaId === 'marginalia-1') {
+          console.log(`[HYSTERESIS DEBUG] ${marginalia.dataset.marginaliaId}: scrollY=${this.scrollTracker.lastScrollY}, activationY=${marginalia.activationScrollY}, distance=${scrolledDistance}, threshold=${this.config.HYSTERESIS_DISTANCE}`);
+        }
         
         // Simple distance-based deactivation without expensive DOM queries
         if (scrolledDistance > this.config.HYSTERESIS_DISTANCE) {
+          console.log(`[DIGITAL_TALMUD] ⚠️ HYSTERESIS DEACTIVATION TRIGGERED: ${marginalia.dataset.marginaliaId} - distance ${scrolledDistance}px > ${this.config.HYSTERESIS_DISTANCE}px`);
           marginalia.state = this.STATES.DEACTIVATING;
           marginalia.stateChangeTime = Date.now();
         }
@@ -281,8 +303,15 @@ class DigitalTalmud {
     marginalia.state = this.STATES.ACTIVE;
     marginalia.stateChangeTime = Date.now();
     
-    // Make marginalia visible and position it
-    marginalia.style.visibility = 'visible'; // Make visible first
+    console.log(`[DIGITAL_TALMUD] 📊 State transition: ${marginalia.dataset.marginaliaId} → ACTIVE at scrollY=${marginalia.activationScrollY}`);
+    
+    // GLITCH ENTRANCE: Reset to completely hidden state first
+    marginalia.style.transition = 'none'; // No smooth transitions
+    marginalia.style.opacity = '0'; // Force start from invisible
+    marginalia.style.transform = 'translateY(30px) scale(0.7) skew(2deg)'; // Match animation start
+    marginalia.style.visibility = 'visible'; // Make observable but invisible
+    
+    // Position marginalia (but keep it invisible)
     this.showMarginalia(marginalia);
     
     // Highlight referenced text phrase if specified (search in nearby content)
@@ -290,14 +319,20 @@ class DigitalTalmud {
       this.highlightNearbyPhrase(marginalia, marginalia.dataset.targetPhrase);
     }
     
-    // Smooth entrance animation
-    marginalia.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    marginalia.style.opacity = '1';
-    marginalia.style.transform = 'translateY(0) scale(1)';
+    // Trigger glitch entrance animation after a tiny delay to ensure state is set
+    setTimeout(() => {
+      marginalia.classList.add('materializing'); // Trigger glitch entrance animation
+      console.log(`[DIGITAL_TALMUD] 🎬 GLITCH ANIMATION STARTED for ${marginalia.dataset.marginaliaId}`);
+    }, 10);
     
-    marginalia.classList.add('intruding');
+    // Remove materializing class after animation completes and add materialized class
+    setTimeout(() => {
+      marginalia.classList.remove('materializing');
+      marginalia.classList.add('materialized'); // Ensure permanent visibility
+      console.log(`[DIGITAL_TALMUD] 🎭 ${marginalia.dataset.marginaliaId} animation complete - now materialized`);
+    }, 600); // Match animation duration (0.6s)
     
-    console.log(`[DIGITAL_TALMUD] ✅ ${marginalia.dataset.marginaliaId} FULLY ACTIVATED (scroll: ${marginalia.activationScrollY})`);
+    console.log(`[DIGITAL_TALMUD] ✅ ${marginalia.dataset.marginaliaId} GLITCH ACTIVATED (scroll: ${marginalia.activationScrollY})`);
   }
   
   completeDeactivation(marginalia) {
@@ -314,10 +349,17 @@ class DigitalTalmud {
     marginalia.style.transform = 'translateY(10px) scale(0.9)';
     
     setTimeout(() => {
-      marginalia.style.visibility = 'hidden'; // Use visibility instead of display
+      // INVISIBLE-IN-PLACE CLEANUP - keep element in natural position for reliable IntersectionObserver
+      // NEVER change position - that breaks intersection detection!
+      marginalia.style.opacity = '0'; // Invisible but still in layout
+      marginalia.style.pointerEvents = 'none'; // Don't interfere with page interaction
+      marginalia.style.visibility = 'visible'; // Must stay visible for IntersectionObserver
       marginalia.classList.remove('intruding');
+      marginalia.classList.remove('materialized');
       marginalia.style.float = 'none';
       marginalia.style.clear = 'none';
+      
+      // DON'T change: position, left, top, height, margin, padding - keep natural layout
       
       // Reset state
       marginalia.state = this.STATES.INACTIVE;
@@ -329,7 +371,7 @@ class DigitalTalmud {
       if (position.includes('right')) this.activeMarginalia.right--;
       this.updateLayout();
       
-      console.log(`[DIGITAL_TALMUD] ✅ ${marginalia.dataset.marginaliaId} FULLY DEACTIVATED`);
+      console.log(`[DIGITAL_TALMUD] ✅ ${marginalia.dataset.marginaliaId} DEACTIVATED - invisible in natural position, ready for reliable reactivation`);
     }, 400);
   }
   
@@ -411,15 +453,24 @@ class DigitalTalmud {
       if (!marginalia.dataset.width) marginalia.dataset.width = '20';
     }
     
-    // Calculate optimal max width based on content container for better text flow
-    const containerWidth = this.container.offsetWidth;
-    const maxAllowedWidth = Math.floor(containerWidth * 0.45); // Up to 45% of content area - better for text wrapping
+    // Calculate max width based on user intent - viewport for explicit percentages, container for defaults
+    let maxAllowedWidth;
+    if (marginalia.dataset.width && parseInt(marginalia.dataset.width) >= 30) {
+      // For explicit high percentages (30%+), use viewport width as requested
+      maxAllowedWidth = Math.floor(window.innerWidth * (parseInt(marginalia.dataset.width) / 100));
+      console.log(`[DIGITAL_TALMUD] ${marginalia.dataset.marginaliaId}: Using viewport-based width ${marginalia.dataset.width}% = ${maxAllowedWidth}px`);
+    } else {
+      // For smaller percentages, use content area to ensure text flow
+      const containerWidth = this.container.offsetWidth;
+      maxAllowedWidth = Math.floor(containerWidth * 0.45);
+      console.log(`[DIGITAL_TALMUD] ${marginalia.dataset.marginaliaId}: Using container-based width = ${maxAllowedWidth}px`);
+    }
     
     // Set CSS custom property for dynamic width control
     marginalia.style.setProperty('--marginalia-max-width', `${maxAllowedWidth}px`);
     marginalia.style.setProperty('--content-length', Math.min(length / 80, 2.5));
     
-    console.log(`[DIGITAL_TALMUD] Optimized ${marginalia.dataset.marginaliaId}: ${length} chars, ${marginalia.dataset.width}% of content area, max ${maxAllowedWidth}px (45% container)`);
+    console.log(`[DIGITAL_TALMUD] Optimized ${marginalia.dataset.marginaliaId}: ${length} chars, ${marginalia.dataset.width}% width, max ${maxAllowedWidth}px`);
   }
   
   async intrudeMarginalia(marginalia) {
@@ -467,21 +518,30 @@ class DigitalTalmud {
   }
   
   showMarginalia(marginalia) {
-    // Show marginalia with float positioning
+    // SIMPLE REACTIVATION - only reset visual properties, keep layout unchanged
     marginalia.style.display = 'block';
+    marginalia.style.visibility = 'visible'; 
+    marginalia.style.opacity = ''; // Let CSS/animation handle opacity
+    marginalia.style.pointerEvents = ''; // Re-enable interactions
+    marginalia.style.transform = ''; // Reset any transform constraints
     marginalia.classList.add('intruding');
     
-    // Apply float based on position
+    // NO position/layout changes - element stays in natural flow for reliable IntersectionObserver
+    console.log(`[DIGITAL_TALMUD] 🔄 ${marginalia.dataset.marginaliaId} REACTIVATED - stayed in natural layout position`);
+    
+    // Apply float based on position - NO CLEAR to allow multiple marginalia simultaneously
     const position = marginalia.dataset.position;
     if (position.includes('left')) {
       marginalia.style.float = 'left';
-      marginalia.style.clear = 'left';
+      marginalia.style.clear = 'none'; // Allow multiple left marginalia
       this.activeMarginalia.left++;
     } else if (position.includes('right')) {
       marginalia.style.float = 'right';
-      marginalia.style.clear = 'right';
+      marginalia.style.clear = 'none'; // Allow multiple right marginalia  
       this.activeMarginalia.right++;
     }
+    
+    console.log(`[DIGITAL_TALMUD] 📐 ${marginalia.dataset.marginaliaId} positioned ${position} - Active: L${this.activeMarginalia.left} R${this.activeMarginalia.right}`);
   }
   
   updateLayout() {
@@ -563,38 +623,37 @@ class DigitalTalmud {
   }
   
   applyFontSize(marginalia) {
-    // Numerical scale system (0.4 - 2.5 range)
+    // CSS handles font scaling - just ensure attribute is set for CSS selectors
     if (marginalia.dataset.fontScale) {
       const scale = parseFloat(marginalia.dataset.fontScale);
       if (scale >= 0.4 && scale <= 2.5) {
-        marginalia.style.setProperty('--font-scale', scale);
-        marginalia.style.fontSize = `${scale * 0.7}rem`; // Base 0.7rem * scale
-        console.log(`[DIGITAL_TALMUD] Applied font scale ${scale} to ${marginalia.dataset.marginaliaId}`);
+        // CSS will handle this via data-font-scale attribute - don't override with inline styles
+        console.log(`[DIGITAL_TALMUD] Font scale ${scale} set for CSS handling on ${marginalia.dataset.marginaliaId}`);
       } else {
         console.warn(`[DIGITAL_TALMUD] Font scale ${scale} out of range (0.4-2.5) for ${marginalia.dataset.marginaliaId}`);
       }
     }
     
-    // Direct font size override
+    // Direct font size override - only when specifically requested
     else if (marginalia.dataset.fontSize) {
       marginalia.style.fontSize = marginalia.dataset.fontSize;
       console.log(`[DIGITAL_TALMUD] Applied direct font size ${marginalia.dataset.fontSize} to ${marginalia.dataset.marginaliaId}`);
     }
     
-    // Predefined font categories (backward compatibility)
+    // Predefined font categories (backward compatibility) - convert to data-font-scale
     else if (marginalia.dataset.font) {
       const fontMap = {
-        'tiny': 0.6,
-        'small': 0.8,
-        'medium': 1.0,
-        'large': 1.3,
-        'huge': 1.8
+        'tiny': '0.6',
+        'small': '0.8',
+        'medium': '1.0',
+        'large': '1.3',
+        'huge': '1.8'
       };
       
       const scale = fontMap[marginalia.dataset.font];
       if (scale) {
-        marginalia.style.fontSize = `${scale * 0.7}rem`;
-        console.log(`[DIGITAL_TALMUD] Applied predefined font '${marginalia.dataset.font}' (${scale}) to ${marginalia.dataset.marginaliaId}`);
+        marginalia.dataset.fontScale = scale; // Convert to CSS-handled attribute
+        console.log(`[DIGITAL_TALMUD] Converted predefined font '${marginalia.dataset.font}' to font-scale=${scale} for ${marginalia.dataset.marginaliaId}`);
       }
     }
   }

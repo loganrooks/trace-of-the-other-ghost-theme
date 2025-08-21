@@ -80,7 +80,8 @@
 /* Progressive animation states */
 .marginalia-voice.intruding {
   display: block;
-  /* opacity and transform handled by JavaScript for smooth progression */
+  opacity: 1 !important; /* Override base opacity: 0 when active */
+  transform: translateY(0) scale(1) !important; /* Override base transform when active */
 }
 
 /* No longer needed - observing marginalia directly */
@@ -248,9 +249,62 @@
 .marginalia-voice.materialized {
   opacity: 1 !important;
   transform: translateY(0) scale(1) !important;
+  visibility: visible !important; /* Ensure visibility is never lost */
 }
 
-/* ===== GLITCH EFFECTS ===== */
+/* ===== GLITCH ENTRANCE ANIMATION ===== */
+.marginalia-voice.materializing {
+  animation: marginalia-glitch-in 0.6s ease-out forwards !important;
+  /* Override any existing opacity/transform during animation */
+  opacity: 0 !important;
+  transform: translateY(30px) scale(0.7) skew(2deg) !important;
+  /* Faster animation for better performance */
+}
+
+@keyframes marginalia-glitch-in {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.7) skew(2deg);
+    /* Removed expensive filter effects for performance */
+  }
+  
+  15% {
+    opacity: 0.3;
+    transform: translateY(-5px) scale(1.1) skew(-1deg);
+  }
+  
+  25% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9) skew(3deg);
+  }
+  
+  40% {
+    opacity: 0.7;
+    transform: translateY(-2px) scale(1.05) skew(-2deg);
+  }
+  
+  55% {
+    opacity: 0.2;
+    transform: translateY(5px) scale(0.95) skew(1deg);
+  }
+  
+  70% {
+    opacity: 0.9;
+    transform: translateY(-1px) scale(1.02) skew(-0.5deg);
+  }
+  
+  85% {
+    opacity: 1;
+    transform: translateY(1px) scale(0.98) skew(0.2deg);
+  }
+  
+  100% {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) skew(0deg) !important;
+  }
+}
+
+/* ===== PERIODIC GLITCH EFFECTS ===== */
 .marginalia-voice.intruding {
   animation: marginalia-glitch 15s infinite; /* Subtle glitch every 15 seconds */
 }

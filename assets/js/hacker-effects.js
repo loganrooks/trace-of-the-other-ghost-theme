@@ -70,6 +70,10 @@ class HackerEffects {
       return;
     }
     
+    // Performance monitoring state
+    this.performanceModeTriggered = false; // Prevent multiple triggers
+    this.lastPerformanceCheck = 0;
+    
     this.init();
   }
   
@@ -266,10 +270,13 @@ class HackerEffects {
       if (currentTime - lastTime >= 1000) {
         const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
         
-        // Disable effects if performance is poor
-        if (fps < 20 && this.isActive) {
-          console.warn('[HACKER_EFFECTS] Low FPS detected, reducing effects');
-          this.reduceffects();
+        // Reduce effects if performance is poor, but only once every 5 seconds
+        if (fps < 15 && this.isActive && !this.performanceModeTriggered && 
+            currentTime - this.lastPerformanceCheck > 5000) {
+          console.warn('[HACKER_EFFECTS] Low FPS detected, reducing background effects only');
+          this.reduceEffects();
+          this.performanceModeTriggered = true;
+          this.lastPerformanceCheck = currentTime;
         }
         
         frameCount = 0;
@@ -285,20 +292,28 @@ class HackerEffects {
   }
   
   reduceEffects() {
-    // Reduce number of matrix columns
+    // ONLY reduce background effects - NEVER disable marginalia
+    
+    // Reduce number of matrix columns by half
     const columnsToRemove = this.matrixColumns.slice(this.matrixColumns.length / 2);
     columnsToRemove.forEach(column => {
       if (column.parentNode) {
         column.parentNode.removeChild(column);
       }
     });
+    this.matrixColumns = this.matrixColumns.slice(0, this.matrixColumns.length / 2);
     
-    // Disable some visual effects
+    // Disable expensive visual effects (but keep core functionality)
     document.querySelectorAll('.scanlines').forEach(el => {
-      el.classList.remove('scanlines');
+      el.style.animationPlayState = 'paused'; // Pause instead of removing
     });
     
-    console.log('[HACKER_EFFECTS] Performance mode activated');
+    // Reduce matrix animation speed
+    document.querySelectorAll('.matrix-column').forEach(col => {
+      col.style.animationDuration = '8s'; // Slower = less CPU
+    });
+    
+    console.log('[HACKER_EFFECTS] Background effects reduced for performance - marginalia unaffected');
   }
   
   // Public methods for interaction
