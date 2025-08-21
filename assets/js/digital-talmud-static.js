@@ -2,12 +2,15 @@
  * Digital Talmud STATIC Marginalia System
  * Simplified approach: Always visible marginalia with proper width control
  * No complex animations, no IntersectionObserver, no state management
+ * Includes interactive footnote system
  */
 
 class DigitalTalmudStatic {
   constructor() {
     this.container = document.querySelector('.post-content, .page-content');
     this.marginalia = [];
+    this.footnotes = new Map(); // footnote-id -> definition element
+    this.footnotePopup = null; // Current hover popup
     
     this.init();
   }
@@ -21,9 +24,13 @@ class DigitalTalmudStatic {
     // Simple setup: find marginalia and make them static
     this.findMarginalia();
     this.setupStaticMarginalia();
+    
+    // Setup interactive footnote system
+    this.setupFootnotes();
+    
     this.addDebugListeners();
     
-    console.log('[DIGITAL_TALMUD_STATIC] Static marginalia system initialized with', this.marginalia.length, 'marginalia voices');
+    console.log('[DIGITAL_TALMUD_STATIC] Static marginalia system initialized with', this.marginalia.length, 'marginalia voices and', this.footnotes.size, 'footnotes');
   }
   
   findMarginalia() {
@@ -139,6 +146,121 @@ class DigitalTalmudStatic {
     }
   }
   
+  setupFootnotes() {
+    // Find all footnote definitions and map them by ID
+    const footnoteDefinitions = Array.from(document.querySelectorAll('.footnote-definition'));
+    footnoteDefinitions.forEach(def => {
+      const footnoteId = def.dataset.footnoteId;
+      if (footnoteId) {
+        this.footnotes.set(footnoteId, def);
+        // Hide definitions initially (they'll be shown in popups)
+        def.style.display = 'none';
+        console.log(`[DIGITAL_TALMUD_STATIC] Found footnote definition: ${footnoteId}`);
+      }
+    });
+    
+    // Find all footnote markers and add hover functionality
+    const footnoteMarkers = Array.from(document.querySelectorAll('.footnote-marker'));
+    footnoteMarkers.forEach(marker => {
+      const footnoteId = marker.dataset.footnote;
+      if (footnoteId && this.footnotes.has(footnoteId)) {
+        this.setupFootnoteMarker(marker, footnoteId);
+        console.log(`[DIGITAL_TALMUD_STATIC] Setup footnote marker: ${footnoteId}`);
+      }
+    });
+  }
+  
+  setupFootnoteMarker(marker, footnoteId) {
+    const definition = this.footnotes.get(footnoteId);
+    
+    marker.addEventListener('mouseenter', (e) => {
+      this.showFootnotePopup(e.target, definition);
+    });
+    
+    marker.addEventListener('mouseleave', () => {
+      this.hideFootnotePopup();
+    });
+    
+    // Make marker visually distinct
+    marker.style.cursor = 'pointer';
+    marker.style.color = 'var(--hacker-green)';
+    marker.style.textDecoration = 'underline';
+    marker.style.textDecorationColor = 'rgba(0, 255, 0, 0.3)';
+  }
+  
+  showFootnotePopup(marker, definition) {
+    // Remove any existing popup
+    this.hideFootnotePopup();
+    
+    // Create popup container
+    this.footnotePopup = document.createElement('div');
+    this.footnotePopup.className = 'footnote-popup marginalia-voice';
+    
+    // Copy content from definition
+    this.footnotePopup.innerHTML = definition.innerHTML;
+    
+    // Copy styling attributes from definition
+    if (definition.dataset.voice) {
+      this.footnotePopup.dataset.voice = definition.dataset.voice;
+    }
+    if (definition.dataset.position) {
+      this.footnotePopup.dataset.position = definition.dataset.position;
+    }
+    
+    // Style the popup
+    this.footnotePopup.style.position = 'absolute';
+    this.footnotePopup.style.zIndex = '1000';
+    this.footnotePopup.style.display = 'block';
+    this.footnotePopup.style.opacity = '1';
+    this.footnotePopup.style.visibility = 'visible';
+    this.footnotePopup.style.pointerEvents = 'none'; // Don't interfere with mouse events
+    this.footnotePopup.style.maxWidth = '300px';
+    this.footnotePopup.style.padding = '0.8rem';
+    this.footnotePopup.style.margin = '0';
+    this.footnotePopup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+    
+    // Position popup relative to marker
+    const markerRect = marker.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    
+    // Determine position based on definition's data-position or auto-detect
+    const preferredPosition = definition.dataset.position || 'right';
+    let left, top;
+    
+    if (preferredPosition === 'left' || markerRect.left > window.innerWidth * 0.6) {
+      // Position on left side
+      left = markerRect.left + scrollLeft - 320; // popup width + margin
+      this.footnotePopup.style.textAlign = 'right';
+    } else {
+      // Position on right side
+      left = markerRect.right + scrollLeft + 20;
+      this.footnotePopup.style.textAlign = 'left';
+    }
+    
+    top = markerRect.top + scrollTop - 20; // Slightly above marker
+    
+    // Ensure popup stays within viewport
+    if (left < 0) left = 10;
+    if (left + 300 > window.innerWidth) left = window.innerWidth - 310;
+    
+    this.footnotePopup.style.left = `${left}px`;
+    this.footnotePopup.style.top = `${top}px`;
+    
+    // Add to document
+    document.body.appendChild(this.footnotePopup);
+    
+    console.log(`[DIGITAL_TALMUD_STATIC] Showing footnote popup at ${left}, ${top}`);
+  }
+  
+  hideFootnotePopup() {
+    if (this.footnotePopup) {
+      document.body.removeChild(this.footnotePopup);
+      this.footnotePopup = null;
+      console.log(`[DIGITAL_TALMUD_STATIC] Hidden footnote popup`);
+    }
+  }
+  
   addDebugListeners() {
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.shiftKey) {
@@ -150,6 +272,10 @@ class DigitalTalmudStatic {
           case 'W':
             e.preventDefault();
             this.recalculateWidths();
+            break;
+          case 'F':
+            e.preventDefault();
+            this.debugFootnotes();
             break;
         }
       }
@@ -191,6 +317,34 @@ class DigitalTalmudStatic {
     console.groupEnd();
   }
   
+  debugFootnotes() {
+    console.group('[DIGITAL_TALMUD_STATIC] 📝 FOOTNOTE DEBUG INFO');
+    console.log(`Total footnotes: ${this.footnotes.size}`);
+    
+    // Debug footnote definitions
+    console.group('Footnote Definitions:');
+    this.footnotes.forEach((definition, footnoteId) => {
+      console.log(`${footnoteId}:`);
+      console.log(`  Content: ${definition.textContent.substring(0, 100)}...`);
+      console.log(`  Voice: ${definition.dataset.voice || 'default'}`);
+      console.log(`  Position: ${definition.dataset.position || 'auto'}`);
+      console.log(`  Hidden: ${definition.style.display === 'none'}`);
+    });
+    console.groupEnd();
+    
+    // Debug footnote markers
+    console.group('Footnote Markers:');
+    const markers = Array.from(document.querySelectorAll('.footnote-marker'));
+    markers.forEach(marker => {
+      const footnoteId = marker.dataset.footnote;
+      const hasDefinition = this.footnotes.has(footnoteId);
+      console.log(`Marker "${footnoteId}": ${hasDefinition ? '✅ has definition' : '❌ missing definition'}`);
+    });
+    console.groupEnd();
+    
+    console.groupEnd();
+  }
+  
   recalculateWidths() {
     console.log('[DIGITAL_TALMUD_STATIC] Recalculating widths...');
     this.marginalia.forEach(marginalia => {
@@ -210,7 +364,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Make instance available globally for debugging
     window.DigitalTalmudStatic = digitalTalmudStaticInstance;
     
-    console.log('[DIGITAL_TALMUD_STATIC] Ready. Use Ctrl+Shift+S for static debug, Ctrl+Shift+W to recalculate widths');
+    console.log('[DIGITAL_TALMUD_STATIC] Ready. Use Ctrl+Shift+S for static debug, Ctrl+Shift+W to recalculate widths, Ctrl+Shift+F for footnote debug');
   }
 });
 

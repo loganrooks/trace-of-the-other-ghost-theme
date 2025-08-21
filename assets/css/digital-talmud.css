@@ -1,12 +1,11 @@
 /* ===== DIGITAL TALMUD LAYOUT SYSTEM ===== */
 
-/* ===== AGGRESSIVE OVERRIDE OF ALL GHOST CONTAINER CONSTRAINTS ===== */
-/* Override every possible Ghost container that could clip marginalia */
+/* ===== SELECTIVE OVERRIDE OF GHOST CONTAINER CONSTRAINTS ===== */
+/* Allow marginalia to extend beyond containers WITHOUT removing all width constraints */
 .site-wrapper,
 .site,
 .site-main,
 .main,
-.content,
 .post,
 .page,
 .post-full,
@@ -14,38 +13,40 @@
 .post-wrapper,
 .page-wrapper,
 .post-content-wrapper,
-.page-content-wrapper,
-body,
-html {
-  overflow-x: visible !important; /* Allow marginalia to extend beyond all containers */
-  max-width: none !important; /* Remove all width constraints */
-  width: 100% !important; /* Full width */
+.page-content-wrapper {
+  overflow-x: visible !important; /* Allow marginalia to extend beyond containers */
+  /* DON'T remove width constraints - keep containers reasonable width */
 }
 
-/* Override Ghost's site-wrapper specifically */
+/* Override Ghost's site-wrapper for marginalia extension but keep reasonable bounds */
 .site-wrapper {
-  padding: 0 !important; /* Remove Ghost's padding - we'll handle our own */
-  margin: 0 !important; /* Remove constraining margins */
+  overflow-x: visible !important; /* Critical for marginalia */
+  max-width: 1200px !important; /* Reduced by ~200px to decrease green margin width by half */
+  margin: 0 auto !important; /* Center the container */
+  padding: 0 1rem !important; /* Reduced padding to shrink green margins */
   box-sizing: border-box !important;
 }
 
-/* Override any container that might constrain marginalia */
+/* Content area: constrained for readability but allows marginalia to extend beyond */
 .post-content, .page-content {
   overflow: visible !important; /* Critical: allow marginalia to extend beyond content area */
-  max-width: none !important; /* Remove content width limits */
+  max-width: 880px !important; /* Increased by 10% from 800px to 880px */
+  width: 100% !important;
+  margin: 0 auto !important; /* Center the content */
+  position: relative !important; /* For marginalia positioning */
 }
 
 /* ===== CORE TALMUDIC INTRUSION LAYOUT ===== */
+/* Content styling - width already set above, just need padding and typography */
 .post-content, .page-content {
-  position: relative;
-  max-width: 800px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 2rem 8rem; /* Increased padding creates more margin space for wider intrusion */
+  padding: 2rem 7rem; /* Increased padding to accommodate wider marginalia extension */
   line-height: 1.8;
-  
-  /* Always stay block layout for text flow */
   display: block;
+  
+  /* Slight background transparency to show animated background */
+  background: rgba(0, 0, 0, 0.85); /* Semi-transparent dark background */
+  border-radius: 8px; /* Subtle rounded corners */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Subtle depth */
 }
 
 /* Text flows naturally around floated marginalia */
@@ -103,7 +104,7 @@ html {
   clear: none !important; /* Allow multiple marginalia simultaneously */
   text-align: right !important;
   margin-right: 1rem !important;
-  margin-left: -6rem !important; /* Pull into margin space */
+  margin-left: -8rem !important; /* Increased to extend beyond black background into green margins */
   overflow: visible !important; /* Allow content to extend beyond boundaries */
 }
 
@@ -114,11 +115,41 @@ html {
   clear: none !important; /* Allow multiple marginalia simultaneously */
   text-align: left !important;
   margin-left: 1rem !important;
-  margin-right: -6rem !important; /* Pull into margin space */
+  margin-right: -8rem !important; /* Increased to extend beyond black background into green margins */
   overflow: visible !important; /* Allow content to extend beyond boundaries */
 }
 
 /* Remove all animation state classes - marginalia are always static */
+
+/* ===== GHOST-COMPATIBLE REFERENCE SYSTEM ===== */
+.reference-note {
+  margin: 1.5rem 0 !important;
+  padding: 1rem !important;
+  background: rgba(0, 255, 0, 0.08) !important;
+  border-left: 4px solid var(--hacker-green) !important;
+  border-radius: 6px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.85rem !important;
+  line-height: 1.4 !important;
+  position: relative !important;
+  
+  /* Subtle glow effect */
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.1) !important;
+}
+
+.reference-note strong {
+  color: var(--hacker-green) !important;
+  margin-right: 0.8rem !important;
+  font-size: 1.2em !important;
+  display: inline-block !important;
+  min-width: 1.5em !important;
+}
+
+.reference-note:hover {
+  background: rgba(0, 255, 0, 0.12) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.2) !important;
+  transition: all 0.2s ease !important;
+}
 
 /* No longer needed - observing marginalia directly */
 
@@ -382,11 +413,29 @@ html {
 }
 
 @media (max-width: 768px) {
-  /* Override site-wrapper constraints for full width mobile experience */
   .site-wrapper {
     max-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    overflow-x: visible !important;
+  }
+  
+  .post-content, .page-content {
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Override any Ghost-specific containers that might constrain us */
+  .gh-content,
+  .kg-card,
+  .kg-width-wide,
+  .kg-width-full,
+  article,
+  main {
+    overflow: visible !important;
+    max-width: none !important;
   }
   
   .post-content, .page-content {
@@ -444,19 +493,40 @@ html {
     padding: 0.5rem 0.75rem !important;
   }
   
-  .marginalia-voice {
-    /* On mobile, marginalia takes full width */
-    float: none !important;
+  .marginalia-voice[data-marginalia-id] {
+    /* MAXIMUM SPECIFICITY TO OVERRIDE INLINE STYLES */
+    
+    /* NUCLEAR OVERRIDE - BEATS ALL INLINE STYLES */
+    position: static !important;
     display: block !important;
+    float: none !important;
+    
+    /* FORCE ZERO MARGINS - OVERRIDE JS NEGATIVE MARGINS */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    
+    /* NORMAL CONTENT WIDTH */
+    width: auto !important;
     max-width: 100% !important;
-    width: 100% !important;
-    margin: 1.5rem 0 !important;
+    min-width: auto !important;
+    
+    /* BASIC STYLING */
     padding: 1rem !important;
-    font-size: 0.8rem;
-    text-align: left;
-    shape-outside: none; /* Disable shapes on mobile */
-    border-radius: 8px;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    text-align: left !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    
+    /* RESET ALL POSITIONING */
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
   }
   
   /* Clear floats on mobile */
@@ -526,7 +596,9 @@ html {
   .marginalia-voice {
     font-size: 0.75rem;
     padding: 0.8rem;
-    margin: 0.8rem auto;
+    margin: 0.8rem 0.5rem !important; /* Ensure consistent side margins to prevent cutoff */
+    max-width: calc(100% - 1rem) !important; /* Conservative width to prevent any cutoff */
+    width: calc(100% - 1rem) !important;
   }
 }
 
@@ -699,7 +771,7 @@ html {
 
 /* Enhanced debug info panel */
 .talmud-debug::before {
-  content: 'STATIC DEBUG MODE: Marginalia always visible | No animations | No state management | Aggressive Ghost container overrides applied | Ctrl+Shift: D=Debug S=StaticInfo W=RecalcWidths';
+  content: 'GHOST-COMPATIBLE MODE: Static marginalia via HTML cards | Reference notes | Background visible | Content width 880px (+10%) | Marginalia extend into green margins | Mobile cutoff fixed | Ctrl+Shift: D=Debug G=GhostDebug W=RecalcWidths';
   position: fixed;
   top: 10px;
   right: 10px;

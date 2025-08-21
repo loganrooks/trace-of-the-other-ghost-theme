@@ -7,6 +7,10 @@ class HackerEffects {
   constructor() {
     this.isActive = true;
     this.matrixColumns = [];
+    this.activeCodeFragments = []; // Track active fragments for cleanup
+    this.maxMatrixColumns = 8; // Reduced limit for performance
+    this.maxCodeFragments = 2;  // Reduced limit for performance
+    this.performanceMode = this.detectPerformanceMode();
     this.codeFragments = [
       "function deconstruct(reality) {",
       "  if (!reality.stable) {",
@@ -98,7 +102,19 @@ class HackerEffects {
     // Performance monitoring
     this.monitorPerformance();
     
-    console.log('[HACKER_EFFECTS] System initialized');
+    console.log('[HACKER_EFFECTS] System initialized', `Performance mode: ${this.performanceMode}`);
+  }
+  
+  detectPerformanceMode() {
+    // Detect mobile/low-performance devices
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isLowEnd = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
+    const isSlowConnection = navigator.connection && (navigator.connection.effectiveType === 'slow-2g' || navigator.connection.effectiveType === '2g');
+    
+    if (isMobile || isLowEnd || isSlowConnection) {
+      return 'low'; // Minimal effects
+    }
+    return 'normal'; // Full effects
   }
   
   createMatrixBackground() {
@@ -106,21 +122,80 @@ class HackerEffects {
     matrixBg.className = 'matrix-background';
     document.body.appendChild(matrixBg);
     this.matrixContainer = matrixBg;
+    
+    // Create side columns only where they'll be visible
+    this.createSideColumns();
+  }
+  
+  createSideColumns() {
+    // Create left and right side areas for matrix effect only
+    const leftSide = document.createElement('div');
+    leftSide.className = 'matrix-side-area matrix-left';
+    leftSide.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: calc((100vw - 1200px) / 2);
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    `;
+    
+    const rightSide = document.createElement('div');
+    rightSide.className = 'matrix-side-area matrix-right';
+    rightSide.style.cssText = `
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: calc((100vw - 1200px) / 2);
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    `;
+    
+    document.body.appendChild(leftSide);
+    document.body.appendChild(rightSide);
+    
+    this.leftSideArea = leftSide;
+    this.rightSideArea = rightSide;
+    
+    // Only create matrix columns if side areas are visible
+    if (window.innerWidth > 1200) {
+      this.sideColumnsActive = true;
+    } else {
+      this.sideColumnsActive = false;
+    }
   }
   
   startMatrixRain() {
-    const columnCount = Math.floor(window.innerWidth / 20);
+    // Only start matrix rain if we have visible side areas
+    if (!this.sideColumnsActive) {
+      console.log('[HACKER_EFFECTS] Skipping matrix rain - no visible side areas');
+      return;
+    }
     
-    for (let i = 0; i < columnCount; i++) {
+    // Calculate columns only for the visible side areas
+    const sideWidth = Math.max(0, (window.innerWidth - 1200) / 2);
+    const baseColumnCount = Math.floor(sideWidth / 20) * 2; // Both sides
+    const columnCount = this.performanceMode === 'low' ? Math.min(baseColumnCount, 3) : Math.min(baseColumnCount, this.maxMatrixColumns);
+    
+    // Create fewer initial columns for better performance
+    const initialColumns = Math.min(columnCount * 0.3, 2);
+    for (let i = 0; i < initialColumns; i++) {
       this.createMatrixColumn(i);
     }
     
-    // Create new columns periodically
+    // Create new columns less frequently, respecting limits
+    const interval = this.performanceMode === 'low' ? 5000 : 3000; // 5s for low-end, 3s for normal
     setInterval(() => {
-      if (this.matrixColumns.length < columnCount * 1.5) {
+      if (this.sideColumnsActive && this.matrixColumns.length < this.maxMatrixColumns) {
         this.createMatrixColumn(Math.floor(Math.random() * columnCount));
       }
-    }, 2000);
+    }, interval);
+    
+    console.log(`[HACKER_EFFECTS] Matrix rain started with ${columnCount} max columns in side areas`);
   }
   
   createMatrixColumn(index) {
@@ -135,12 +210,24 @@ class HackerEffects {
     }
     column.textContent = text;
     
-    // Position the column
-    column.style.left = (index * 20) + Math.random() * 20 + 'px';
+    // Position in left or right side area only
+    const isLeftSide = Math.random() > 0.5;
+    const sideWidth = Math.max(0, (window.innerWidth - 1200) / 2);
+    
+    if (isLeftSide && this.leftSideArea && sideWidth > 50) {
+      column.style.left = Math.random() * (sideWidth - 20) + 'px';
+      this.leftSideArea.appendChild(column);
+    } else if (!isLeftSide && this.rightSideArea && sideWidth > 50) {
+      column.style.left = Math.random() * (sideWidth - 20) + 'px';
+      this.rightSideArea.appendChild(column);
+    } else {
+      // If side areas too small, don't create column
+      return;
+    }
+    
     column.style.animationDelay = Math.random() * 5 + 's';
     column.style.animationDuration = (8 + Math.random() * 10) + 's';
     
-    this.matrixContainer.appendChild(column);
     this.matrixColumns.push(column);
     
     // Remove column after animation completes
@@ -156,11 +243,21 @@ class HackerEffects {
   }
   
   startCodeFragments() {
-    setInterval(() => {
-      if (Math.random() > 0.3) { // 70% chance
-        this.generateCodeFragment();
-      }
-    }, 3000 + Math.random() * 4000);
+    if (this.performanceMode === 'low') {
+      // Very infrequent code fragments on low-end devices
+      setInterval(() => {
+        if (Math.random() > 0.7 && this.activeCodeFragments.length < this.maxCodeFragments) { // 30% chance
+          this.generateCodeFragment();
+        }
+      }, 8000 + Math.random() * 7000); // 8-15 seconds
+    } else {
+      // Normal frequency but still limited
+      setInterval(() => {
+        if (Math.random() > 0.5 && this.activeCodeFragments.length < this.maxCodeFragments) { // 50% chance
+          this.generateCodeFragment();
+        }
+      }, 5000 + Math.random() * 5000); // 5-10 seconds
+    }
   }
   
   generateCodeFragment() {
@@ -197,31 +294,51 @@ class HackerEffects {
     fragment.style.top = Math.random() * window.innerHeight + 'px';
     
     document.body.appendChild(fragment);
+    this.activeCodeFragments.push(fragment);
     
-    // Remove after animation
+    // Remove after animation with proper cleanup
     setTimeout(() => {
       if (fragment.parentNode) {
         fragment.parentNode.removeChild(fragment);
+      }
+      // Remove from active tracking
+      const index = this.activeCodeFragments.indexOf(fragment);
+      if (index > -1) {
+        this.activeCodeFragments.splice(index, 1);
       }
     }, 8500);
   }
   
   startRandomGlitches() {
-    // Random glitch effects on various elements
+    if (this.performanceMode === 'low') {
+      // Very minimal glitches on low-end devices
+      setInterval(() => {
+        const glitchableElements = document.querySelectorAll('.post-title, .site-title, .post-card-title h2');
+        if (glitchableElements.length > 0 && Math.random() > 0.85) { // Only 15% chance
+          const target = glitchableElements[Math.floor(Math.random() * glitchableElements.length)];
+          this.applyRandomGlitch(target);
+        }
+      }, 15000 + Math.random() * 20000); // 15-35 seconds
+      
+      // Skip page-wide glitches on low-end devices
+      return;
+    }
+    
+    // Normal performance mode
     setInterval(() => {
       const glitchableElements = document.querySelectorAll('.post-title, .site-title, .post-card-title h2');
-      if (glitchableElements.length > 0 && Math.random() > 0.7) {
+      if (glitchableElements.length > 0 && Math.random() > 0.8) { // Reduced to 20% chance
         const target = glitchableElements[Math.floor(Math.random() * glitchableElements.length)];
         this.applyRandomGlitch(target);
       }
-    }, 8000 + Math.random() * 12000);
+    }, 10000 + Math.random() * 15000); // 10-25 seconds
     
-    // Occasional page-wide glitch
+    // Less frequent page-wide glitches
     setInterval(() => {
-      if (Math.random() > 0.9) {
+      if (Math.random() > 0.95) { // Reduced to 5% chance
         this.applyPageGlitch();
       }
-    }, 30000 + Math.random() * 60000);
+    }, 45000 + Math.random() * 75000); // 45-120 seconds
   }
   
   applyRandomGlitch(element) {
