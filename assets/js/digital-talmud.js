@@ -207,9 +207,32 @@ class DigitalTalmud {
     
     switch (marginalia.state) {
       case this.STATES.INACTIVE:
-        // REACTIVATION DEBUG: Always log intersection attempts for inactive marginalia
-        if (entry.isIntersecting && entry.intersectionRatio > 0.01) {
-          console.log(`[DIGITAL_TALMUD] 🔍 ${marginalia.dataset.marginaliaId} REACTIVATION ATTEMPT: ratio=${entry.intersectionRatio.toFixed(2)}, scrollDir=${this.scrollTracker.direction}`);
+        // COMPREHENSIVE REACTIVATION DEBUG
+        if (entry.isIntersecting) {
+          console.group(`[DIGITAL_TALMUD] 🔍 ${marginalia.dataset.marginaliaId} INTERSECTION DETECTED`);
+          console.log(`Intersection ratio: ${entry.intersectionRatio.toFixed(3)}`);
+          console.log(`Is intersecting: ${entry.isIntersecting}`);
+          console.log(`Scroll direction: ${this.scrollTracker.direction}`);
+          console.log(`In reading zone: ${isInReadingZone}`);
+          
+          // Check element visibility properties
+          const computed = getComputedStyle(marginalia);
+          console.log(`Element visibility: display=${computed.display}, visibility=${computed.visibility}, opacity=${computed.opacity}`);
+          
+          const rect = marginalia.getBoundingClientRect();
+          console.log(`Element bounds: ${rect.left.toFixed(0)}, ${rect.top.toFixed(0)} (${rect.width.toFixed(0)}×${rect.height.toFixed(0)})`);
+          console.log(`Element has classes: ${marginalia.className}`);
+          
+          // Check if element is actually visible/detectable
+          const shouldBeObservable = computed.display !== 'none' && 
+                                   computed.visibility !== 'hidden' && 
+                                   rect.height > 0 && rect.width > 0;
+          console.log(`Should be observable: ${shouldBeObservable}`);
+          
+          if (!shouldBeObservable) {
+            console.log(`🚨 ELEMENT NOT PROPERLY OBSERVABLE - REACTIVATION MAY FAIL`);
+          }
+          console.groupEnd();
         }
         
         // Primary activation: reading zone + scrolling down
@@ -221,6 +244,8 @@ class DigitalTalmud {
           setTimeout(() => {
             if (marginalia.state === this.STATES.ACTIVATING) {
               this.activateMarginalia(marginalia);
+            } else {
+              console.log(`[DIGITAL_TALMUD] ❌ ${marginalia.dataset.marginaliaId} activation cancelled - state changed to ${marginalia.state}`);
             }
           }, this.config.ACTIVATION_DELAY);
         }
@@ -233,6 +258,8 @@ class DigitalTalmud {
           setTimeout(() => {
             if (marginalia.state === this.STATES.ACTIVATING) {
               this.activateMarginalia(marginalia);
+            } else {
+              console.log(`[DIGITAL_TALMUD] ❌ ${marginalia.dataset.marginaliaId} activation cancelled - state changed to ${marginalia.state}`);
             }
           }, this.config.ACTIVATION_DELAY);
         }
@@ -270,22 +297,32 @@ class DigitalTalmud {
         // GRACE PERIOD - don't deactivate immediately after activation
         const timeSinceActivation = currentTime - marginalia.stateChangeTime;
         if (timeSinceActivation < 1000) { // 1 second grace period
-          if (marginalia.dataset.marginaliaId === 'marginalia-0' || marginalia.dataset.marginaliaId === 'marginalia-1') {
-            console.log(`[HYSTERESIS DEBUG] ${marginalia.dataset.marginaliaId}: GRACE PERIOD - ${timeSinceActivation}ms since activation`);
+          // Reduced logging - only log once at start and end of grace period
+          if (timeSinceActivation < 100 && 
+              (marginalia.dataset.marginaliaId === 'marginalia-0' || marginalia.dataset.marginaliaId === 'marginalia-1')) {
+            console.log(`[HYSTERESIS DEBUG] ${marginalia.dataset.marginaliaId}: GRACE PERIOD active - 1s protection`);
           }
           return; // Skip hysteresis check during grace period
         }
         
         const scrolledDistance = this.scrollTracker.lastScrollY - marginalia.activationScrollY;
         
-        // HYSTERESIS DEBUG - log distance calculations for active marginalia
-        if (marginalia.dataset.marginaliaId === 'marginalia-0' || marginalia.dataset.marginaliaId === 'marginalia-1') {
-          console.log(`[HYSTERESIS DEBUG] ${marginalia.dataset.marginaliaId}: scrollY=${this.scrollTracker.lastScrollY}, activationY=${marginalia.activationScrollY}, distance=${scrolledDistance}, threshold=${this.config.HYSTERESIS_DISTANCE}`);
+        // REDUCED DEBUG - only log when approaching threshold to reduce performance impact
+        if (scrolledDistance > (this.config.HYSTERESIS_DISTANCE * 0.8) && 
+            (marginalia.dataset.marginaliaId === 'marginalia-0' || marginalia.dataset.marginaliaId === 'marginalia-1')) {
+          console.log(`[HYSTERESIS DEBUG] ${marginalia.dataset.marginaliaId}: distance=${scrolledDistance}, threshold=${this.config.HYSTERESIS_DISTANCE}`);
         }
         
         // Simple distance-based deactivation without expensive DOM queries
         if (scrolledDistance > this.config.HYSTERESIS_DISTANCE) {
-          console.log(`[DIGITAL_TALMUD] ⚠️ HYSTERESIS DEACTIVATION TRIGGERED: ${marginalia.dataset.marginaliaId} - distance ${scrolledDistance}px > ${this.config.HYSTERESIS_DISTANCE}px`);
+          console.group(`[DIGITAL_TALMUD] ⚠️ HYSTERESIS DEACTIVATION TRIGGERED: ${marginalia.dataset.marginaliaId}`);
+          console.log(`Scrolled distance: ${scrolledDistance}px > threshold: ${this.config.HYSTERESIS_DISTANCE}px`);
+          console.log(`Activation scroll Y: ${marginalia.activationScrollY}`);
+          console.log(`Current scroll Y: ${this.scrollTracker.lastScrollY}`);
+          console.log(`Current classes: ${marginalia.className}`);
+          console.log(`Current state before deactivation: ${marginalia.state}`);
+          console.groupEnd();
+          
           marginalia.state = this.STATES.DEACTIVATING;
           marginalia.stateChangeTime = Date.now();
         }
@@ -349,17 +386,16 @@ class DigitalTalmud {
     marginalia.style.transform = 'translateY(10px) scale(0.9)';
     
     setTimeout(() => {
-      // INVISIBLE-IN-PLACE CLEANUP - keep element in natural position for reliable IntersectionObserver
-      // NEVER change position - that breaks intersection detection!
-      marginalia.style.opacity = '0'; // Invisible but still in layout
+      // TRUE INVISIBLE-IN-PLACE CLEANUP - NEVER change position, stay in natural flow
+      marginalia.style.opacity = '0'; // Invisible but still in layout flow
       marginalia.style.pointerEvents = 'none'; // Don't interfere with page interaction
       marginalia.style.visibility = 'visible'; // Must stay visible for IntersectionObserver
       marginalia.classList.remove('intruding');
       marginalia.classList.remove('materialized');
-      marginalia.style.float = 'none';
-      marginalia.style.clear = 'none';
+      marginalia.style.float = 'none'; // Remove from flow
+      marginalia.style.clear = 'none'; // Remove clearing
       
-      // DON'T change: position, left, top, height, margin, padding - keep natural layout
+      // CRITICAL: NEVER change position, top, left, width - keep natural layout for reliable IntersectionObserver
       
       // Reset state
       marginalia.state = this.STATES.INACTIVE;
@@ -460,10 +496,10 @@ class DigitalTalmud {
       maxAllowedWidth = Math.floor(window.innerWidth * (parseInt(marginalia.dataset.width) / 100));
       console.log(`[DIGITAL_TALMUD] ${marginalia.dataset.marginaliaId}: Using viewport-based width ${marginalia.dataset.width}% = ${maxAllowedWidth}px`);
     } else {
-      // For smaller percentages, use content area to ensure text flow
+      // For smaller percentages, use much larger allowance to utilize full margin space
       const containerWidth = this.container.offsetWidth;
-      maxAllowedWidth = Math.floor(containerWidth * 0.45);
-      console.log(`[DIGITAL_TALMUD] ${marginalia.dataset.marginaliaId}: Using container-based width = ${maxAllowedWidth}px`);
+      maxAllowedWidth = Math.floor(containerWidth * 0.75); // Increased from 0.45 to 0.75 for better margin usage
+      console.log(`[DIGITAL_TALMUD] ${marginalia.dataset.marginaliaId}: Using container-based width = ${maxAllowedWidth}px (75% of container)`);
     }
     
     // Set CSS custom property for dynamic width control
@@ -518,16 +554,19 @@ class DigitalTalmud {
   }
   
   showMarginalia(marginalia) {
-    // SIMPLE REACTIVATION - only reset visual properties, keep layout unchanged
+    // REACTIVATION - reset from absolute positioning back to normal flow
     marginalia.style.display = 'block';
+    marginalia.style.position = ''; // Reset from absolute positioning
+    marginalia.style.top = ''; // Reset absolute positioning
+    marginalia.style.left = ''; // Reset absolute positioning  
+    marginalia.style.width = ''; // Reset fixed width - let CSS handle it
     marginalia.style.visibility = 'visible'; 
     marginalia.style.opacity = ''; // Let CSS/animation handle opacity
     marginalia.style.pointerEvents = ''; // Re-enable interactions
     marginalia.style.transform = ''; // Reset any transform constraints
     marginalia.classList.add('intruding');
     
-    // NO position/layout changes - element stays in natural flow for reliable IntersectionObserver
-    console.log(`[DIGITAL_TALMUD] 🔄 ${marginalia.dataset.marginaliaId} REACTIVATED - stayed in natural layout position`);
+    console.log(`[DIGITAL_TALMUD] 🔄 ${marginalia.dataset.marginaliaId} REACTIVATED - reset from absolute positioning to flow`);
     
     // Apply float based on position - NO CLEAR to allow multiple marginalia simultaneously
     const position = marginalia.dataset.position;
@@ -862,6 +901,146 @@ class DigitalTalmud {
     });
   }
 
+  debugContainerHierarchy() {
+    console.group('[DIGITAL_TALMUD] 🔍 COMPREHENSIVE CONTAINER DEBUG');
+    
+    // 1. Check all parent containers and their constraints
+    console.group('📦 Container Hierarchy & Constraints:');
+    let element = this.container;
+    let level = 0;
+    while (element && element !== document.body) {
+      const computed = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      
+      console.log(`${' '.repeat(level * 2)}${level}: ${element.tagName}.${element.className}`);
+      console.log(`${' '.repeat(level * 2)}   Size: ${rect.width.toFixed(0)}×${rect.height.toFixed(0)}`);
+      console.log(`${' '.repeat(level * 2)}   Position: ${computed.position}`);
+      console.log(`${' '.repeat(level * 2)}   Overflow: X=${computed.overflowX}, Y=${computed.overflowY}`);
+      console.log(`${' '.repeat(level * 2)}   Max-width: ${computed.maxWidth}`);
+      console.log(`${' '.repeat(level * 2)}   Padding: ${computed.paddingLeft} ${computed.paddingRight}`);
+      console.log(`${' '.repeat(level * 2)}   Margin: ${computed.marginLeft} ${computed.marginRight}`);
+      
+      // Check if this container could be clipping marginalia
+      if (computed.overflowX === 'hidden' || computed.maxWidth !== 'none') {
+        console.log(`${' '.repeat(level * 2)}   ⚠️  POTENTIAL CLIPPING CONSTRAINT`);
+      }
+      
+      element = element.parentElement;
+      level++;
+    }
+    console.groupEnd();
+    
+    // 2. Detailed marginalia state analysis
+    console.group('🎯 Marginalia State Analysis:');
+    this.marginalia.forEach((marginalia, index) => {
+      console.group(`${marginalia.dataset.marginaliaId}:`);
+      
+      const rect = marginalia.getBoundingClientRect();
+      const computed = getComputedStyle(marginalia);
+      
+      console.log(`State: ${marginalia.state}`);
+      console.log(`Classes: ${marginalia.className}`);
+      console.log(`Position: ${rect.left.toFixed(0)}, ${rect.top.toFixed(0)} (${rect.width.toFixed(0)}×${rect.height.toFixed(0)})`);
+      
+      // Check if marginalia extends beyond visible area
+      const viewportWidth = window.innerWidth;
+      const isClippedLeft = rect.left < 0;
+      const isClippedRight = rect.right > viewportWidth;
+      const isClippedTop = rect.top < 0;
+      const isClippedBottom = rect.bottom > window.innerHeight;
+      
+      if (isClippedLeft || isClippedRight || isClippedTop || isClippedBottom) {
+        console.log(`🚨 CLIPPING DETECTED:`);
+        if (isClippedLeft) console.log(`  Left edge at ${rect.left.toFixed(0)}px (< 0)`);
+        if (isClippedRight) console.log(`  Right edge at ${rect.right.toFixed(0)}px (> ${viewportWidth}px)`);
+        if (isClippedTop) console.log(`  Top edge at ${rect.top.toFixed(0)}px (< 0)`);
+        if (isClippedBottom) console.log(`  Bottom edge at ${rect.bottom.toFixed(0)}px (> ${window.innerHeight}px)`);
+      }
+      
+      // CSS properties affecting visibility
+      console.log(`CSS Visibility Properties:`);
+      console.log(`  display: ${computed.display}`);
+      console.log(`  visibility: ${computed.visibility}`);
+      console.log(`  opacity: ${computed.opacity}`);
+      console.log(`  position: ${computed.position}`);
+      console.log(`  float: ${computed.float}`);
+      console.log(`  clear: ${computed.clear}`);
+      console.log(`  z-index: ${computed.zIndex}`);
+      
+      // CSS layout properties
+      console.log(`CSS Layout Properties:`);
+      console.log(`  width: ${computed.width}`);
+      console.log(`  max-width: ${computed.maxWidth}`);
+      console.log(`  margin: ${computed.marginTop} ${computed.marginRight} ${computed.marginBottom} ${computed.marginLeft}`);
+      console.log(`  padding: ${computed.paddingTop} ${computed.paddingRight} ${computed.paddingBottom} ${computed.paddingLeft}`);
+      console.log(`  transform: ${computed.transform}`);
+      
+      // Check IntersectionObserver detection
+      const rootMargin = this.observer ? this.observer.rootMargin : 'unknown';
+      console.log(`IntersectionObserver:`);
+      console.log(`  Root margin: ${rootMargin}`);
+      console.log(`  Should be observable: ${computed.display !== 'none' && computed.visibility !== 'hidden' && rect.height > 0}`);
+      
+      // Parent container affecting this marginalia
+      let parent = marginalia.parentElement;
+      while (parent && parent !== document.body) {
+        const parentComputed = getComputedStyle(parent);
+        if (parentComputed.overflowX === 'hidden' || parentComputed.overflowY === 'hidden') {
+          const parentRect = parent.getBoundingClientRect();
+          console.log(`⚠️  Parent ${parent.tagName}.${parent.className} has overflow:hidden`);
+          console.log(`     Parent bounds: ${parentRect.left.toFixed(0)}-${parentRect.right.toFixed(0)}px (width: ${parentRect.width.toFixed(0)}px)`);
+          
+          // Check if marginalia extends beyond this parent
+          if (rect.left < parentRect.left || rect.right > parentRect.right) {
+            console.log(`🚨 MARGINALIA EXTENDS BEYOND PARENT WITH OVERFLOW:HIDDEN`);
+          }
+        }
+        parent = parent.parentElement;
+      }
+      
+      console.groupEnd();
+    });
+    console.groupEnd();
+    
+    // 3. IntersectionObserver detailed analysis
+    console.group('👁️ IntersectionObserver Analysis:');
+    if (this.observer) {
+      console.log(`Observer root: ${this.observer.root ? this.observer.root.tagName : 'viewport'}`);
+      console.log(`Observer rootMargin: ${this.observer.rootMargin}`);
+      console.log(`Observer thresholds: [${this.observer.thresholds.join(', ')}]`);
+      
+      // Manual intersection calculation
+      this.marginalia.forEach(marginalia => {
+        const rect = marginalia.getBoundingClientRect();
+        const intersectionRect = {
+          top: Math.max(rect.top, window.innerHeight * 0.15), // 15% rootMargin
+          bottom: Math.min(rect.bottom, window.innerHeight * 0.85), // 15% rootMargin
+          left: Math.max(rect.left, 0),
+          right: Math.min(rect.right, window.innerWidth)
+        };
+        
+        const intersectionArea = Math.max(0, intersectionRect.right - intersectionRect.left) * 
+                               Math.max(0, intersectionRect.bottom - intersectionRect.top);
+        const elementArea = rect.width * rect.height;
+        const intersectionRatio = elementArea > 0 ? intersectionArea / elementArea : 0;
+        
+        console.log(`${marginalia.dataset.marginaliaId}:`);
+        console.log(`  Calculated intersection ratio: ${intersectionRatio.toFixed(3)}`);
+        console.log(`  Should trigger: ${intersectionRatio > 0.01 ? 'YES' : 'NO'}`);
+        console.log(`  Current state: ${marginalia.state}`);
+        
+        if (intersectionRatio > 0.01 && marginalia.state === this.STATES.INACTIVE) {
+          console.log(`🚨 SHOULD REACTIVATE BUT ISN'T - INTERSECTION DETECTION BROKEN`);
+        }
+      });
+    } else {
+      console.log('❌ IntersectionObserver not initialized');
+    }
+    console.groupEnd();
+    
+    console.groupEnd();
+  }
+
   addEventListeners() {
     // Enhanced keyboard shortcuts for testing
     document.addEventListener('keydown', (e) => {
@@ -887,6 +1066,11 @@ class DigitalTalmud {
             e.preventDefault();
             console.log('[DIGITAL_TALMUD] 🎯 Manual intersection check triggered via Ctrl+Shift+C');
             this.manualIntersectionCheck();
+            break;
+          case 'X':
+            e.preventDefault();
+            console.log('[DIGITAL_TALMUD] 🔍 Comprehensive container debug triggered via Ctrl+Shift+X');
+            this.debugContainerHierarchy();
             break;
         }
       }

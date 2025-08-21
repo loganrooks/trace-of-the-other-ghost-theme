@@ -1,12 +1,47 @@
 /* ===== DIGITAL TALMUD LAYOUT SYSTEM ===== */
 
+/* ===== AGGRESSIVE OVERRIDE OF ALL GHOST CONTAINER CONSTRAINTS ===== */
+/* Override every possible Ghost container that could clip marginalia */
+.site-wrapper,
+.site,
+.site-main,
+.main,
+.content,
+.post,
+.page,
+.post-full,
+.page-full,
+.post-wrapper,
+.page-wrapper,
+.post-content-wrapper,
+.page-content-wrapper,
+body,
+html {
+  overflow-x: visible !important; /* Allow marginalia to extend beyond all containers */
+  max-width: none !important; /* Remove all width constraints */
+  width: 100% !important; /* Full width */
+}
+
+/* Override Ghost's site-wrapper specifically */
+.site-wrapper {
+  padding: 0 !important; /* Remove Ghost's padding - we'll handle our own */
+  margin: 0 !important; /* Remove constraining margins */
+  box-sizing: border-box !important;
+}
+
+/* Override any container that might constrain marginalia */
+.post-content, .page-content {
+  overflow: visible !important; /* Critical: allow marginalia to extend beyond content area */
+  max-width: none !important; /* Remove content width limits */
+}
+
 /* ===== CORE TALMUDIC INTRUSION LAYOUT ===== */
 .post-content, .page-content {
   position: relative;
   max-width: 800px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 4rem; /* Extra padding for marginalia space */
+  padding: 2rem 8rem; /* Increased padding creates more margin space for wider intrusion */
   line-height: 1.8;
   
   /* Always stay block layout for text flow */
@@ -25,7 +60,7 @@
 
 /* Main text flows normally, marginalia positions absolutely relative to it */
 
-/* ===== MARGINALIA INTRUSION POSITIONING ===== */
+/* ===== STATIC MARGINALIA POSITIONING ===== */
 .marginalia-voice {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
@@ -34,55 +69,56 @@
   border: 1px solid var(--hacker-green-dark);
   background: rgba(0, 0, 0, 0.95);
   
-  /* Responsive width control - based on content area for proper text flow */
-  width: fit-content;
-  min-width: 80px;
-  max-width: var(--marginalia-max-width, 200px); /* Calculated from content area */
+  /* STATIC APPROACH: Always visible, no complex animations */
+  display: block !important;
+  opacity: 1 !important; /* Always visible */
+  visibility: visible !important; /* Never hidden */
+  pointer-events: all !important; /* Always interactive */
   
-  /* Initially hidden but observable */
-  display: block;
-  opacity: 0;
-  transform: scale(0.8) translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  pointer-events: none; /* Don't interfere with page interaction when hidden */
+  /* Aggressive width control - force the width regardless of constraints */
+  width: var(--marginalia-max-width, 200px) !important;
+  min-width: 80px !important;
+  max-width: var(--marginalia-max-width, 200px) !important; 
+  box-sizing: border-box !important;
   
   /* Float for text wrapping */
-  position: relative;
-  z-index: 10;
-  margin: 0.8rem 1rem;
+  position: relative !important;
+  z-index: 10 !important;
+  margin: 0.8rem 1rem !important;
   
   /* CSS Shapes for precise text flow */
   shape-outside: margin-box;
   shape-margin: 0.8rem;
+  
+  /* Override any constraints that might be applied */
+  transform: none !important; /* No transforms */
+  transition: none !important; /* No entrance/exit animations */
 }
 
-/* Float positioning for text wrapping */
+/* STATIC FLOAT POSITIONING - Always active, no dynamic changes */
 .marginalia-voice[data-position="left"],
 .marginalia-voice[data-position="top-left"],
 .marginalia-voice[data-position="bottom-left"] { 
-  float: left;
-  clear: left;
-  text-align: right;
-  margin-right: 1rem;
-  margin-left: -3rem; /* Pull into left margin */
+  float: left !important;
+  clear: none !important; /* Allow multiple marginalia simultaneously */
+  text-align: right !important;
+  margin-right: 1rem !important;
+  margin-left: -6rem !important; /* Pull into margin space */
+  overflow: visible !important; /* Allow content to extend beyond boundaries */
 }
 
 .marginalia-voice[data-position="right"],
 .marginalia-voice[data-position="top-right"], 
 .marginalia-voice[data-position="bottom-right"] { 
-  float: right;
-  clear: right;
-  text-align: left;
-  margin-left: 1rem;
-  margin-right: -3rem; /* Pull into right margin */
+  float: right !important;
+  clear: none !important; /* Allow multiple marginalia simultaneously */
+  text-align: left !important;
+  margin-left: 1rem !important;
+  margin-right: -6rem !important; /* Pull into margin space */
+  overflow: visible !important; /* Allow content to extend beyond boundaries */
 }
 
-/* Progressive animation states */
-.marginalia-voice.intruding {
-  display: block;
-  opacity: 1 !important; /* Override base opacity: 0 when active */
-  transform: translateY(0) scale(1) !important; /* Override base transform when active */
-}
+/* Remove all animation state classes - marginalia are always static */
 
 /* No longer needed - observing marginalia directly */
 
@@ -245,68 +281,12 @@
   text-decoration-color: rgba(255, 107, 157, 0.3);
 }
 
-/* ===== MATERIALIZATION EFFECTS ===== */
-.marginalia-voice.materialized {
-  opacity: 1 !important;
-  transform: translateY(0) scale(1) !important;
-  visibility: visible !important; /* Ensure visibility is never lost */
-}
+/* ===== REMOVED COMPLEX ANIMATIONS - STATIC APPROACH ===== */
+/* No materialization effects needed - marginalia are always visible */
 
-/* ===== GLITCH ENTRANCE ANIMATION ===== */
-.marginalia-voice.materializing {
-  animation: marginalia-glitch-in 0.6s ease-out forwards !important;
-  /* Override any existing opacity/transform during animation */
-  opacity: 0 !important;
-  transform: translateY(30px) scale(0.7) skew(2deg) !important;
-  /* Faster animation for better performance */
-}
-
-@keyframes marginalia-glitch-in {
-  0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.7) skew(2deg);
-    /* Removed expensive filter effects for performance */
-  }
-  
-  15% {
-    opacity: 0.3;
-    transform: translateY(-5px) scale(1.1) skew(-1deg);
-  }
-  
-  25% {
-    opacity: 0;
-    transform: translateY(10px) scale(0.9) skew(3deg);
-  }
-  
-  40% {
-    opacity: 0.7;
-    transform: translateY(-2px) scale(1.05) skew(-2deg);
-  }
-  
-  55% {
-    opacity: 0.2;
-    transform: translateY(5px) scale(0.95) skew(1deg);
-  }
-  
-  70% {
-    opacity: 0.9;
-    transform: translateY(-1px) scale(1.02) skew(-0.5deg);
-  }
-  
-  85% {
-    opacity: 1;
-    transform: translateY(1px) scale(0.98) skew(0.2deg);
-  }
-  
-  100% {
-    opacity: 1 !important;
-    transform: translateY(0) scale(1) skew(0deg) !important;
-  }
-}
-
-/* ===== PERIODIC GLITCH EFFECTS ===== */
-.marginalia-voice.intruding {
-  animation: marginalia-glitch 15s infinite; /* Subtle glitch every 15 seconds */
+/* ===== SIMPLE PERIODIC GLITCH EFFECTS ===== */
+.marginalia-voice {
+  animation: marginalia-glitch 15s infinite; /* Subtle glitch every 15 seconds - always active */
 }
 
 @keyframes marginalia-glitch {
@@ -719,7 +699,7 @@
 
 /* Enhanced debug info panel */
 .talmud-debug::before {
-  content: 'DEBUG MODE: 15% rootMargin (70% active zone) | Optimized scroll @ 30fps | Font scale applied via CSS | Scroll lag fixes applied | States: ⚫Inactive 🟡Activating ✅Active 🟠Deactivating | Ctrl+Shift: I=Info C=Check M=Force D=Debug';
+  content: 'STATIC DEBUG MODE: Marginalia always visible | No animations | No state management | Aggressive Ghost container overrides applied | Ctrl+Shift: D=Debug S=StaticInfo W=RecalcWidths';
   position: fixed;
   top: 10px;
   right: 10px;
