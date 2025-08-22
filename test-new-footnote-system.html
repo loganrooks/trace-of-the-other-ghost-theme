@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Talmud - New Footnote System Test</title>
+    
+    <!-- Load new footnote system CSS -->
+    <link rel="stylesheet" href="assets/css/footnote-themes.css">
+    
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--footnote-accent, #00ff00);
+        }
+        
+        .test-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--footnote-accent, #00ff00);
+            padding: 1rem;
+            border-radius: 8px;
+            z-index: 2000;
+        }
+        
+        .controls button {
+            display: block;
+            width: 100%;
+            margin: 0.5rem 0;
+            background: var(--footnote-accent, #00ff00);
+            color: #000;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: monospace;
+        }
+        
+        .controls button:hover {
+            background: #fff;
+        }
+        
+        .theme-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--footnote-accent, #00ff00);
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body data-footnote-theme="hacker">
+    
+    <!-- Control Panel -->
+    <div class="controls">
+        <strong>Theme Controls:</strong>
+        <button onclick="switchTheme('hacker')">Hacker Theme</button>
+        <button onclick="switchTheme('academic')">Academic Theme</button>
+        <button onclick="switchTheme('minimal')">Minimal Theme</button>
+        <hr style="border-color: var(--footnote-accent, #00ff00); margin: 1rem 0;">
+        <button onclick="debugSystem()">Debug System</button>
+        <button onclick="toggleTooltips()">Toggle Tooltips</button>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-header">
+            <h1>New Footnote System Architecture Test</h1>
+            <p>Future-proof, configurable, maintainable footnote system</p>
+        </div>
+
+        <!-- Simulate Ghost's post content structure -->
+        <div class="post-content">
+            
+            <div class="test-section">
+                <h3>Architecture Benefits Test</h3>
+                <p>The new system separates concerns properly[^1]. Visual styling is controlled entirely through CSS custom properties[^2], while behavior is configurable through JavaScript settings[^3].</p>
+                
+                <div data-ref="1">Configuration, styling, and logic are now completely separate, making the system future-proof and easily maintainable.</div>
+                
+                <div data-ref="2">Change themes instantly without touching JavaScript - all visual aspects controlled via CSS custom properties.</div>
+                
+                <div data-ref="3">Modify tooltips, scrolling, keyboard navigation, and other behaviors through configuration objects.</div>
+            </div>
+
+            <div class="test-section">
+                <h3>Theme Switching Test</h3>
+                <p>Click the theme buttons to see instant visual changes[^4]. The hacker theme uses green Matrix aesthetics[^5], while the academic theme uses traditional blue[^6].</p>
+                
+                <div data-ref="4">Theme switching happens instantly through CSS custom property updates - no JavaScript recompilation needed.</div>
+                
+                <div data-ref="5">The hacker theme maintains the Digital Talmud aesthetic with JetBrains Mono font and green Matrix colors.</div>
+                
+                <div data-ref="6">Academic theme provides a professional appearance suitable for scholarly content with serif fonts and blue accents.</div>
+            </div>
+
+            <div class="test-section">
+                <h3>Writer Experience Test</h3>
+                <p>Writers still use the simple workflow[^7]: type `[^1]` in paragraph blocks, then add HTML cards with `data-ref` attributes[^8]. No complexity added to the writing process[^9].</p>
+                
+                <div data-ref="7">The writing workflow remains unchanged - content creators don't need to learn new syntax or processes.</div>
+                
+                <div data-ref="8">HTML cards can contain complex formatting: <strong>bold text</strong>, <em>italics</em>, <code>code snippets</code>, and even <a href="#" style="color: var(--footnote-accent);">links</a>.</div>
+                
+                <div data-ref="9">Progressive enhancement ensures footnotes work even without JavaScript, maintaining accessibility and reliability.</div>
+            </div>
+
+            <div class="test-section">
+                <h3>Interactive Features Test</h3>
+                <p>Hover over footnote numbers for tooltips[^10]. Click footnotes to navigate smoothly[^11]. Use keyboard navigation with Tab, Enter, and Space[^12].</p>
+                
+                <div data-ref="10">Tooltips show footnote content without leaving the main text, improving reading flow and user experience.</div>
+                
+                <div data-ref="11">Smooth scrolling with highlight effects provides clear navigation feedback, while back-links return readers to original context.</div>
+                
+                <div data-ref="12">Full keyboard accessibility ensures the system works for all users, including those using screen readers or keyboard-only navigation.</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Theme Information Display -->
+    <div class="theme-info">
+        <strong>Current Theme:</strong> <span id="current-theme">hacker</span><br>
+        <strong>Accent Color:</strong> <span style="color: var(--footnote-accent);">●</span><br>
+        <strong>Font:</strong> <span style="font-family: var(--footnote-font);">Sample Text</span><br>
+        <strong>Tooltips:</strong> <span id="tooltip-status">enabled</span>
+    </div>
+
+    <!-- Load new footnote system -->
+    <script src="assets/js/footnote-config.js"></script>
+    <script src="assets/js/footnote-system.js"></script>
+    
+    <script>
+        let tooltipsEnabled = true;
+        
+        // Theme switching function
+        function switchTheme(themeName) {
+            if (window.DigitalTalmudFootnoteConfig) {
+                window.DigitalTalmudFootnoteConfig.applyTheme(themeName);
+                document.body.setAttribute('data-footnote-theme', themeName);
+                document.getElementById('current-theme').textContent = themeName;
+            }
+        }
+        
+        // Debug function
+        function debugSystem() {
+            if (window.debugFootnotes) {
+                window.debugFootnotes();
+            } else {
+                console.log('Debug function not available - system may not be loaded');
+            }
+        }
+        
+        // Toggle tooltips function
+        function toggleTooltips() {
+            if (window.DigitalTalmudFootnoteConfig) {
+                tooltipsEnabled = !tooltipsEnabled;
+                window.DigitalTalmudFootnoteConfig.behavior.enableTooltips = tooltipsEnabled;
+                document.getElementById('tooltip-status').textContent = tooltipsEnabled ? 'enabled' : 'disabled';
+                
+                // Reinitialize system with new config
+                if (window.FootnoteSystemInstance) {
+                    window.FootnoteSystemInstance = new window.FootnoteSystem();
+                }
+            }
+        }
+        
+        // Test configuration modifications
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🧪 New Footnote System Test Environment Loaded');
+            console.log('✓ Use theme buttons to test instant theme switching');
+            console.log('✓ Hover over footnote numbers to test tooltips');
+            console.log('✓ Click footnote numbers to test navigation');
+            console.log('✓ Use Tab key to test keyboard navigation');
+            
+            // Demo: Custom theme creation
+            if (window.DigitalTalmudFootnoteConfig) {
+                window.DigitalTalmudFootnoteConfig.themes.demo = {
+                    '--footnote-accent': '#ff00ff',
+                    '--footnote-accent-dark': '#cc00cc',
+                    '--footnote-accent-alpha': 'rgba(255, 0, 255, 0.1)',
+                    '--footnote-font': 'Comic Sans MS, cursive',
+                    '--footnote-bg': 'rgba(255, 255, 255, 0.95)'
+                };
+                
+                console.log('✓ Added demo theme - try: switchTheme("demo")');
+            }
+        });
+        
+        // Keyboard shortcuts for testing
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey) {
+                switch (e.key) {
+                    case '1':
+                        e.preventDefault();
+                        switchTheme('hacker');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        switchTheme('academic');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        switchTheme('minimal');
+                        break;
+                    case 'D':
+                        e.preventDefault();
+                        debugSystem();
+                        break;
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>

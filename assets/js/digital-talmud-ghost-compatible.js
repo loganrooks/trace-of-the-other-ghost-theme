@@ -11,6 +11,9 @@ class DigitalTalmudGhostCompatible {
   constructor() {
     this.container = document.querySelector('.post-content, .page-content');
     this.marginalia = [];
+    this.footnotes = new Map(); // Track footnote references and content
+    this.footnoteTooltips = new Map(); // Cache tooltip elements
+    this.footnoteCounter = 0; // Track global footnote numbering
     
     this.init();
   }
@@ -25,10 +28,14 @@ class DigitalTalmudGhostCompatible {
     this.findMarginalia();
     this.setupStaticMarginalia();
     this.addReferenceNoteInteractivity();
+    
+    // NEW: Initialize footnote system
+    this.initializeFootnoteSystem();
+    
     this.addDebugListeners();
     
     console.log('[DIGITAL_TALMUD_GHOST] Ghost-compatible static marginalia system initialized');
-    console.log(`Found: ${this.marginalia.length} marginalia, ${document.querySelectorAll('.reference-note').length} reference notes`);
+    console.log(`Found: ${this.marginalia.length} marginalia, ${document.querySelectorAll('.reference-note').length} reference notes, ${this.footnotes.size} footnotes`);
   }
   
   findMarginalia() {
@@ -111,6 +118,401 @@ class DigitalTalmudGhostCompatible {
       
       console.log(`[DIGITAL_TALMUD_GHOST] Added interactivity to reference note ${index + 1}`);
     });
+  }
+  
+  // ===== FOOTNOTE SYSTEM =====
+  
+  initializeFootnoteSystem() {
+    return this.safeExecute(() => {
+      console.log('[DIGITAL_TALMUD_GHOST] Initializing footnote system...');
+      
+      // Step 0: Create basic fallback footnotes for progressive enhancement
+      this.createProgressiveEnhancementFallback();
+      
+      // Step 1: Scan for [^1] patterns in paragraph blocks
+      this.scanFootnoteMarkers();
+      
+      // Step 2: Connect footnote references to HTML cards
+      this.connectFootnoteContent();
+      
+      // Step 3: Create footnote collection at end of post
+      this.createFootnoteCollection();
+      
+      // Step 4: Add interactive enhancements
+      this.enhanceFootnoteInteractions();
+      
+      // Step 5: Remove fallback elements (they're now replaced with enhanced versions)
+      this.removeFallbackElements();
+      
+      // Step 6: Mark enhanced system as loaded
+      this.container.classList.add('footnote-system-enhanced');
+      
+      console.log(`[DIGITAL_TALMUD_GHOST] Footnote system initialized: ${this.footnotes.size} footnotes found`);
+    }, 'Failed to initialize footnote system');
+  }
+  
+  // Progressive Enhancement: Create basic HTML fallback
+  createProgressiveEnhancementFallback() {
+    // This creates basic HTML footnotes that work without JavaScript
+    // They'll be enhanced/replaced by the full system
+    const footnotePattern = /\[\^(\d+)\]/g;
+    const paragraphs = this.container.querySelectorAll('p');
+    const footnoteCards = this.container.querySelectorAll('[data-ref]');
+    
+    // Create a basic footnote section if data-ref cards exist
+    if (footnoteCards.length > 0) {
+      const fallbackSection = document.createElement('div');
+      fallbackSection.className = 'footnote-fallback';
+      fallbackSection.innerHTML = `
+        <hr>
+        <h4>Notes</h4>
+        <ol class="footnote-fallback-list"></ol>
+      `;
+      
+      const fallbackList = fallbackSection.querySelector('.footnote-fallback-list');
+      
+      // Add footnote content to fallback list
+      footnoteCards.forEach(card => {
+        const refNum = card.dataset.ref;
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<span id="fallback-fn-${refNum}">${card.innerHTML}</span>`;
+        fallbackList.appendChild(listItem);
+      });
+      
+      this.container.appendChild(fallbackSection);
+      
+      // Convert [^1] to basic HTML links in paragraphs
+      paragraphs.forEach(paragraph => {
+        const originalHTML = paragraph.innerHTML;
+        const modifiedHTML = originalHTML.replace(footnotePattern, (match, num) => {
+          return `<sup><a href="#fallback-fn-${num}" class="footnote-fallback-link">${num}</a></sup>`;
+        });
+        
+        if (modifiedHTML !== originalHTML) {
+          paragraph.innerHTML = modifiedHTML;
+        }
+      });
+      
+      console.log(`[DIGITAL_TALMUD_GHOST] Created progressive enhancement fallback with ${footnoteCards.length} footnotes`);
+    }
+  }
+  
+  // Remove fallback elements after enhanced system is in place
+  removeFallbackElements() {
+    const fallbackSection = this.container.querySelector('.footnote-fallback');
+    if (fallbackSection) {
+      fallbackSection.remove();
+    }
+    
+    // Remove fallback links (they've been replaced with enhanced versions)
+    const fallbackLinks = this.container.querySelectorAll('.footnote-fallback-link');
+    fallbackLinks.forEach(link => {
+      const parent = link.parentElement; // <sup>
+      if (parent && parent.tagName === 'SUP') {
+        // This will be replaced by enhanced footnote, so just remove the fallback
+        parent.remove();
+      }
+    });
+  }
+  
+  scanFootnoteMarkers() {
+    const footnotePattern = /\[\^(\d+)\]/g;
+    let globalFootnoteNumber = 1;
+    
+    // Find all paragraph blocks (not in markdown cards)
+    const paragraphs = this.container.querySelectorAll('p');
+    
+    paragraphs.forEach((paragraph, paraIndex) => {
+      let modifiedHTML = paragraph.innerHTML;
+      let hasFootnotes = false;
+      
+      // Replace each [^N] with clickable footnote reference
+      modifiedHTML = modifiedHTML.replace(footnotePattern, (match, originalNum) => {
+        hasFootnotes = true;
+        const footnoteId = `footnote-${globalFootnoteNumber}`;
+        const backrefId = `fnref-${globalFootnoteNumber}`;
+        
+        // Store footnote reference data
+        this.footnotes.set(globalFootnoteNumber, {
+          id: footnoteId,
+          backrefId: backrefId,
+          originalNumber: originalNum,
+          globalNumber: globalFootnoteNumber,
+          paragraph: paragraph,
+          content: null // Will be filled by connectFootnoteContent
+        });
+        
+        // Create accessible clickable footnote reference
+        const footnoteRef = `<sup class="footnote-ref" id="${backrefId}">
+          <a href="#${footnoteId}" 
+             data-footnote="${globalFootnoteNumber}" 
+             class="footnote-link"
+             role="doc-noteref"
+             aria-describedby="${footnoteId}"
+             aria-label="Footnote ${globalFootnoteNumber}"
+             tabindex="0">${globalFootnoteNumber}</a>
+        </sup>`;
+        
+        globalFootnoteNumber++;
+        return footnoteRef;
+      });
+      
+      if (hasFootnotes) {
+        paragraph.innerHTML = modifiedHTML;
+        console.log(`[DIGITAL_TALMUD_GHOST] Processed paragraph ${paraIndex + 1}: found footnote markers`);
+      }
+    });
+    
+    this.footnoteCounter = globalFootnoteNumber - 1;
+    console.log(`[DIGITAL_TALMUD_GHOST] Scanned ${paragraphs.length} paragraphs, found ${this.footnoteCounter} footnote references`);
+  }
+  
+  connectFootnoteContent() {
+    // Find all HTML cards with data-ref attributes
+    const footnoteCards = this.container.querySelectorAll('[data-ref]');
+    
+    footnoteCards.forEach(card => {
+      const refNumber = parseInt(card.dataset.ref);
+      
+      // Find corresponding footnote reference
+      this.footnotes.forEach((footnoteData, globalNum) => {
+        if (footnoteData.originalNumber == refNumber || globalNum == refNumber) {
+          // Store content reference
+          footnoteData.content = card;
+          footnoteData.contentHTML = card.innerHTML;
+          
+          // Add unique ID to the card for linking
+          card.id = `footnote-content-${globalNum}`;
+          
+          console.log(`[DIGITAL_TALMUD_GHOST] Connected footnote ${globalNum} to content card [data-ref="${refNumber}"]`);
+        }
+      });
+    });
+    
+    // Check for unconnected footnotes
+    let unconnectedCount = 0;
+    this.footnotes.forEach((footnoteData, globalNum) => {
+      if (!footnoteData.content) {
+        console.warn(`[DIGITAL_TALMUD_GHOST] Footnote ${globalNum} has no matching content card`);
+        unconnectedCount++;
+      }
+    });
+    
+    if (unconnectedCount > 0) {
+      console.warn(`[DIGITAL_TALMUD_GHOST] Warning: ${unconnectedCount} footnotes have no content`);
+    }
+  }
+  
+  createFootnoteCollection() {
+    // Check if footnotes collection already exists
+    let footnoteCollection = this.container.querySelector('.footnote-collection');
+    
+    if (!footnoteCollection && this.footnotes.size > 0) {
+      footnoteCollection = document.createElement('div');
+      footnoteCollection.className = 'footnote-collection';
+      footnoteCollection.setAttribute('role', 'doc-endnotes');
+      footnoteCollection.setAttribute('aria-label', 'Footnotes');
+      footnoteCollection.innerHTML = `
+        <hr class="footnote-separator" role="separator">
+        <h4 class="footnote-title">Notes</h4>
+        <div class="footnote-list" role="list"></div>
+      `;
+      
+      // Add to end of post content
+      this.container.appendChild(footnoteCollection);
+      console.log(`[DIGITAL_TALMUD_GHOST] Created footnote collection container`);
+    }
+    
+    const footnoteList = footnoteCollection?.querySelector('.footnote-list');
+    if (footnoteList) {
+      // Clear existing content
+      footnoteList.innerHTML = '';
+      
+      // Add each footnote to the collection
+      this.footnotes.forEach((footnoteData, globalNum) => {
+        if (footnoteData.content) {
+          const footnoteItem = document.createElement('div');
+          footnoteItem.className = 'footnote-item';
+          footnoteItem.id = footnoteData.id;
+          footnoteItem.setAttribute('role', 'listitem');
+          footnoteItem.setAttribute('role', 'doc-endnote');
+          
+          // Sanitize HTML content to prevent XSS
+          const sanitizedContent = this.sanitizeHTML(footnoteData.contentHTML);
+          
+          footnoteItem.innerHTML = `
+            <span class="footnote-number">
+              <a href="#${footnoteData.backrefId}" 
+                 class="footnote-backref" 
+                 data-target="${footnoteData.backrefId}"
+                 role="doc-backlink"
+                 aria-label="Return to footnote ${globalNum} reference in text"
+                 tabindex="0">${globalNum}</a>
+            </span>
+            <div class="footnote-content">${sanitizedContent}</div>
+          `;
+          
+          footnoteList.appendChild(footnoteItem);
+        }
+      });
+      
+      console.log(`[DIGITAL_TALMUD_GHOST] Populated footnote collection with ${footnoteList.children.length} footnotes`);
+    }
+  }
+  
+  enhanceFootnoteInteractions() {
+    // Add click and keyboard handlers for footnote references (text -> footnote)
+    const footnoteLinks = this.container.querySelectorAll('.footnote-link');
+    footnoteLinks.forEach(link => {
+      // Click handler
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const footnoteNum = parseInt(link.dataset.footnote);
+        const targetId = `footnote-${footnoteNum}`;
+        this.smoothScrollToElement(targetId);
+      });
+      
+      // Keyboard navigation (Enter and Space)
+      link.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const footnoteNum = parseInt(link.dataset.footnote);
+          const targetId = `footnote-${footnoteNum}`;
+          this.smoothScrollToElement(targetId);
+        }
+      });
+      
+      // Add hover tooltips
+      link.addEventListener('mouseenter', (e) => {
+        this.showFootnoteTooltip(e, parseInt(link.dataset.footnote));
+      });
+      
+      link.addEventListener('mouseleave', (e) => {
+        this.hideFootnoteTooltip(parseInt(link.dataset.footnote));
+      });
+      
+      // Focus handlers for keyboard users
+      link.addEventListener('focus', (e) => {
+        this.showFootnoteTooltip(e, parseInt(link.dataset.footnote));
+      });
+      
+      link.addEventListener('blur', (e) => {
+        // Small delay to allow mouse users to interact with tooltip
+        setTimeout(() => {
+          this.hideFootnoteTooltip(parseInt(link.dataset.footnote));
+        }, 150);
+      });
+    });
+    
+    // Add click and keyboard handlers for back-references (footnote -> text)
+    const backrefLinks = this.container.querySelectorAll('.footnote-backref');
+    backrefLinks.forEach(link => {
+      // Click handler
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.dataset.target;
+        this.smoothScrollToElement(targetId);
+      });
+      
+      // Keyboard navigation
+      link.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const targetId = link.dataset.target;
+          this.smoothScrollToElement(targetId);
+        }
+      });
+    });
+    
+    console.log(`[DIGITAL_TALMUD_GHOST] Enhanced ${footnoteLinks.length} footnote links and ${backrefLinks.length} back-references with full accessibility support`);
+  }
+  
+  smoothScrollToElement(elementId) {
+    const targetElement = document.getElementById(elementId);
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+      
+      // Add brief highlight effect
+      targetElement.style.transition = 'background-color 0.3s ease';
+      targetElement.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+      setTimeout(() => {
+        targetElement.style.backgroundColor = '';
+      }, 1000);
+      
+      console.log(`[DIGITAL_TALMUD_GHOST] Smooth scrolled to ${elementId}`);
+    } else {
+      console.warn(`[DIGITAL_TALMUD_GHOST] Target element not found: ${elementId}`);
+    }
+  }
+  
+  showFootnoteTooltip(event, footnoteNum) {
+    const footnoteData = this.footnotes.get(footnoteNum);
+    if (!footnoteData || !footnoteData.content) return;
+    
+    // Check if tooltip already exists
+    if (this.footnoteTooltips.has(footnoteNum)) {
+      const existingTooltip = this.footnoteTooltips.get(footnoteNum);
+      existingTooltip.style.display = 'block';
+      return;
+    }
+    
+    // Create new tooltip
+    const tooltip = document.createElement('div');
+    tooltip.className = 'footnote-tooltip';
+    tooltip.innerHTML = footnoteData.contentHTML;
+    
+    // Position tooltip
+    const rect = event.target.getBoundingClientRect();
+    tooltip.style.position = 'absolute';
+    tooltip.style.left = `${rect.left}px`;
+    tooltip.style.top = `${rect.bottom + 5}px`;
+    tooltip.style.zIndex = '1000';
+    
+    document.body.appendChild(tooltip);
+    this.footnoteTooltips.set(footnoteNum, tooltip);
+    
+    console.log(`[DIGITAL_TALMUD_GHOST] Showed tooltip for footnote ${footnoteNum}`);
+  }
+  
+  hideFootnoteTooltip(footnoteNum) {
+    const tooltip = this.footnoteTooltips.get(footnoteNum);
+    if (tooltip) {
+      tooltip.style.display = 'none';
+    }
+  }
+  
+  // HTML Sanitization for security
+  sanitizeHTML(html) {
+    // Create a temporary element to parse HTML safely
+    const temp = document.createElement('div');
+    
+    // Basic HTML sanitization - remove script tags and dangerous attributes
+    const cleanHTML = html
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+="[^"]*"/gi, '')
+      .replace(/on\w+='[^']*'/gi, '');
+    
+    temp.innerHTML = cleanHTML;
+    
+    // Additional security: remove any remaining script elements
+    const scripts = temp.querySelectorAll('script');
+    scripts.forEach(script => script.remove());
+    
+    return temp.innerHTML;
+  }
+  
+  // Error handling wrapper for footnote operations
+  safeExecute(operation, errorMessage, defaultReturn = null) {
+    try {
+      return operation();
+    } catch (error) {
+      console.error(`[DIGITAL_TALMUD_GHOST] ${errorMessage}:`, error);
+      return defaultReturn;
+    }
   }
   
   calculateWidth(marginalia) {
@@ -256,6 +658,38 @@ class DigitalTalmudGhostCompatible {
       console.log(`Background visible area: ${window.innerWidth - rect.width}px`);
       console.log(`Background visible: ${rect.width < window.innerWidth ? '✅' : '❌'}`);
     }
+    console.groupEnd();
+    
+    console.group('🔗 Footnote System:');
+    console.log(`Total footnotes: ${this.footnotes.size}`);
+    console.log(`Footnote counter: ${this.footnoteCounter}`);
+    
+    if (this.footnotes.size > 0) {
+      this.footnotes.forEach((footnoteData, globalNum) => {
+        console.log(`Footnote ${globalNum}:`);
+        console.log(`  Original: [^${footnoteData.originalNumber}]`);
+        console.log(`  IDs: ${footnoteData.id} ⟷ ${footnoteData.backrefId}`);
+        console.log(`  Has content: ${footnoteData.content ? '✅' : '❌'}`);
+        if (footnoteData.content) {
+          console.log(`  Content preview: ${footnoteData.contentHTML.substring(0, 50).replace(/\n/g, ' ')}...`);
+        }
+      });
+    }
+    
+    const footnoteLinks = this.container.querySelectorAll('.footnote-link');
+    const backrefLinks = this.container.querySelectorAll('.footnote-backref');
+    const footnoteCollection = this.container.querySelector('.footnote-collection');
+    
+    console.log(`Footnote links in text: ${footnoteLinks.length}`);
+    console.log(`Back-reference links: ${backrefLinks.length}`);
+    console.log(`Footnote collection: ${footnoteCollection ? '✅' : '❌'}`);
+    
+    if (footnoteCollection) {
+      const footnoteItems = footnoteCollection.querySelectorAll('.footnote-item');
+      console.log(`Footnote items in collection: ${footnoteItems.length}`);
+    }
+    
+    console.log(`Cached tooltips: ${this.footnoteTooltips.size}`);
     console.groupEnd();
     
     console.groupEnd();

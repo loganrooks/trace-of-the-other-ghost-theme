@@ -44,16 +44,17 @@
     .margin-voice {
         position: static;
         width: 100%;
-        margin: 1rem 0;
+        margin: 1rem auto;
         padding: 1rem;
         border-left: 3px solid #ddd;
         background: #f9f9f9;
+        text-align: center;
     }
     
     .margin-left,
     .margin-right {
         left: auto;
         right: auto;
-        text-align: left;
+        text-align: center;
     }
 }

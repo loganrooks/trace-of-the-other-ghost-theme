@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Talmud Footnote System Test</title>
+    
+    <!-- Load CSS -->
+    <link rel="stylesheet" href="assets/css/digital-talmud.css">
+    
+    <!-- Hacker Green CSS Variables -->
+    <style>
+        :root {
+            --hacker-green: #00ff00;
+            --hacker-green-dark: #008800;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--hacker-green);
+        }
+        
+        .test-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid var(--hacker-green-dark);
+            border-radius: 8px;
+        }
+        
+        .test-section h3 {
+            color: var(--hacker-green);
+            margin-top: 0;
+        }
+        
+        /* Debug button */
+        .debug-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--hacker-green);
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            z-index: 2000;
+        }
+        
+        .debug-button:hover {
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <button class="debug-button" onclick="debugFootnotes()">DEBUG FOOTNOTES</button>
+    
+    <div class="test-container">
+        <div class="test-header">
+            <h1>Digital Talmud Footnote System Test</h1>
+            <p>Testing [^1] pattern recognition and interactive footnote system</p>
+        </div>
+
+        <!-- Simulate Ghost's post content structure -->
+        <div class="post-content">
+            
+            <div class="test-section">
+                <h3>Test 1: Basic Footnote Integration</h3>
+                <p>Philosophy cannot solve this problem[^1]. These words offer no blueprint for peace, no roadmap beyond the current horror[^2]. What follows will be patient, sometimes maddeningly so.</p>
+                
+                <div data-ref="1">This aporia isn't just theoretical—every word betrays its own conditions. The impossibility of justice becomes the condition of political thought.</div>
+                
+                <div data-ref="2">The theoretical frameworks we inherit are insufficient for thinking beyond the violence of the present moment.</div>
+            </div>
+
+            <div class="test-section">
+                <h3>Test 2: Multiple Paragraphs with Sequential Footnotes</h3>
+                <p>The tragedy of our current moment is how the legitimate need for protection gets channeled through political forms that can only secure one people's presence by ensuring another's absence[^3].</p>
+                
+                <p>What you're about to read emerged in pieces, each one discovering the violence of what came before[^4]. The analysis reveals deeper structures[^5] that conventional approaches miss.</p>
+                
+                <div data-ref="3">This mutual constitution through exclusion suggests that some positions seem structurally incompatible—the settler and the refugee exist in relation but cannot exchange places within the current political framework.</div>
+                
+                <div data-ref="4">"WE DEMAND JUSTICE!" chanted at every demonstration. But what arrives is always law, procedure, compromise. The demand remains, inexhaustible.</div>
+                
+                <div data-ref="5">Here I reference Said's work on orientalism and the systematic production of knowledge as power.</div>
+            </div>
+
+            <div class="test-section">
+                <h3>Test 3: Mixed Content with Marginalia</h3>
+                <p>This connects to the broader theoretical framework[^6]. The deconstruction of presence reveals how language itself resists our attempts at mastery.</p>
+                
+                <!-- Test marginalia alongside footnotes -->
+                <div class="marginalia-voice" data-position="right" data-voice="3" data-width="30">
+                    Here I doubt my own analysis. Every critique of violence risks aestheticizing what it claims to oppose.
+                </div>
+                
+                <p>The continuation of analysis[^7] reveals deeper tensions between theory and praxis.</p>
+                
+                <div data-ref="6">See Derrida's "Of Grammatology" for the foundational argument about the metaphysics of presence.</div>
+                
+                <div data-ref="7">This builds on the previous deconstruction of presence, showing how différance operates at the level of political action.</div>
+            </div>
+
+            <div class="test-section">
+                <h3>Test 4: Edge Cases</h3>
+                <p>Testing edge cases: missing footnote content[^8], out of order numbering[^10], and duplicate references[^6].</p>
+                
+                <p>This paragraph has no footnotes to test normal text flow.</p>
+                
+                <p>Final test with proper footnote[^9] to ensure sequential processing works.</p>
+                
+                <!-- Note: No data-ref="8" to test missing content -->
+                <div data-ref="9">This footnote tests proper handling when some footnotes are missing content.</div>
+                <div data-ref="10">Testing out-of-order footnote content processing.</div>
+            </div>
+
+            <div class="test-section">
+                <h3>Test 5: Complex HTML in Footnotes</h3>
+                <p>Testing footnotes with complex HTML content[^11] and formatting[^12].</p>
+                
+                <div data-ref="11">
+                    <strong>Complex footnote with formatting:</strong><br>
+                    This footnote contains <em>emphasized text</em>, <code>code snippets</code>, and even lists:
+                    <ul>
+                        <li>First item in footnote</li>
+                        <li>Second item with <a href="#" style="color: var(--hacker-green);">links</a></li>
+                    </ul>
+                </div>
+                
+                <div data-ref="12">
+                    <blockquote style="border-left: 3px solid var(--hacker-green); padding-left: 1rem; margin: 0;">
+                        "Every naming is already a taking of sides. Yet we cannot not name."
+                        <cite>— Edward Said</cite>
+                    </blockquote>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Load JavaScript -->
+    <script src="assets/js/digital-talmud-ghost-compatible.js"></script>
+    
+    <script>
+        // Debug function
+        function debugFootnotes() {
+            if (window.DigitalTalmudGhost) {
+                window.DigitalTalmudGhost.debugGhost();
+            } else {
+                console.error('DigitalTalmudGhost instance not found');
+            }
+        }
+        
+        // Test function to validate footnote system
+        function validateFootnoteSystem() {
+            console.group('🧪 FOOTNOTE SYSTEM VALIDATION');
+            
+            // Check if footnote links were created
+            const footnoteLinks = document.querySelectorAll('.footnote-link');
+            console.log(`✓ Footnote links created: ${footnoteLinks.length}`);
+            
+            // Check if footnote collection was created
+            const footnoteCollection = document.querySelector('.footnote-collection');
+            console.log(`✓ Footnote collection: ${footnoteCollection ? 'Created' : 'Missing'}`);
+            
+            if (footnoteCollection) {
+                const footnoteItems = footnoteCollection.querySelectorAll('.footnote-item');
+                console.log(`✓ Footnote items in collection: ${footnoteItems.length}`);
+            }
+            
+            // Test click functionality
+            console.log('✓ Testing footnote interactions...');
+            footnoteLinks.forEach((link, index) => {
+                const footnoteNum = link.dataset.footnote;
+                const targetExists = document.getElementById(`footnote-${footnoteNum}`);
+                console.log(`  Footnote ${footnoteNum}: target ${targetExists ? 'exists' : 'missing'}`);
+            });
+            
+            // Check tooltips
+            console.log('✓ Hover over footnote links to test tooltip functionality');
+            
+            console.groupEnd();
+        }
+        
+        // Run validation after system loads
+        window.addEventListener('load', () => {
+            setTimeout(validateFootnoteSystem, 500);
+        });
+        
+        // Add keyboard shortcut for validation
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'V') {
+                e.preventDefault();
+                validateFootnoteSystem();
+            }
+        });
+    </script>
+    
+    <div style="position: fixed; bottom: 20px; left: 20px; background: rgba(0, 255, 0, 0.1); border: 1px solid var(--hacker-green); padding: 1rem; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+        <strong>Test Controls:</strong><br>
+        • Click "DEBUG FOOTNOTES" button<br>
+        • Press Ctrl+Shift+V for validation<br>
+        • Press Ctrl+Shift+G for full debug<br>
+        • Hover over [1] [2] etc for tooltips<br>
+        • Click footnote numbers to navigate
+    </div>
+</body>
+</html>

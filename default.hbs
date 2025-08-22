@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset "css/main.css"}}">
     <link rel="stylesheet" type="text/css" href="{{asset "css/hacker-effects.css"}}">
     <link rel="stylesheet" type="text/css" href="{{asset "css/digital-talmud.css"}}">
+    <link rel="stylesheet" type="text/css" href="{{asset "css/footnote-themes.css"}}">
     
     {{!-- Ghost head outputs meta tags and structured data --}}
     {{ghost_head}}
@@ -50,7 +51,10 @@
 
     {{!-- Hacker effects JavaScript --}}
     <script src="{{asset "js/hacker-effects.js"}}"></script>
-    <script src="{{asset "js/digital-talmud-ghost-compatible.js"}}"></script>
+    
+    {{!-- Footnote system --}}
+    <script src="{{asset "js/footnote-config.js"}}"></script>
+    <script src="{{asset "js/footnote-system.js"}}"></script>
     
     {{ghost_foot}}
 </body>
