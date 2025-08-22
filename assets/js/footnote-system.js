@@ -91,15 +91,36 @@ class FootnoteSystem {
 
   // Process [^1] patterns into semantic footnote references
   processFootnoteMarkers() {
+    console.group('[FOOTNOTE_SYSTEM] Pattern Processing Debug');
+    
     const pattern = this.config.processing.footnotePattern;
     const paragraphs = this.container.querySelectorAll(this.config.selectors.paragraphs);
     let globalNumber = 1;
+    
+    console.log(`Pattern: ${pattern}`);
+    console.log(`Found ${paragraphs.length} paragraphs to search`);
 
     paragraphs.forEach((paragraph, paraIndex) => {
       const originalHTML = paragraph.innerHTML;
+      const textContent = paragraph.textContent;
+      
+      // Test pattern matching
+      const matches = originalHTML.match(pattern);
+      const textMatches = textContent.match(/\[\^(\d+)\]/g);
+      
+      if (matches || textMatches) {
+        console.log(`Paragraph ${paraIndex}:`, {
+          htmlMatches: matches,
+          textMatches: textMatches,
+          originalHTML: originalHTML.substring(0, 100) + '...',
+          textContent: textContent.substring(0, 100) + '...'
+        });
+      }
+      
       let hasFootnotes = false;
 
       const modifiedHTML = originalHTML.replace(pattern, (match, originalNum) => {
+        console.log(`✅ Processing match: "${match}" → originalNum: "${originalNum}"`);
         hasFootnotes = true;
         
         // Store footnote data
@@ -112,6 +133,8 @@ class FootnoteSystem {
           content: null
         });
 
+        console.log(`✅ Stored footnote ${globalNumber} with originalNumber: "${originalNum}"`);
+
         // Create semantic footnote reference
         const ref = this.createFootnoteReference(globalNumber, originalNum);
         globalNumber++;
@@ -119,11 +142,15 @@ class FootnoteSystem {
       });
 
       if (hasFootnotes) {
+        console.log(`✅ Updated paragraph ${paraIndex} HTML`);
         paragraph.innerHTML = modifiedHTML;
       }
     });
 
     this.counter = globalNumber - 1;
+    console.log(`Final footnotes count: ${this.counter}`);
+    console.log('Final footnotes Map:', Array.from(this.footnotes.entries()));
+    console.groupEnd();
   }
 
   // Create accessible footnote reference HTML
@@ -145,21 +172,45 @@ class FootnoteSystem {
 
   // Connect footnote references to HTML card content
   connectFootnoteContent() {
-    const footnoteCards = this.container.querySelectorAll(this.config.selectors.footnoteCards);
+    console.group('[FOOTNOTE_SYSTEM] Connection Debug');
     
-    footnoteCards.forEach(card => {
+    // Search for footnote cards globally since Ghost may place them outside .post-content
+    const footnoteCards = document.querySelectorAll(this.config.selectors.footnoteCards);
+    console.log(`Found ${footnoteCards.length} footnote cards`);
+    
+    console.log(`Footnotes Map size: ${this.footnotes.size}`);
+    console.log('Footnotes Map contents:', Array.from(this.footnotes.entries()));
+    
+    footnoteCards.forEach((card, index) => {
       const refNumber = parseInt(card.getAttribute(this.config.processing.referenceAttribute));
+      console.log(`Card ${index + 1}: data-ref="${refNumber}"`);
       
+      let matched = false;
       // Find corresponding footnote
       for (let [globalNum, footnoteData] of this.footnotes) {
+        console.log(`  Checking against footnote ${globalNum}: originalNumber=${footnoteData.originalNumber} (type: ${typeof footnoteData.originalNumber})`);
+        
         if (footnoteData.originalNumber == refNumber || globalNum == refNumber) {
+          console.log(`  ✅ MATCH FOUND: footnote ${globalNum} ↔ data-ref="${refNumber}"`);
           footnoteData.content = card;
           footnoteData.contentHTML = this.sanitizeHTML(card.innerHTML);
           card.id = `footnote-content-${globalNum}`;
+          
+          // HIDE original HTML card to prevent duplicates
+          card.style.display = 'none';
+          console.log(`  ✅ HIDDEN original HTML card to prevent duplicate`);
+          
+          matched = true;
           break;
         }
       }
+      
+      if (!matched) {
+        console.log(`  ❌ NO MATCH for data-ref="${refNumber}"`);
+      }
     });
+    
+    console.groupEnd();
   }
 
   // Create organized footnote collection
@@ -308,27 +359,90 @@ class FootnoteSystem {
     const footnoteData = this.footnotes.get(footnoteNum);
     if (!footnoteData?.content) return;
 
-    // Reuse existing tooltip
-    if (this.tooltips.has(footnoteNum)) {
-      this.tooltips.get(footnoteNum).style.display = 'block';
-      return;
+    // Get or create tooltip
+    let tooltip = this.tooltips.get(footnoteNum);
+    if (!tooltip) {
+      // Create new tooltip with clean content (no duplicates)
+      tooltip = this.createElement('div', this.config.classes.footnoteTooltip);
+      
+      // Extract clean content, avoiding any nested footnote markers
+      const cleanContent = this.extractCleanContent(footnoteData.contentHTML);
+      tooltip.innerHTML = cleanContent;
+      
+      // Add arrow
+      const arrow = this.createElement('div', 'footnote-tooltip-arrow');
+      tooltip.appendChild(arrow);
+      
+      document.body.appendChild(tooltip);
+      this.tooltips.set(footnoteNum, tooltip);
     }
 
-    // Create new tooltip
-    const tooltip = this.createElement('div', this.config.classes.footnoteTooltip);
-    tooltip.innerHTML = footnoteData.contentHTML;
-
-    // Position tooltip
+    // Show tooltip to measure it
+    tooltip.style.display = 'block';
+    tooltip.style.visibility = 'hidden'; // Measure without showing
+    
+    // ALWAYS recalculate position on each hover
     const rect = event.target.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // Safe margins from screen edges
+    const MARGIN = 20;
+    const ARROW_SIZE = 8;
+    
+    // Calculate initial position (centered under footnote)
+    let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+    let top = rect.bottom + ARROW_SIZE + 5;
+    let arrowLeft = 50; // percentage
+    let arrowClass = 'arrow-top';
+    
+    // Constrain horizontally with margins
+    const minLeft = MARGIN;
+    const maxLeft = viewportWidth - tooltipRect.width - MARGIN;
+    
+    if (left < minLeft) {
+      // Tooltip would go off left edge
+      left = minLeft;
+      arrowLeft = ((rect.left + rect.width/2 - left) / tooltipRect.width) * 100;
+    } else if (left > maxLeft) {
+      // Tooltip would go off right edge  
+      left = maxLeft;
+      arrowLeft = ((rect.left + rect.width/2 - left) / tooltipRect.width) * 100;
+    }
+    
+    // Constrain arrow position to stay within tooltip bounds
+    arrowLeft = Math.max(10, Math.min(90, arrowLeft));
+    
+    // Check if tooltip would go off bottom of screen
+    if (top + tooltipRect.height > viewportHeight - MARGIN) {
+      // Show above footnote instead
+      top = rect.top - tooltipRect.height - ARROW_SIZE - 5;
+      arrowClass = 'arrow-bottom';
+      
+      // If still off screen (footnote near top), position at top with margin
+      if (top < MARGIN) {
+        top = MARGIN;
+        arrowClass = 'arrow-top';
+      }
+    }
+
+    // Apply positioning
     this.setStyles(tooltip, {
       position: 'fixed',
-      left: `${rect.left}px`,
-      top: `${rect.bottom + 5}px`,
-      zIndex: '1000'
+      left: `${left}px`,
+      top: `${top}px`,
+      zIndex: '1000',
+      display: 'block',
+      visibility: 'visible'
     });
-
-    document.body.appendChild(tooltip);
-    this.tooltips.set(footnoteNum, tooltip);
+    
+    // Position arrow
+    const arrow = tooltip.querySelector('.footnote-tooltip-arrow');
+    if (arrow) {
+      arrow.className = `footnote-tooltip-arrow ${arrowClass}`;
+      arrow.style.left = `${arrowLeft}%`;
+    }
   }
 
   hideTooltip(footnoteNum) {
@@ -366,6 +480,30 @@ class FootnoteSystem {
     Object.entries(styles).forEach(([property, value]) => {
       element.style[property] = value;
     });
+  }
+
+  // Extract clean content for tooltips (removes duplicates and footnote markers)
+  extractCleanContent(html) {
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    
+    // Remove any nested footnote markers or numbers that might cause duplicates
+    const footnoteMarkers = temp.querySelectorAll('strong, sup, .footnote-ref, .footnote-link, [data-footnote]');
+    footnoteMarkers.forEach(marker => {
+      // If it's just a number/marker (like ¹, ², 1, 2), remove it
+      const text = marker.textContent.trim();
+      if (/^[\d¹²³⁴⁵⁶⁷⁸⁹⁰]+$/.test(text)) {
+        marker.remove();
+      }
+    });
+    
+    // Clean up any remaining footnote patterns
+    let cleanText = temp.innerHTML
+      .replace(/\[\^(\d+)\]/g, '') // Remove [^1] patterns
+      .replace(/^[\d¹²³⁴⁵⁶⁷⁸⁹⁰\s]*/, '') // Remove leading numbers/superscripts
+      .trim();
+    
+    return this.sanitizeHTML(cleanText);
   }
 
   // HTML sanitization (basic implementation)

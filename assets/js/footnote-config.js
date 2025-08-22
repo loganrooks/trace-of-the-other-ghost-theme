@@ -11,7 +11,7 @@ window.DigitalTalmudFootnoteConfig = {
     tooltipDelay: 150,
     scrollOffset: 'center',
     enableKeyboardNav: true,
-    enableProgressiveEnhancement: true
+    enableProgressiveEnhancement: false
   },
 
   // Visual Theme Configuration (CSS Custom Properties)
@@ -46,7 +46,7 @@ window.DigitalTalmudFootnoteConfig = {
   processing: {
     footnotePattern: /\[\^(\d+)\]/g,
     referenceAttribute: 'data-ref',
-    fallbackEnabled: true,
+    fallbackEnabled: false, // DISABLE progressive enhancement fallback
     sanitizeHTML: true,
     allowedTags: ['strong', 'em', 'code', 'a', 'ul', 'ol', 'li', 'blockquote', 'cite', 'br'],
     maxTooltipWidth: 320,
@@ -76,8 +76,9 @@ window.DigitalTalmudFootnoteConfig = {
   // Selectors Configuration
   selectors: {
     container: '.post-content, .page-content',
-    paragraphs: 'p',
+    paragraphs: 'p, .marginalia-voice, blockquote, li', // Expanded to include marginalia and other text elements
     footnoteCards: '[data-ref]',
+    footnoteSearchScope: 'article, .gh-content, .post-content, .page-content, main', // Broader search for footnote content
     marginalia: '.marginalia-voice'
   },
 
