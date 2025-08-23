@@ -8,18 +8,25 @@ ZIP_NAME="${THEME_NAME}-$(date +%Y%m%d-%H%M).zip"
 
 echo "Building $ZIP_NAME..."
 
-# Create zip with hacker theme files including Digital Talmud system
+# Create zip with hacker theme files including complete footnote system
 zip -r "$ZIP_NAME" \
     package.json \
     default.hbs \
     index.hbs \
     post.hbs \
     page.hbs \
+    partials/ \
     assets/css/main.css \
     assets/css/hacker-effects.css \
     assets/css/digital-talmud.css \
+    assets/css/footnote-themes.css \
     assets/js/hacker-effects.js \
-    assets/js/digital-talmud.js \
+    assets/js/footnote-config.js \
+    assets/js/footnote-system.js \
+    assets/js/footnote-test.js \
+    assets/js/footnote-debug-connection.js \
+    assets/js/footnote-direct-test.js \
+    assets/js/footnote-raw-content-dump.js \
     -x "*.DS_Store" \
     -x "__MACOSX/*" \
     -x "*.git*" \

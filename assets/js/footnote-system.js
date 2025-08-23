@@ -388,7 +388,8 @@ class FootnoteSystem {
     const viewportHeight = window.innerHeight;
     
     // Safe margins from screen edges
-    const MARGIN = 20;
+    const HORIZONTAL_MARGIN = 20;
+    const VERTICAL_MARGIN = 40; // Larger margin for comfortable viewing
     const ARROW_SIZE = 8;
     
     // Calculate initial position (centered under footnote)
@@ -397,9 +398,9 @@ class FootnoteSystem {
     let arrowLeft = 50; // percentage
     let arrowClass = 'arrow-top';
     
-    // Constrain horizontally with margins
-    const minLeft = MARGIN;
-    const maxLeft = viewportWidth - tooltipRect.width - MARGIN;
+    // Constrain horizontally with margins - MUST stay within screen
+    const minLeft = HORIZONTAL_MARGIN;
+    const maxLeft = viewportWidth - tooltipRect.width - HORIZONTAL_MARGIN;
     
     if (left < minLeft) {
       // Tooltip would go off left edge
@@ -414,17 +415,22 @@ class FootnoteSystem {
     // Constrain arrow position to stay within tooltip bounds
     arrowLeft = Math.max(10, Math.min(90, arrowLeft));
     
-    // Check if tooltip would go off bottom of screen
-    if (top + tooltipRect.height > viewportHeight - MARGIN) {
+    // Vertical positioning - allow overflow but with reasonable limits
+    const maxAllowedHeight = viewportHeight - VERTICAL_MARGIN;
+    
+    // If tooltip is too tall to fit comfortably, prefer showing above
+    if (tooltipRect.height > maxAllowedHeight * 0.7 || 
+        top + tooltipRect.height > viewportHeight + maxAllowedHeight) {
       // Show above footnote instead
       top = rect.top - tooltipRect.height - ARROW_SIZE - 5;
       arrowClass = 'arrow-bottom';
-      
-      // If still off screen (footnote near top), position at top with margin
-      if (top < MARGIN) {
-        top = MARGIN;
-        arrowClass = 'arrow-top';
-      }
+    }
+    
+    // Final vertical constraint - allow controlled overflow
+    // Only intervene if tooltip would be completely unusable
+    if (top < -maxAllowedHeight) {
+      top = -maxAllowedHeight + VERTICAL_MARGIN;
+      arrowClass = 'arrow-top';
     }
 
     // Apply positioning

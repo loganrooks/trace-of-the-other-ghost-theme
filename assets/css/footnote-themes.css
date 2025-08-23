@@ -225,6 +225,17 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
+
+/* Desktop: Constrain tooltip width to 60% of viewport */
+@media (min-width: 769px) {
+  .footnote-tooltip {
+    max-width: 60vw !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* Tablet and Mobile */
 @media (max-width: 768px) {
   :root {
     --footnote-collection-padding: 1rem;
