@@ -208,14 +208,33 @@ switchTheme('academic'); // Change theme
 - Semantic HTML markup improves search results
 - No negative SEO impact from interactive features
 
+## 🔧 **Development & Documentation**
+
+### **For Content Creators**
+- **[Realistic Ghost Workflow](REALISTIC_GHOST_WORKFLOW.md)** - Step-by-step Ghost editor guide
+- **[Footnote Integration Guide](FOOTNOTE_INTEGRATION_GUIDE.md)** - How to use enhanced footnotes
+- **[Footnote System User Guide](FOOTNOTE_SYSTEM_USER_GUIDE.md)** - Complete footnote reference
+
+### **For Developers**
+- **[Development Guide](DEVELOPMENT_GUIDE.md)** - Complete development workflow for Ghost platform
+- **[Modular Architecture Plan](MODULAR_ARCHITECTURE_PLAN.md)** - System architecture overview
+- **[Implementation Plan](IMPLEMENTATION_PLAN.md)** - Technical implementation details
+- **[Test Validation](TEST_VALIDATION.md)** - Pre-deployment testing checklist
+
+### **Technical Documentation**
+- **[Installation Guide](INSTALLATION.md)** - Detailed installation instructions
+- **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Production deployment guide
+- **[Digital Talmud Usage](DIGITAL_TALMUD_USAGE.md)** - Advanced marginalia system
+
 ## 🔮 **Roadmap**
 
 The modular architecture supports future enhancements:
-- **Marginalia System**: Enhanced marginal commentary
-- **Citation Management**: Automatic citation formatting
-- **Collaborative Annotations**: Reader-contributed annotations
-- **Search Integration**: Search within footnotes and extensions
+- **Enhanced Marginalia Patterns**: More flexible positioning and styling
+- **Citation Management**: Automatic citation formatting and validation
+- **Collaborative Annotations**: Reader-contributed marginalia system
+- **Search Integration**: Full-text search within footnotes and extensions
 - **Export Features**: PDF/print optimizations with enhanced footnotes
+- **Ghost Marketplace**: Prepare for Ghost theme marketplace distribution
 
 ## 📄 **License**
 
@@ -223,4 +242,4 @@ MIT License - feel free to modify and redistribute.
 
 ---
 
-**Questions?** Check the troubleshooting section above or examine the debug console commands for real-time system information.
+**Questions?** Check the [Development Guide](DEVELOPMENT_GUIDE.md) for technical questions or the troubleshooting section above for usage issues.
