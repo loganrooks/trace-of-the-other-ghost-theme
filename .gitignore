@@ -1,0 +1,17 @@
+# Ghost Theme Package Files
+trace-of-the-other-ghost-theme-v*.zip
+
+# Development Files
+*.log
+*.tmp
+.DS_Store
+node_modules/
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Files
+Thumbs.db

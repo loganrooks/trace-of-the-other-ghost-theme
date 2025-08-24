@@ -118,10 +118,57 @@ window.ContentEnhancementConfig = {
         enableKeyboardNav: true,
         announceStateChanges: true
       }
+    },
+    
+    // Marginalia processor configuration
+    marginalia: {
+      behavior: {
+        enablePatternProcessing: true,
+        enableBackwardCompatibility: true, // Support existing HTML blocks
+        enableHoverEffects: true,
+        enableVoiceInteractions: true
+      },
+      
+      patterns: {
+        // Core pattern: [m][voice font-scale width position][content] - supports multiline
+        // FIXED: Made content matching greedy to handle nested brackets like [^2]
+        marginaliaPattern: /\[m\]\[([^\]]*)\]\[([\s\S]+)\]/g
+      },
+      
+      defaults: {
+        voice: 1,        // Default voice (1-6)
+        fontScale: 1.0,  // Default font scale (0.4-2.5)
+        width: 30,       // Default width percentage (15-45)
+        position: 'right' // Default position (left/right)
+      },
+      
+      classes: {
+        marginalia: 'marginalia-voice',
+        marginaliaContent: 'marginalia-content'
+      },
+      
+      selectors: {
+        paragraphs: 'p, .marginalia-voice, blockquote, li, div',
+        existingMarginalia: '.marginalia-voice'
+      },
+      
+      validation: {
+        minVoice: 1,
+        maxVoice: 6,
+        minFontScale: 0.4,
+        maxFontScale: 2.5,
+        minWidth: 15,
+        maxWidth: 45,
+        validPositions: ['left', 'right', 'l', 'r'] // Support both short and long forms
+      },
+      
+      formatting: {
+        supportMarkdown: true, // Enable basic markdown in marginalia
+        maxMarginaliaLength: 1000 // Prevent extremely long marginalia
+      }
     }
     
     // Future processors can be added here:
-    // marginalia: { /* configuration for marginalia processor */ },
     // citations: { /* configuration for citation processor */ },
     // annotations: { /* configuration for annotation processor */ }
   },
@@ -337,14 +384,16 @@ window.ContentEnhancementConfig = {
 // Feature flags - integrates with Ghost custom theme settings
 // Default values are overridden by theme settings if available
 window.CONTENT_ENHANCEMENT_FLAGS = {
-  // Migration control - use theme settings or fallback to safe defaults
-  USE_LEGACY_FOOTNOTES: !window.ghost_custom_settings?.enable_modern_footnotes,
+  // Migration control - use modern system to ensure proper processing order
+  USE_LEGACY_FOOTNOTES: false,  // FIXED: Use modern system for correct Marginalia→Extensions→Footnotes order
   ENABLE_EXTENSIONS: window.ghost_custom_settings?.enable_extensions || false,
+  ENABLE_MARGINALIA: window.ghost_custom_settings?.enable_marginalia !== false, // Enabled by default
   MIGRATION_MODE: true,        // Always enable gradual migration
   
   // Processor control - driven by theme settings
-  ENABLE_FOOTNOTE_PROCESSOR: window.ghost_custom_settings?.enable_modern_footnotes || false,
+  ENABLE_FOOTNOTE_PROCESSOR: true,  // FIXED: Enable modern footnote processor
   ENABLE_EXTENSION_PROCESSOR: window.ghost_custom_settings?.enable_extensions || false,
+  ENABLE_MARGINALIA_PROCESSOR: window.ghost_custom_settings?.enable_marginalia !== false, // Enabled by default
   
   // Feature control
   ENABLE_MODERN_TOOLTIPS: window.ghost_custom_settings?.enable_modern_footnotes || false,

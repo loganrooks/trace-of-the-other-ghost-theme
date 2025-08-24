@@ -76,10 +76,10 @@
   visibility: visible !important; /* Never hidden */
   pointer-events: all !important; /* Always interactive */
   
-  /* Aggressive width control - force the width regardless of constraints */
-  width: var(--marginalia-max-width, 200px) !important;
+  /* Width control - allow data-width attributes to override default */
   min-width: 80px !important;
-  max-width: var(--marginalia-max-width, 200px) !important; 
+  /* Default max-width for marginalia without data-width attribute */
+  max-width: var(--marginalia-max-width, 200px); 
   box-sizing: border-box !important;
   
   /* Float for text wrapping */
@@ -207,20 +207,33 @@
   font-size: 0.75rem;
 }
 
-/* Width percentage control via data attributes - based on content area for proper text flow */
-.marginalia-voice[data-width="15"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.33); } /* ~15% of content area */
-.marginalia-voice[data-width="20"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.44); } /* ~20% of content area */
-.marginalia-voice[data-width="25"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.56); } /* ~25% of content area */
-.marginalia-voice[data-width="30"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.67); } /* ~30% of content area */
-.marginalia-voice[data-width="35"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.78); } /* ~35% of content area */
-.marginalia-voice[data-width="40"] { max-width: calc(var(--marginalia-max-width, 200px) * 0.89); } /* ~40% of content area */
-.marginalia-voice[data-width="45"] { max-width: var(--marginalia-max-width, 200px); } /* Full available margin space */
+/* Width percentage control via data attributes - responsive to actual container space */
+:root {
+  --marginalia-max-width: min(300px, 25vw); /* Responsive margin width */
+  --content-width: min(65ch, 90vw); /* Approximate content area width */
+  --container-width: min(800px, 95vw); /* Full container width where marginalia can extend */
+}
+
+.marginalia-voice[data-width="15"] { max-width: calc(var(--container-width) * 0.15) !important; } /* 15% of container space */
+.marginalia-voice[data-width="20"] { max-width: calc(var(--container-width) * 0.20) !important; } /* 20% of container space */
+.marginalia-voice[data-width="25"] { max-width: calc(var(--container-width) * 0.25) !important; } /* 25% of container space */
+.marginalia-voice[data-width="30"] { max-width: calc(var(--container-width) * 0.30) !important; } /* 30% of container space */
+.marginalia-voice[data-width="35"] { max-width: calc(var(--container-width) * 0.35) !important; } /* 35% of container space */
+.marginalia-voice[data-width="40"] { max-width: calc(var(--container-width) * 0.40) !important; } /* 40% of container space */
+.marginalia-voice[data-width="45"] { max-width: calc(var(--container-width) * 0.45) !important; } /* 45% of container space */
+
+/* Extended range for wider marginalia */
+.marginalia-voice[data-width="50"] { max-width: calc(var(--container-width) * 0.50) !important; } /* 50% of container space */
+.marginalia-voice[data-width="60"] { max-width: calc(var(--container-width) * 0.60) !important; } /* 60% of container space */
+.marginalia-voice[data-width="70"] { max-width: calc(var(--container-width) * 0.70) !important; } /* 70% of container space */
+.marginalia-voice[data-width="80"] { max-width: calc(var(--container-width) * 0.80) !important; } /* 80% of container space */
+.marginalia-voice[data-width="90"] { max-width: calc(var(--container-width) * 0.90) !important; } /* 90% of container space */
 
 /* Content-length based sizing with width limits */
 .marginalia-voice {
   font-size: calc(0.75rem - (var(--content-length, 0) * 0.05rem));
-  /* Ensure text can always wrap - based on content area calculations */
-  max-width: var(--marginalia-max-width, 200px) !important;
+  /* Default width - overridden by data-width specific rules above */
+  max-width: var(--marginalia-max-width, min(300px, 25vw));
 }
 
 /* Numerical font scale system (0.4 - 2.5 range) - applied immediately to prevent jumping */

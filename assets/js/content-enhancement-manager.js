@@ -92,19 +92,38 @@ class ContentEnhancementManager {
   async registerDefaultProcessors() {
     const flags = window.CONTENT_ENHANCEMENT_FLAGS || {};
     
-    // Register extension processor FIRST if enabled
+    // Register marginalia processor FIRST - processes content before extensions and footnotes
+    console.log('[ENHANCEMENT_MANAGER] Checking marginalia registration...', {
+      ENABLE_MARGINALIA: flags.ENABLE_MARGINALIA,
+      condition: flags.ENABLE_MARGINALIA !== false,
+      MarginaliaProcessor: typeof MarginaliaProcessor
+    });
+    
+    if (flags.ENABLE_MARGINALIA !== false) {
+      console.log('[ENHANCEMENT_MANAGER] Registering marginalia processor (FIRST - to process before other systems)');
+      try {
+        await this.registerProcessor('marginalia', MarginaliaProcessor);
+        console.log('[ENHANCEMENT_MANAGER] ✅ Marginalia processor registered successfully');
+      } catch (error) {
+        console.error('[ENHANCEMENT_MANAGER] ❌ Marginalia processor registration failed:', error);
+      }
+    } else {
+      console.log('[ENHANCEMENT_MANAGER] ❌ Marginalia processor registration skipped');
+    }
+    
+    // Register extension processor SECOND if enabled
     // This prevents breaking footnote event listeners
     if (flags.ENABLE_EXTENSIONS === true) {
-      console.log('[ENHANCEMENT_MANAGER] Registering paragraph extension processor (FIRST - to preserve footnote functionality)');
+      console.log('[ENHANCEMENT_MANAGER] Registering paragraph extension processor (SECOND - to preserve footnote functionality)');
       await this.registerProcessor('extensions', ParagraphExtensionProcessor);
     }
     
-    // Register footnote processor AFTER extensions
+    // Register footnote processor LAST
     if (flags.USE_LEGACY_FOOTNOTES !== false) {
       console.log('[ENHANCEMENT_MANAGER] Using legacy footnote system');
       // Legacy system handled separately - don't register footnote processor
     } else {
-      console.log('[ENHANCEMENT_MANAGER] Registering modern footnote processor (AFTER extensions)');
+      console.log('[ENHANCEMENT_MANAGER] Registering modern footnote processor (LAST - after all content processing)');
       await this.registerProcessor('footnotes', FootnoteProcessor);
     }
 
@@ -193,17 +212,23 @@ class ContentEnhancementManager {
 
   /**
    * Process all content with registered processors
+   * @param {boolean} force - Force reprocessing even if already processed
    * @returns {Promise<boolean>} Success status
    */
-  async processContent() {
+  async processContent(force = false) {
     if (!this.initialized) {
       console.error('[ENHANCEMENT_MANAGER] System not initialized - call initialize() first');
       return false;
     }
 
-    if (this.processed) {
-      console.warn('[ENHANCEMENT_MANAGER] Content already processed - skipping');
+    if (this.processed && !force) {
+      console.warn('[ENHANCEMENT_MANAGER] Content already processed - skipping (use force=true to override)');
       return true;
+    }
+
+    if (force) {
+      console.log('[ENHANCEMENT_MANAGER] 🔄 Force reprocessing content...');
+      this.processed = false; // Reset processed flag
     }
 
     try {

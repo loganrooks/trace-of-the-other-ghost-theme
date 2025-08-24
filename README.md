@@ -1,10 +1,10 @@
 # Trace of the Other - Ghost Theme
 
-**Version:** 1.0.0  
+**Version:** 2.0.2  
 **Ghost Compatibility:** 5.0.0+  
 **License:** MIT
 
-A literary Ghost theme featuring enhanced footnotes and expandable commentary while preserving the simple Ghost editor workflow that writers love.
+A deconstructive Ghost theme with advanced marginalia, footnotes, and expandable commentary systems, preserving simple Ghost editor workflow.
 
 ## 🎯 **Features**
 
@@ -14,6 +14,13 @@ A literary Ghost theme featuring enhanced footnotes and expandable commentary wh
 - **Mobile Optimized**: Touch-friendly responsive design
 - **Accessibility**: Full keyboard navigation, ARIA labels, screen reader support
 - **Backwards Compatible**: All existing footnote posts work unchanged
+
+### **Marginalia System**
+- **Pattern Syntax**: `[m][voice font-scale width position][content]`
+- **Example**: `[m][2 1.4 40 r][This is margin content with [^1] footnotes]`
+- **Responsive Width**: 15-45% of content area, dynamic calculations
+- **Voice Variations**: 6 different styling voices (1-6)
+- **Nested Content**: Supports footnotes and complex content within marginalia
 
 ### **Paragraph Extensions** *(Optional)*
 - **New Syntax**: Add `[+][extended content]` directly in Ghost editor
