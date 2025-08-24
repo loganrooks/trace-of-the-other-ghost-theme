@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Footnote Extensions Test</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/footnote-themes.css">
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+            background: #0a0a0a;
+            color: #00ff00;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1 {
+            color: #00ff00;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #ff8800;
+            margin-top: 2rem;
+        }
+        p {
+            margin-bottom: 1.5em;
+        }
+        .test-info {
+            background: #1a1a1a;
+            border: 1px dashed #333;
+            padding: 15px;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+        .post-content {
+            position: relative;
+        }
+        .footnote-system-enhanced {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <strong>Extension Footnote System Test</strong><br>
+        • Regular footnotes appear as <span style="color: #00ff00;">[^1]</span> (green) and show tooltips<br>
+        • Extension footnotes appear as <span style="color: #ff8800;">[^1+]</span> (orange) and expand inline<br>
+        • Click extension footnotes to toggle inline content<br>
+    </div>
+
+    <div class="post-content footnote-system-enhanced">
+        <h1>Testing Footnote Extensions</h1>
+
+        <h2>Mixed Footnote Types</h2>
+        <p>
+            This paragraph contains both regular footnotes [^1] and extension footnotes [^2]. The regular 
+            footnote should show a tooltip on hover and navigate to the collection on click. The extension 
+            footnote should show an inline expandable box when clicked.
+        </p>
+
+        <p>
+            Here's another test with multiple extensions [^3] in the same [^4] paragraph to verify that 
+            text reflow works properly when extensions are expanded. Each extension should appear as a 
+            distinct orange [^N+] marker.
+        </p>
+
+        <h2>Deconstructive Potential</h2>
+        <p>
+            Extensions allow footnotes to exceed their traditional bounds [^5]. This challenges the 
+            hierarchy between main text and supplementary content. What happens when the supplement [^6] 
+            demands as much space as the original?
+        </p>
+
+        <h2>Nested Commentary</h2>
+        <p>
+            This demonstrates how extensions can comment on the very notion of marginality [^7]. The 
+            footnote that admits it needs more space than traditional footnotes allow.
+        </p>
+    </div>
+
+    <!-- Regular Footnotes -->
+    <div data-ref="1">A brief explanatory note that fits comfortably in a tooltip.</div>
+    
+    <!-- Extension Footnotes (marked with data-extension="true") -->
+    <div data-ref="2" data-extension="true">
+        This is an extended footnote that provides substantial commentary beyond what a tooltip can contain. 
+        It includes detailed analysis, multiple sentences, and complex ideas that need proper space to unfold. 
+        The inline expansion allows readers to engage with this content without losing their place in the main text, 
+        while the distinctive styling (orange markers, expandable boxes) signals its different nature from regular footnotes.
+    </div>
+
+    <div data-ref="3" data-extension="true">
+        <strong>On Textual Violence:</strong> Every decision about layout enacts a form of violence—what gets to be central, 
+        what gets marginalized, whose voice gets heard first. Extensions make this visible by allowing marginal content 
+        to claim space in direct proportion to its complexity rather than being arbitrarily constrained by interface conventions.
+    </div>
+
+    <div data-ref="4" data-extension="true">
+        The notion of "main text" versus "footnote" is itself a construction that serves certain power structures. 
+        When Derrida writes about the logic of supplementarity, he shows how supplements don't just add to originals—they 
+        reveal the incompleteness of what they supplement. Extension footnotes perform this logic: they're explicitly marked 
+        as exceeding traditional footnote bounds, as demanding the space their content requires rather than accepting arbitrary constraints.
+    </div>
+
+    <div data-ref="5" data-extension="true">
+        <em>The Traditional Boundary:</em> Standard footnotes accept their subsidiary role, appearing in smaller text, 
+        limited space, relegated to page bottoms or document ends. But what if a footnote contains the essay's most important insight? 
+        What if the "supplementary" content is actually primary? Extensions don't just provide more space—they question 
+        the very categories of primary and secondary, central and marginal.
+    </div>
+
+    <div data-ref="6" data-extension="true">
+        Rousseau feared writing as a dangerous supplement to speech, masturbation as a supplement to "natural" sexuality. 
+        In each case, the supplement revealed the inadequacy of the supposedly complete original. Extension footnotes work 
+        similarly: by requiring more space than traditional footnotes allow, they reveal the arbitrariness of textual hierarchies. 
+        They don't just contain overflow content—they perform a critique of the very notion that any content should overflow.
+    </div>
+
+    <div data-ref="7" data-extension="true">
+        <strong>Meta-Commentary on Extensions:</strong> This very footnote demonstrates the recursive potential of the system. 
+        It's a footnote about footnotes, an extension commenting on the concept of extension itself. Future iterations could 
+        allow extensions to spawn sub-extensions ([^7a], [^7b]), creating branching commentary trees that further destabilize 
+        traditional text-supplement hierarchies. The technology becomes philosophy, the interface becomes argument.
+    </div>
+
+    <!-- Load footnote system -->
+    <script src="assets/js/footnote-config.js"></script>
+    <script src="assets/js/footnote-system.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Extension footnote system test loaded');
+            
+            // Initialize footnote system
+            const footnoteSystem = new FootnoteSystem();
+            
+            // Add test logging
+            setTimeout(() => {
+                const regularFootnotes = document.querySelectorAll('.footnote-link:not([data-is-extension="true"])');
+                const extensionFootnotes = document.querySelectorAll('.footnote-link[data-is-extension="true"]');
+                
+                console.log(`✅ Regular footnotes found: ${regularFootnotes.length}`);
+                console.log(`📝 Extension footnotes found: ${extensionFootnotes.length}`);
+                
+                if (extensionFootnotes.length > 0) {
+                    console.log('🎯 Click orange [^N+] markers to test inline expansion');
+                } else {
+                    console.error('❌ No extension footnotes detected - check implementation');
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

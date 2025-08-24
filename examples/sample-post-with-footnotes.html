@@ -1,0 +1,101 @@
+<!-- SAMPLE POST: Enhanced Footnotes Example -->
+<!-- This demonstrates the enhanced footnote system with improved tooltips and accessibility -->
+
+<h1>Enhanced Footnote System Example</h1>
+
+<p>This is a sample post demonstrating the enhanced footnote system. Academic writing often requires citations[^1] and references[^2] to support arguments and provide additional context for readers.</p>
+
+<p>The enhanced system provides better tooltip positioning[^3], improved accessibility features[^4], and mobile-responsive design[^5] while maintaining the same simple syntax you're familiar with.</p>
+
+<p>Multiple footnotes in a single paragraph[^6] work seamlessly[^7], and the system handles edge cases like very long footnotes[^8] with improved positioning algorithms.</p>
+
+<p>The system is fully backward compatible[^9], so your existing content works unchanged while gaining all the new enhancements[^10].</p>
+
+<!-- FOOTNOTE CARDS (HTML format - place at bottom of post) -->
+<!-- Simple format: <div data-ref="N">content</div> -->
+
+<div data-ref="1">
+This footnote demonstrates basic citation functionality. The enhanced system provides better tooltip positioning, ensuring footnotes never extend beyond the screen edges on desktop (60vw max width) while remaining fully responsive on mobile devices.
+</div>
+
+<div data-ref="2">
+Academic references benefit from the improved accessibility features, including ARIA labels, keyboard navigation support, and screen reader compatibility. Press Tab to navigate between footnote links using only the keyboard.
+</div>
+
+<div data-ref="3">
+The tooltip positioning algorithm prevents horizontal overflow while allowing controlled vertical overflow when needed. Tooltips automatically reposition above the footnote reference when there's insufficient space below.
+</div>
+
+<div data-ref="4">
+Accessibility improvements include proper ARIA labels (<code>role="doc-noteref"</code>, <code>aria-describedby</code>), keyboard navigation support (Enter/Space activation), focus management, and screen reader announcements for footnote state changes.
+</div>
+
+<div data-ref="5">
+Mobile responsiveness ensures footnotes work perfectly on all device sizes. Tooltips adapt to mobile viewports, and the footnote collection at the bottom provides an excellent fallback for mobile users who prefer scrolling to reference information.
+</div>
+
+<div data-ref="6">
+The system handles multiple footnotes per paragraph efficiently, with each footnote maintaining its own tooltip state and interaction behavior. There's no limit to the number of footnotes you can include.
+</div>
+
+<div data-ref="7">
+Smooth animations and transitions provide visual feedback when navigating between footnotes and their references. The system respects the <code>prefers-reduced-motion</code> accessibility setting to disable animations for users who need them turned off.
+</div>
+
+<div data-ref="8">
+Very long footnotes receive special handling with improved positioning algorithms that prevent them from extending beyond reasonable viewport boundaries. This footnote itself demonstrates how longer content is managed gracefully, with automatic text wrapping, proper line height, and readability optimizations. The system calculates optimal positioning based on available viewport space and content length.
+</div>
+
+<div data-ref="9">
+Backward compatibility is maintained through the legacy adapter pattern, ensuring zero downtime during migration. Your existing footnote content works exactly as before, while gaining all the new enhancement features automatically.
+</div>
+
+<div data-ref="10">
+New enhancements include: improved tooltip positioning with viewport awareness, better mobile responsiveness, enhanced accessibility with full keyboard navigation, ARIA label support, theme-aware styling, performance optimizations, and comprehensive error handling with graceful degradation.
+</div>
+
+<!-- DEMONSTRATION SCRIPT -->
+<script>
+// This script demonstrates the debug functions available
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📚 Enhanced Footnote System Loaded');
+    console.log('🔧 Debug Commands Available:');
+    console.log('   debugContentConfig() - View system configuration');
+    console.log('   contentEnhancementHealth() - Check system health');
+    console.log('   debugFootnotes() - Legacy system debug');
+    console.log('   switchTheme("academic") - Change theme');
+    
+    // Show current system status
+    setTimeout(function() {
+        if (typeof debugContentConfig === 'function') {
+            console.log('✅ Enhanced footnote system ready!');
+            console.log('💡 Try hovering over footnotes to see improved tooltips');
+            console.log('⌨️  Try keyboard navigation (Tab to footnotes, Enter to activate)');
+        }
+    }, 1000);
+});
+</script>
+
+<!-- STYLING EXAMPLE -->
+<style>
+/* Example of how the enhanced system works with custom styling */
+.footnote-ref {
+    /* Enhanced footnote references get theme-aware colors */
+    transition: all 0.2s ease;
+}
+
+.footnote-tooltip {
+    /* Tooltips have improved positioning and readability */
+    max-width: 60vw; /* Desktop constraint */
+    line-height: 1.6;
+    font-size: 0.9em;
+}
+
+@media (max-width: 768px) {
+    .footnote-tooltip {
+        /* Mobile optimization */
+        max-width: 90vw;
+        font-size: 0.85em;
+    }
+}
+</style>

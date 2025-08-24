@@ -158,15 +158,21 @@ class FootnoteSystem {
     const footnoteData = this.footnotes.get(globalNum);
     const classes = this.config.classes;
     
-    return `<sup style="color: #00ff00; font-family: 'JetBrains Mono', monospace; font-size: 0.75em; cursor: pointer; text-shadow: 0 0 3px #00ff00;" class="${classes.footnoteRef}" id="${footnoteData.backrefId}">
+    // Visual indicator for extensions
+    const displayNumber = footnoteData.isExtension ? `${globalNum}+` : globalNum;
+    const extensionClass = footnoteData.isExtension ? 'footnote-extension' : '';
+    const extensionColor = footnoteData.isExtension ? '#ff8800' : '#00ff00'; // Orange for extensions
+    
+    return `<sup style="color: ${extensionColor}; font-family: 'JetBrains Mono', monospace; font-size: 0.75em; cursor: pointer; text-shadow: 0 0 3px ${extensionColor};" class="${classes.footnoteRef} ${extensionClass}" id="${footnoteData.backrefId}">
       <a href="#${footnoteData.id}" 
          data-footnote="${globalNum}" 
+         data-is-extension="${footnoteData.isExtension || false}"
          class="${classes.footnoteLink}"
          role="doc-noteref"
          aria-describedby="${footnoteData.id}"
-         aria-label="Footnote ${globalNum}"
+         aria-label="Footnote ${globalNum}${footnoteData.isExtension ? ' with extension' : ''}"
          style="color: inherit; text-decoration: none;"
-         tabindex="0">${globalNum}</a>
+         tabindex="0">${displayNumber}</a>
     </sup>`;
   }
 
@@ -195,6 +201,12 @@ class FootnoteSystem {
           footnoteData.content = card;
           footnoteData.contentHTML = this.sanitizeHTML(card.innerHTML);
           card.id = `footnote-content-${globalNum}`;
+          
+          // Check for extension attribute
+          footnoteData.isExtension = card.getAttribute('data-extension') === 'true';
+          if (footnoteData.isExtension) {
+            console.log(`  📝 EXTENSION detected for footnote ${globalNum}`);
+          }
           
           // HIDE original HTML card to prevent duplicates
           card.style.display = 'none';
@@ -301,17 +313,30 @@ class FootnoteSystem {
 
   addFootnoteLinkBehaviors(link) {
     const footnoteNum = parseInt(link.dataset.footnote);
+    const isExtension = link.dataset.isExtension === 'true';
 
-    // Navigation
-    ['click', 'keydown'].forEach(eventType => {
-      link.addEventListener(eventType, (e) => {
-        if (eventType === 'keydown' && !['Enter', ' '].includes(e.key)) return;
-        e.preventDefault();
-        this.navigateToFootnote(`footnote-${footnoteNum}`);
+    // Different behavior for extensions vs regular footnotes
+    if (isExtension) {
+      // Extensions: click to expand inline
+      ['click', 'keydown'].forEach(eventType => {
+        link.addEventListener(eventType, (e) => {
+          if (eventType === 'keydown' && !['Enter', ' '].includes(e.key)) return;
+          e.preventDefault();
+          this.toggleInlineExtension(footnoteNum, link);
+        });
       });
-    });
+    } else {
+      // Regular footnotes: navigate to collection
+      ['click', 'keydown'].forEach(eventType => {
+        link.addEventListener(eventType, (e) => {
+          if (eventType === 'keydown' && !['Enter', ' '].includes(e.key)) return;
+          e.preventDefault();
+          this.navigateToFootnote(`footnote-${footnoteNum}`);
+        });
+      });
+    }
 
-    // Tooltips
+    // Tooltips for both types
     if (this.config.behavior.enableTooltips) {
       link.addEventListener('mouseenter', (e) => this.showTooltip(e, footnoteNum));
       link.addEventListener('mouseleave', () => this.hideTooltip(footnoteNum));
@@ -456,6 +481,60 @@ class FootnoteSystem {
     if (tooltip) {
       tooltip.style.display = 'none';
     }
+  }
+
+  // Inline extension management
+  toggleInlineExtension(footnoteNum, linkElement) {
+    const footnoteData = this.footnotes.get(footnoteNum);
+    if (!footnoteData?.contentHTML || !footnoteData.isExtension) return;
+
+    const existingBox = document.getElementById(`extension-box-${footnoteNum}`);
+    
+    if (existingBox) {
+      // Toggle existing box
+      if (existingBox.style.display === 'none') {
+        existingBox.style.display = 'block';
+        linkElement.classList.add('extension-expanded');
+      } else {
+        existingBox.style.display = 'none';
+        linkElement.classList.remove('extension-expanded');
+      }
+      return;
+    }
+
+    // Create new extension box
+    const extensionBox = this.createElement('div', 'footnote-extension-box');
+    extensionBox.id = `extension-box-${footnoteNum}`;
+    extensionBox.innerHTML = `
+      <div class="extension-header">
+        <span class="extension-label">Extended Note ${footnoteNum}</span>
+        <button class="extension-close" aria-label="Close extension">×</button>
+      </div>
+      <div class="extension-content">
+        ${footnoteData.contentHTML}
+      </div>
+    `;
+
+    // Find the paragraph containing the footnote link
+    let targetParagraph = linkElement.closest('p, .marginalia-voice, blockquote, li');
+    if (!targetParagraph) {
+      targetParagraph = linkElement.parentElement;
+    }
+
+    // Insert after the paragraph
+    targetParagraph.insertAdjacentElement('afterend', extensionBox);
+
+    // Add close button behavior
+    const closeBtn = extensionBox.querySelector('.extension-close');
+    closeBtn.addEventListener('click', () => {
+      extensionBox.style.display = 'none';
+      linkElement.classList.remove('extension-expanded');
+    });
+
+    // Mark link as expanded
+    linkElement.classList.add('extension-expanded');
+
+    console.log(`[EXTENSION] Created inline extension for footnote ${footnoteNum}`);
   }
 
   // Mark system as ready (removes fallbacks)

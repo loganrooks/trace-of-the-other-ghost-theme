@@ -16,6 +16,9 @@
   
   /* Sizing Variables */
   --footnote-ref-size: 0.75em;
+  --extension-ref-size: 0.9em;
+  --extension-box-size: 1.5em; /* Compensate for 0.75em container shrinkage */
+  --extension-symbol-size: 1em; /* Large + symbol */
   --footnote-tooltip-max-width: 320px;
   --footnote-collection-padding: 2rem;
   --footnote-item-gap: 1rem;
@@ -206,6 +209,106 @@
   border-top: 8px solid var(--footnote-accent);
 }
 
+/* ===== EXTENSION FOOTNOTES ===== */
+.footnote-link[data-is-extension="true"] {
+  color: #ff8800 !important;
+  border-color: #ff8800 !important;
+  background: rgba(255, 136, 0, 0.1) !important;
+  text-shadow: 0 0 3px rgba(255, 136, 0, 0.5) !important;
+  
+  /* Square box with fixed dimensions */
+  width: var(--extension-box-size) !important;
+  height: var(--extension-box-size) !important;
+  font-size: var(--extension-symbol-size) !important;
+  padding: 0 !important;
+  
+  /* Center the + symbol */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+.footnote-link[data-is-extension="true"]:hover,
+.footnote-link[data-is-extension="true"]:focus {
+  background: rgba(255, 136, 0, 0.2) !important;
+  border-color: #ff8800 !important;
+  box-shadow: 0 0 6px rgba(255, 136, 0, 0.3) !important;
+}
+
+.footnote-link.extension-expanded {
+  background: rgba(255, 136, 0, 0.3) !important;
+  transform: scale(1.1) !important;
+}
+
+/* ===== INLINE EXTENSION BOXES ===== */
+.footnote-extension-box {
+  margin: 1.5rem 0;
+  padding: 0;
+  background: rgba(255, 136, 0, 0.05);
+  border: 2px solid #ff8800;
+  border-radius: 8px;
+  font-family: var(--footnote-font);
+  box-shadow: 
+    0 4px 12px rgba(255, 136, 0, 0.1),
+    0 0 8px rgba(255, 136, 0, 0.05);
+  animation: footnote-extension-appear 0.3s ease;
+  overflow: hidden;
+}
+
+.extension-header {
+  background: rgba(255, 136, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 136, 0, 0.3);
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.extension-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #ff8800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.extension-close {
+  background: none;
+  border: 1px solid rgba(255, 136, 0, 0.3);
+  color: #ff8800;
+  font-size: 1.2rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.extension-close:hover {
+  background: rgba(255, 136, 0, 0.1);
+  border-color: #ff8800;
+  transform: scale(1.1);
+}
+
+.extension-content {
+  padding: 1rem;
+  line-height: 1.6;
+  font-size: 0.9rem;
+  color: currentColor;
+}
+
+.extension-content p:first-child {
+  margin-top: 0;
+}
+
+.extension-content p:last-child {
+  margin-bottom: 0;
+}
+
 /* ===== ANIMATIONS ===== */
 @keyframes footnote-tooltip-appear {
   from {
@@ -222,6 +325,17 @@
   0% { background-color: transparent; }
   50% { background-color: var(--footnote-accent-alpha); }
   100% { background-color: transparent; }
+}
+
+@keyframes footnote-extension-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -261,9 +375,20 @@
 }
 
 @media (max-width: 480px) {
+  :root {
+    --extension-box-size: 1.3em; /* Smaller but still compensates for container shrinkage */
+    --extension-symbol-size: 0.8em; /* Proportional + symbol for mobile */
+  }
+  
   .footnote-link {
     padding: 0.15em 0.4em !important;
     font-size: 0.7em !important;
+  }
+  
+  .footnote-link[data-is-extension="true"] {
+    width: var(--extension-box-size) !important;
+    height: var(--extension-box-size) !important;
+    font-size: var(--extension-symbol-size) !important;
   }
   
   .footnote-title {

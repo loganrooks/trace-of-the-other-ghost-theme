@@ -1,22 +1,81 @@
 {
     "name": "trace-of-the-other",
-    "description": "A literary Ghost theme with marginal voices",
-    "version": "0.2.0",
+    "description": "A literary Ghost theme with enhanced footnotes and expandable commentary, preserving simple editor workflow",
+    "version": "1.0.0",
     "engines": {
         "ghost": ">=5.0.0"
     },
     "license": "MIT",
     "author": {
         "name": "Theme Author",
-        "email": "author@example.com"
+        "email": "contact@trace-of-the-other.com"
     },
     "config": {
-        "posts_per_page": 10
+        "posts_per_page": 10,
+        "custom": {
+            "footnote_theme": {
+                "type": "select",
+                "options": ["hacker", "academic", "minimal"],
+                "default": "hacker",
+                "description": "Choose the visual theme for footnotes and extensions"
+            },
+            "enable_extensions": {
+                "type": "boolean",
+                "default": true,
+                "description": "Enable paragraph extensions using [+][content] syntax"
+            },
+            "enable_modern_footnotes": {
+                "type": "boolean", 
+                "default": true,
+                "description": "Use enhanced footnote processor with improved tooltips"
+            },
+            "tooltip_max_width": {
+                "type": "select",
+                "options": ["50vw", "60vw", "70vw", "80vw"],
+                "default": "60vw",
+                "description": "Maximum width for footnote tooltips on desktop"
+            },
+            "animation_speed": {
+                "type": "select",
+                "options": ["fast", "normal", "slow"],
+                "default": "normal", 
+                "description": "Speed of expand/collapse animations"
+            },
+            "primary_accent_color": {
+                "type": "color",
+                "default": "#00ff00",
+                "description": "Primary accent color for footnotes"
+            },
+            "extension_accent_color": {
+                "type": "color", 
+                "default": "#ff8800",
+                "description": "Accent color for paragraph extensions"
+            },
+            "enable_keyboard_navigation": {
+                "type": "boolean",
+                "default": true,
+                "description": "Enable keyboard navigation for footnotes and extensions"
+            },
+            "mobile_responsive": {
+                "type": "boolean",
+                "default": true,
+                "description": "Optimize footnotes and extensions for mobile devices"
+            },
+            "debug_mode": {
+                "type": "boolean",
+                "default": false,
+                "description": "Enable debug mode for troubleshooting (development only)"
+            }
+        }
     },
     "keywords": [
         "ghost",
-        "theme",
+        "theme", 
         "literary",
-        "marginalia"
+        "marginalia",
+        "footnotes",
+        "academic",
+        "interactive",
+        "responsive"
     ]
 }

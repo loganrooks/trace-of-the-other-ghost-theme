@@ -1,0 +1,183 @@
+<!-- MIXED CONTENT EXAMPLE: Both Footnotes and Extensions -->
+<!-- This demonstrates both systems working together harmoniously -->
+
+<h1>Mixed Content Example: Footnotes + Extensions</h1>
+
+<p>This example demonstrates how footnotes and paragraph extensions work together seamlessly in the same content. Both systems operate independently while complementing each other's strengths.</p>
+
+<h2>Understanding the Difference</h2>
+
+<p>Footnotes[^1] and extensions serve different purposes in academic and technical writing.[+][The key difference lies in information architecture:
+
+**Footnotes** are best for:
+- Citations and references
+- Tangential information
+- Sources and attribution
+- Information that interrupts reading flow
+
+**Extensions** are best for:
+- Elaboration on the current point
+- Optional technical details
+- Extended analysis of the topic at hand
+- Information that deepens understanding without derailing the main argument
+
+Both preserve the simple Ghost editor workflow while providing rich interactive features.]</p>
+
+<h2>Practical Usage Examples</h2>
+
+<p>Consider this analysis of modern content management systems. WordPress remains dominant in the CMS market[^2], but newer systems like Ghost are gaining traction among publishers focused on performance and writing experience.[+][Ghost's architecture represents a different philosophy from traditional CMSs. While WordPress evolved from a blogging platform into a full application framework, Ghost was designed from the ground up as a publishing platform. This focus shows in several key areas:
+
+**Performance**: Ghost sites typically load faster due to the Node.js backend and streamlined frontend architecture.
+
+**Writing Experience**: The Ghost editor emphasizes distraction-free writing with real-time preview and markdown support.
+
+**Publishing Features**: Built-in newsletter functionality, member management, and subscription handling cater specifically to modern publishing needs.
+
+**Developer Experience**: The Ghost architecture is more modern, with a clear API-first approach that makes headless implementations straightforward.]</p>
+
+<p>The technical architecture differences[^3] become apparent when examining the underlying technologies.[+][From a technical standpoint, the differences are significant:
+
+**Database Layer**: WordPress uses MySQL for everything, while Ghost uses a more targeted approach with different storage solutions for different data types.
+
+**Language Stack**: WordPress's PHP heritage brings both benefits (widespread hosting support) and challenges (performance characteristics), while Ghost's Node.js foundation offers different trade-offs.
+
+**Plugin Architecture**: WordPress's plugin system is more mature but can lead to performance and security issues. Ghost's more curated approach to extensions trades flexibility for reliability.
+
+**API Design**: Ghost was built API-first, making it naturally suited for headless implementations, while WordPress added REST API support later in its evolution.]</p>
+
+<h2>Content Strategy Integration</h2>
+
+<p>When planning content that uses both systems, consider your audience's reading patterns[^4]. Some readers want comprehensive information immediately available[+][Reader behavior studies show distinct patterns in how people consume digital content:
+
+**Scanners** (60-70% of readers) skim content looking for key points. They benefit from extensions that let them drill down into specific areas of interest without losing their place.
+
+**Deep Readers** (20-30% of readers) want comprehensive information. They use both footnotes for additional context and extensions for detailed elaboration.
+
+**Mobile Users** (50-80% depending on content type) interact differently with supplementary information. Extensions work better on mobile than traditional footnote navigation.
+
+**Accessibility Users** rely on proper semantic markup and keyboard navigation, which both systems provide when implemented correctly.], while others prefer a cleaner reading experience with optional depth available on demand.</p>
+
+<p>The combination approach works particularly well for technical documentation[^5], academic writing[^6], and analysis pieces where you need both authoritative sources and explanatory detail.[+][Implementation best practices for mixed content:
+
+**Semantic Clarity**: Use footnotes for external references, extensions for internal elaboration.
+
+**Visual Hierarchy**: The different visual treatments (superscript numbers vs. orange + buttons) help readers understand the type of additional information available.
+
+**Mobile Optimization**: Extensions expand inline (better for mobile), while footnotes provide anchor navigation (works on all devices).
+
+**Accessibility**: Both systems provide proper ARIA labels and keyboard navigation, but serve different interaction patterns.
+
+**Content Management**: Authors can add both types naturally in the Ghost editor without switching contexts or using complex UI elements.]</p>
+
+<!-- FOOTNOTE CARDS -->
+<div data-ref="1">
+Footnotes traditionally serve as citations, references, or tangential information that would interrupt the main text flow. They direct attention away from the current reading position to provide supporting or contextual information.
+</div>
+
+<div data-ref="2">
+According to W3Techs, WordPress powers approximately 43% of all websites as of 2024. See "Usage statistics of content management systems" at https://w3techs.com/technologies/overview/content_management (accessed August 2025).
+</div>
+
+<div data-ref="3">
+For a detailed comparison of CMS architectures, see Smith, J. "Modern Content Management: Architectural Patterns and Performance Implications" in <em>Web Technology Quarterly</em>, Vol. 15, No. 3 (2024), pp. 45-62.
+</div>
+
+<div data-ref="4">
+Nielsen, J. & Kara, P. "How Users Read on the Web: The Eyetracking Evidence" (Nielsen Norman Group, 2023). Available at: https://www.nngroup.com/articles/how-users-read-on-the-web-eyetracking-evidence/
+</div>
+
+<div data-ref="5">
+Technical documentation benefits from the mixed approach because it needs both authoritative references (footnotes) and optional detail expansion (extensions). See Redish, J. "Letting Go of the Words: Writing Web Content that Works" (Morgan Kaufmann, 2012), Chapter 8.
+</div>
+
+<div data-ref="6">
+Academic writing standards increasingly recognize the value of digital-native citation and elaboration methods. The Modern Language Association's recent guidelines acknowledge hyperlinked and expandable content as valid scholarly communication methods.
+</div>
+
+<!-- INTERACTIVE DEMO SECTION -->
+<div style="margin-top: 3rem; padding: 2rem; background: rgba(0, 255, 0, 0.05); border: 2px solid rgba(0, 255, 0, 0.3); border-radius: 8px;">
+    <h3 style="color: #00ff00; margin-top: 0;">🧪 Interactive Demo</h3>
+    
+    <p>This paragraph demonstrates both systems in action. Here's a citation to external research[^7] followed by an inline extension with additional analysis.[+][This extension provides immediate context expansion without requiring navigation away from the current reading position. Notice how the extension content appears right here in the flow, while the footnote requires either tooltip interaction or navigation to the bottom of the page. Both serve important but different functions in information architecture.]</p>
+    
+    <p style="margin-top: 1.5rem;"><strong>Try these interactions:</strong></p>
+    <ul>
+        <li>🖱️ <strong>Hover</strong> over footnote numbers to see tooltips</li>
+        <li>🔲 <strong>Click</strong> orange + buttons to expand extensions</li>
+        <li>⌨️ <strong>Use Tab + Enter</strong> for keyboard navigation</li>
+        <li>📱 <strong>Test on mobile</strong> for responsive behavior</li>
+    </ul>
+</div>
+
+<div data-ref="7">
+This footnote completes the demo by showing how external references work alongside internal extensions. In academic writing, this citation might point to: Roberts, A. "Digital Reading Comprehension in the Age of Expandable Text" in <em>Educational Technology Research</em>, 2024.
+</div>
+
+<!-- DEMO SCRIPT -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎭 Mixed Content Example Loaded');
+    console.log('');
+    console.log('📚 This page demonstrates both:');
+    console.log('   • Enhanced footnotes with improved tooltips');
+    console.log('   • Paragraph extensions with expandable content');
+    console.log('');
+    console.log('🎯 Current System Status:');
+    
+    const flags = window.CONTENT_ENHANCEMENT_FLAGS || {};
+    console.log('   Legacy Footnotes:', flags.USE_LEGACY_FOOTNOTES !== false ? 'Active' : 'Disabled');
+    console.log('   Modern System:', flags.USE_LEGACY_FOOTNOTES === false ? 'Active' : 'Standby');
+    console.log('   Extensions:', flags.ENABLE_EXTENSIONS ? 'Enabled' : 'Disabled');
+    
+    console.log('');
+    console.log('🚀 Quick Enable Commands:');
+    console.log('   enableModernSystem() - Switch to modern footnotes');
+    console.log('   enableExtensions() - Enable orange + buttons');
+    console.log('   switchTheme("academic") - Try different theme');
+    
+    // Show specific guidance based on current state
+    setTimeout(function() {
+        if (!flags.ENABLE_EXTENSIONS) {
+            console.log('');
+            console.log('💡 To see the full mixed content experience:');
+            console.log('   1. Run: enableExtensions()');
+            console.log('   2. Look for orange + buttons in paragraphs');
+            console.log('   3. Click them to see inline expansion');
+        } else {
+            console.log('');
+            console.log('✅ Full mixed content experience active!');
+            console.log('🎨 Both footnotes and extensions working');
+        }
+    }, 1000);
+});
+</script>
+
+<!-- EDUCATIONAL NOTES -->
+<div style="margin-top: 3rem; padding: 1.5rem; background: rgba(37, 99, 235, 0.1); border-left: 4px solid #2563eb; font-size: 0.9em;">
+    <h3 style="color: #2563eb; margin-top: 0;">🎓 Educational Notes</h3>
+    
+    <h4>When to Use Footnotes:</h4>
+    <ul>
+        <li>External citations and references</li>
+        <li>Tangential information that might interrupt reading flow</li>
+        <li>Attribution and source information</li>
+        <li>Traditional academic or legal citation requirements</li>
+    </ul>
+    
+    <h4>When to Use Extensions:</h4>
+    <ul>
+        <li>Detailed elaboration on the current point</li>
+        <li>Optional technical or background information</li>
+        <li>Extended analysis that deepens understanding</li>
+        <li>Context that enhances but doesn't redirect the argument</li>
+    </ul>
+    
+    <h4>Content Strategy Benefits:</h4>
+    <ul>
+        <li><strong>Reader Choice:</strong> Different information access patterns for different reader types</li>
+        <li><strong>Clean Design:</strong> Main text remains uncluttered while offering rich depth</li>
+        <li><strong>Mobile Friendly:</strong> Extensions work better on small screens than traditional footnote navigation</li>
+        <li><strong>SEO Positive:</strong> All content remains accessible to search engines</li>
+        <li><strong>Accessibility:</strong> Both systems provide proper semantic markup and keyboard navigation</li>
+    </ul>
+</div>

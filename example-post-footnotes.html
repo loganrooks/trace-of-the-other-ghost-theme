@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example Post Footnotes - HTML Cards</title>
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ff8800;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        .footnote-card {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+        .footnote-card[data-extension="true"] {
+            border-color: #ff8800;
+            background: rgba(255, 136, 0, 0.05);
+        }
+        .footnote-number {
+            color: #ff8800;
+            font-weight: bold;
+        }
+        .extension-indicator {
+            color: #ff8800;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Example Post Footnotes - Ready for Ghost CMS</h1>
+    <p>Copy these HTML cards into your Ghost post editor. Regular footnotes will show as tooltips, extensions will expand inline.</p>
+
+    <!-- Regular Footnotes -->
+    <div class="footnote-card">
+        <span class="footnote-number">1:</span> Regular footnote
+        <pre>&lt;div data-ref="1"&gt;Mahmoud Darwish, "present at the absence of a place." This phrase appears in various translations of Darwish's work, most prominently in &lt;em&gt;In the Presence of Absence&lt;/em&gt; (&lt;em&gt;Fi Hadrat al-Ghiyab&lt;/em&gt;), trans. Sinan Antoon (Archipelago Books, 2011). The formulation echoes throughout his oeuvre, particularly in poems dealing with exile and return. The exact phrasing shifts in translation—sometimes "present at the absence of a place," sometimes "presence in absence," sometimes "I am present at my absence." The Arabic original carries resonances that no English translation fully captures: &lt;em&gt;hadrat&lt;/em&gt; means both presence and a sacred or revered state, while &lt;em&gt;ghiyab&lt;/em&gt; suggests not mere absence but a kind of active disappearance, an occultation.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">2:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="2" data-extension="true"&gt;The marginal attribution to Edward Said requires a confession: this precise formulation cannot be located in Said's published work, though it condenses arguments he makes throughout &lt;em&gt;The Question of Palestine&lt;/em&gt; (1979), &lt;em&gt;Covering Islam&lt;/em&gt; (1981), and particularly in &lt;em&gt;After the Last Sky&lt;/em&gt; (1986) where he writes extensively about the violence of naming and representation. Said does argue repeatedly that writing about Palestine is never neutral description but always a political act that shapes what can be seen and said. See especially &lt;em&gt;The Politics of Dispossession&lt;/em&gt; (1994), pp. 97-114, where he discusses how "the very words we use to describe" the conflict "are themselves instruments in the conflict." The quotation as presented may be apocryphal—a ghostly condensation of Said's thought that has acquired its own citational life, speaking to how certain ideas become attributed to thinkers whose work makes them seem inevitable, even when the exact words remain unfindable. This itself performs the problem of citation and inheritance the larger text explores.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card">
+        <span class="footnote-number">3:</span> Regular footnote
+        <pre>&lt;div data-ref="3"&gt;Audre Lorde, "The Master's Tools Will Never Dismantle the Master's House," in &lt;em&gt;Sister Outsider: Essays and Speeches&lt;/em&gt; (Crossing Press, 1984), pp. 110-114. Originally delivered as comments at "The Personal and the Political Panel," Second Sex Conference, New York, September 29, 1979. Lorde's argument specifically addresses the exclusion of Black women and lesbians from feminist discourse, but her insight about the impossibility of using oppressive frameworks to achieve liberation resonates beyond its original context—though this very extension might itself be a kind of appropriation that needs marking.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card">
+        <span class="footnote-number">4:</span> Regular footnote
+        <pre>&lt;div data-ref="4"&gt;Spinoza's concept of &lt;em&gt;conatus&lt;/em&gt; is developed primarily in &lt;em&gt;Ethics&lt;/em&gt;, Part III, Proposition 6: "Each thing, as far as it can by its own power, strives to persevere in its being" (&lt;em&gt;Unaquaeque res, quantum in se est, in suo esse perseverare conatur&lt;/em&gt;). See Benedict de Spinoza, &lt;em&gt;Ethics&lt;/em&gt;, trans. Edwin Curley in &lt;em&gt;The Collected Works of Spinoza&lt;/em&gt;, Vol. 1 (Princeton University Press, 1985), p. 498. The political implications are developed further in the &lt;em&gt;Political Treatise&lt;/em&gt; and &lt;em&gt;Theologico-Political Treatise&lt;/em&gt;.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">19:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="19" data-extension="true"&gt;The application of Hegelian logic to Israel-Palestine reveals its obscenity most clearly in certain liberal Zionist arguments that frame the conflict as a necessary stage in historical development. The Palestinian becomes a "moment" to be overcome in the march toward rational statehood. This reading appears explicitly in some interpretations of Israel as representing "progress" against "traditional" Palestinian society. See Amnon Raz-Krakotzkin, "Exile, History and the Nationalization of Jewish Memory," in &lt;em&gt;Exile and Return: Predicaments of Palestinians and Jews&lt;/em&gt;, eds. Ann M. Lesch and Ian S. Lustick (University of Pennsylvania Press, 2005), pp. 165-186, for a critique of how Hegelian progress narratives function in Zionist historiography.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">35:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="35" data-extension="true"&gt;The founding of Israel in 1948 exemplifies this mystical foundation with terrible clarity. The Declaration of Independence claims authority from "natural and historic right," from UN Resolution 181, from the Holocaust's moral imperative—yet none of these fully authorize what happened. The Nakba—the displacement of 750,000 Palestinians—was neither legal nor illegal under a law that didn't yet exist. Palestinian refugees carry documents from a state that no longer exists, claiming rights under a law that never recognized their dispossession as illegal. Both peoples invoke justice while standing on the abyss of law's founding violence. See Ilan Pappé, &lt;em&gt;The Ethnic Cleansing of Palestine&lt;/em&gt; (Oneworld, 2006) and Benny Morris, &lt;em&gt;The Birth of the Palestinian Refugee Problem Revisited&lt;/em&gt; (Cambridge University Press, 2004) for competing narratives that both reveal law's groundlessness.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">63:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="63" data-extension="true"&gt;The "zone of non-being" maps with terrible precision onto the occupied territories. Area C, where Palestinians cannot build without permits that are never granted. Gaza, where calories are counted to maintain bare life. The refugee camps, permanent temporariness. These aren't metaphors for Fanon's analysis—they're its contemporary performance. See Achille Mbembe, "Necropolitics," trans. Libby Meintjes, &lt;em&gt;Public Culture&lt;/em&gt; 15, no. 1 (2003): 11-40, for how sovereignty operates through the power to kill rather than the power to let live.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">84:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="84" data-extension="true"&gt;The kibbutz movement, before it became an instrument of territorial expansion, experimented with something like Arendtian spaces of appearance—collective decision-making, rotation of roles, the attempt to create political life through shared action rather than ethnic identity. That this experiment failed, or was betrayed, doesn't erase what it momentarily opened.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">96:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="96" data-extension="true"&gt;The impossibility of clean solutions appears most starkly in Jerusalem. The Clinton Parameters tried to divide it: Jewish neighborhoods to Israel, Arab to Palestine. But neighborhoods interpenetrate. Streets refuse division. The Old City's quarters—Muslim, Christian, Jewish, Armenian—are fictions that residents transgress daily. Every attempt to map sovereignty onto this reality creates new violence. See Menachem Klein, &lt;em&gt;The Jerusalem Problem: The Struggle for Permanent Status&lt;/em&gt; (University Press of Florida, 2003), and Wendy Pullan and Britt Baillie, eds., &lt;em&gt;Locating Urban Conflicts: Ethnicity, Nationalism and the Everyday&lt;/em&gt; (Palgrave Macmillan, 2013).&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">103:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="103" data-extension="true"&gt;The choice of Hamlet is neither innocent nor arbitrary. Written at the threshold of modernity, the play stages the crisis of inherited authority—how to act when fathers are ghosts, when tradition speaks in riddles, when revenge and justice become indistinguishable. That it's a Christian prince haunted by demands for blood revenge makes it oddly appropriate for thinking about Israel-Palestine, where European political forms encounter Middle Eastern realities, where secular law meets religious claim, where every act of justice looks like revenge to someone. See Jacqueline Rose, &lt;em&gt;Hamlet and the Trauma of Modernity&lt;/em&gt; (Oxford University Press, 2016), though she doesn't address the colonial dimensions.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">112:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="112" data-extension="true"&gt;The untranslatable 'a' of différance becomes even more complex when we consider Arabic and Hebrew. Arabic has no vowels in its standard written form—the difference would need to be marked through diacritical marks that are often omitted. Hebrew, similarly, is written consonantally. Both languages already know that writing exceeds speech, that the written word carries possibilities the spoken word cannot contain. See Gil Anidjar, &lt;em&gt;Semites: Race, Religion, Literature&lt;/em&gt; (Stanford University Press, 2008), on how Semitic languages complicate Derrida's phonocentrism critique.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card" data-extension="true">
+        <span class="footnote-number">120:</span> Extended footnote <span class="extension-indicator">[EXTENSION]</span>
+        <pre>&lt;div data-ref="120" data-extension="true"&gt;The irony of reading Plato in Palestine: Israeli military theorists have literally studied the cave allegory as a model for controlling perception. The Palestinian population becomes the prisoners, the security apparatus controls what shadows they see, and the state positions itself as possessing the true light. See Neve Gordon, "The Political Economy of Israel's Homeland Security/Surveillance Industry," &lt;em&gt;The New Transparency&lt;/em&gt;, Surveillance Studies Network, 2009, pp. 14-20. Philosophy becomes counterinsurgency doctrine.&lt;/div&gt;</pre>
+    </div>
+
+    <!-- Sample regular footnotes to complete the collection -->
+    <div class="footnote-card">
+        <span class="footnote-number">5:</span> Regular footnote
+        <pre>&lt;div data-ref="5"&gt;Spinoza, &lt;em&gt;Ethics&lt;/em&gt;, Part III, Proposition 7: "The striving by which each thing strives to persevere in its being is nothing but the actual essence of the thing." The Latin &lt;em&gt;conatus&lt;/em&gt; carries meanings that "striving" doesn't fully capture—it suggests not just effort but a kind of structural tendency, the way a stone "strives" to fall or fire "strives" to rise in Aristotelian physics.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card">
+        <span class="footnote-number">6:</span> Regular footnote
+        <pre>&lt;div data-ref="6"&gt;The temporal confusion of the conflict is analyzed brilliantly in Rashid Khalidi, &lt;em&gt;The Hundred Years' War on Palestine&lt;/em&gt; (Metropolitan Books, 2020), where he shows how different chronologies—biblical, colonial, national—operate simultaneously and incompatibly.&lt;/div&gt;</pre>
+    </div>
+
+    <div class="footnote-card">
+        <span class="footnote-number">27:</span> Regular footnote
+        <pre>&lt;div data-ref="27"&gt;Jacques Derrida, "Force of Law: The 'Mystical Foundation of Authority,'" trans. Mary Quaintance, in &lt;em&gt;Deconstruction and the Possibility of Justice&lt;/em&gt;, eds. Drucilla Cornell et al. (Routledge, 1992), p. 27: "Justice remains to come, &lt;em&gt;à venir&lt;/em&gt;, it remains by coming."&lt;/div&gt;</pre>
+    </div>
+
+    <p style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; color: #888; font-size: 0.9em;">
+        <strong>Usage:</strong> Copy the &lt;div data-ref="N"&gt; elements into your Ghost post editor. 
+        Use [^1], [^2], etc. in your main text to reference them. Extensions will automatically 
+        display as [^N+] and expand inline when clicked.
+    </p>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!-- SAMPLE POST: Paragraph Extensions Example -->
+<!-- This demonstrates the new [+][content] extension system -->
+
+<h1>Paragraph Extensions System Example</h1>
+
+<p>This post demonstrates the new paragraph extension system that allows you to add expandable commentary directly in the Ghost editor using simple <code>[+][content]</code> syntax.</p>
+
+<h2>Basic Extension Usage</h2>
+
+<p>The extension system works by detecting the pattern <code>[+][content goes here]</code> in your text and converting it into an interactive orange + button.[+][This is a basic extension example. When you click the orange + button, this content expands to show additional commentary. The extension supports <strong>bold text</strong>, <em>italic text</em>, and even <code>inline code</code> formatting.]</p>
+
+<p>You can include multiple extensions in a single paragraph.[+][This is the first extension in this paragraph, showing how multiple extensions work together.] The system handles each extension independently.[+][And this is the second extension in the same paragraph. Each extension has its own expand/collapse state and can be opened or closed independently of others.]</p>
+
+<h2>Advanced Extension Features</h2>
+
+<p>Extensions support nested brackets and complex content.[+][This extension demonstrates more complex content capabilities:
+
+**Key Features:**
+- Basic markdown support (**bold**, *italic*, `code`)
+- Line breaks and paragraphs
+- Nested [brackets] don't break the parsing
+- Mobile-responsive design
+- Smooth animations (respects prefers-reduced-motion)
+- Keyboard accessibility (Tab + Enter)
+
+The system is designed to handle real-world content complexity while maintaining the simple typing experience in the Ghost editor.]</p>
+
+<p>Long-form extensions work well for detailed explanations.[+][This is a longer extension that demonstrates how the system handles substantial additional content. 
+
+The paragraph extension system is particularly useful for academic writing, technical documentation, and detailed analysis where you want to provide additional depth without cluttering the main text flow.
+
+**Use Cases:**
+- **Academic Writing**: Detailed explanations of complex concepts
+- **Technical Documentation**: Additional implementation details
+- **Analysis Pieces**: Supporting evidence and extended reasoning
+- **Tutorial Content**: Optional advanced information
+
+The extensions are designed to be unobtrusive when closed (just a small orange + button) but rich and informative when expanded. They maintain the reading flow for casual readers while providing depth for those who want more detail.]</p>
+
+<h2>Integration with Existing Content</h2>
+
+<p>The extension system works alongside existing footnote functionality. You can have both footnotes[^1] and extensions[+][This extension works alongside the footnote in the same paragraph. The systems are completely independent - footnotes create tooltips and navigate to the bottom collection, while extensions expand inline for immediate additional context.] in the same content seamlessly.</p>
+
+<p>The system preserves the Ghost editor workflow philosophy[^2] - content creators can use these features without leaving the editor or using complex UI elements.[+][The design philosophy emphasizes maintaining the writing flow. Authors can type naturally in the Ghost editor:
+- `[^1]` for footnotes (existing)
+- `[+][content]` for extensions (new)
+
+Both patterns are:
+- Easy to remember
+- Quick to type
+- Readable even without processing
+- Compatible with Ghost's existing editor features]</p>
+
+<!-- FOOTNOTE CARDS for footnotes used above -->
+<div data-ref="1">
+This footnote demonstrates how the extension system integrates with existing footnote functionality. Both systems work independently and can be used together in the same content without conflicts.
+</div>
+
+<div data-ref="2">
+The Ghost editor workflow philosophy prioritizes simplicity and writing flow. Content creators should be able to add rich functionality without context-switching to complex UI elements or learning complicated syntax.
+</div>
+
+<!-- DEMONSTRATION SCRIPT -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎨 Paragraph Extension System Example Loaded');
+    console.log('');
+    console.log('🚀 To enable extensions, run in console:');
+    console.log('   enableExtensions()');
+    console.log('');
+    console.log('📊 System Status:');
+    console.log('   Extensions Enabled:', window.CONTENT_ENHANCEMENT_FLAGS?.ENABLE_EXTENSIONS || false);
+    console.log('   Extension Processor:', window.CONTENT_ENHANCEMENT_FLAGS?.ENABLE_EXTENSION_PROCESSOR || false);
+    console.log('');
+    console.log('🔧 Debug Commands:');
+    console.log('   debugContentEnhancement() - System stats');
+    console.log('   contentEnhancementHealth() - Health check');
+    
+    // Show instructions for enabling extensions
+    if (!window.CONTENT_ENHANCEMENT_FLAGS?.ENABLE_EXTENSIONS) {
+        setTimeout(function() {
+            console.log('');
+            console.log('💡 Extensions are currently disabled.');
+            console.log('   Run enableExtensions() to see the orange + buttons!');
+        }, 1000);
+    } else {
+        setTimeout(function() {
+            console.log('');
+            console.log('✅ Extensions are enabled!');
+            console.log('🎯 Look for orange + buttons in the paragraphs above');
+            console.log('📱 Try on mobile - extensions are fully responsive');
+        }, 1000);
+    }
+});
+</script>
+
+<!-- EXTENSION STYLING DEMO -->
+<style>
+/* Example styling for extension system */
+.extension-trigger {
+    /* Orange + buttons */
+    background: var(--extension-accent, #ff8800) !important;
+    transition: all 0.2s ease;
+}
+
+.extension-trigger:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(255, 136, 0, 0.3);
+}
+
+.paragraph-extension-box {
+    /* Extension content boxes */
+    border: 2px solid var(--extension-accent, #ff8800);
+    background: var(--background, rgba(0, 0, 0, 0.95));
+    border-radius: 8px;
+    margin: 0.5rem 0;
+    animation: extensionSlideDown 0.3s ease-out;
+}
+
+.extension-content {
+    /* Content within extensions */
+    line-height: 1.7;
+    color: var(--text-color, #e0e0e0);
+}
+
+.extension-content strong {
+    color: var(--extension-accent, #ff8800);
+}
+
+.extension-content code {
+    background: rgba(255, 136, 0, 0.2);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .paragraph-extension-box {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .extension-trigger {
+        transition: none !important;
+    }
+    
+    .paragraph-extension-box {
+        animation: none !important;
+    }
+}
+</style>
+
+<!-- CONTENT CREATOR NOTES -->
+<div style="margin-top: 3rem; padding: 1.5rem; background: rgba(255, 136, 0, 0.1); border-left: 4px solid #ff8800; font-size: 0.9em;">
+    <h3 style="color: #ff8800; margin-top: 0;">📝 Content Creator Notes</h3>
+    <p><strong>How to use extensions in Ghost editor:</strong></p>
+    <ol>
+        <li>Type your main paragraph content normally</li>
+        <li>Add <code>[+][your extended content here]</code> where you want expandable commentary</li>
+        <li>Extended content supports basic markdown: <code>**bold**</code>, <code>*italic*</code>, <code>`code`</code></li>
+        <li>Publish - the system automatically converts patterns to interactive buttons</li>
+    </ol>
+    <p><strong>Best Practices:</strong></p>
+    <ul>
+        <li>Keep extensions focused and relevant to the paragraph</li>
+        <li>Use extensions for optional detail, not essential information</li>
+        <li>Test on mobile devices to ensure good user experience</li>
+        <li>Combine with footnotes for different types of additional information</li>
+    </ul>
+</div>

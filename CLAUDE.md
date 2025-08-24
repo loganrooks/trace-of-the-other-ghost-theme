@@ -55,6 +55,11 @@ Based on the architectural documentation, the planned theme structure includes:
 - The theme should perform its own critique and deconstruction
 - Platform constraints (Ghost's database structure, etc.) become part of the content
 
+### Critical Implementation Notes
+**FOOTNOTE SYSTEM**: The footnote system expects simple `<div data-ref="N">content</div>` HTML cards. Nothing more. Do NOT create elaborate "footnote-card" classes or complex HTML structures. The system uses the selector `'[data-ref]'` to find footnote content. Extensions are marked with `data-extension="true"` attribute.
+
+**MISTAKE TO AVOID**: Creating unnecessary HTML wrapper classes that don't exist in the codebase. Always verify what selectors the actual code uses before assuming complex structures are needed.
+
 ### Technical Approach
 - Use CSS Grid for complex marginal layouts
 - Implement multiple modes for displaying content (linear, fragmentary, talmudic, etc.)

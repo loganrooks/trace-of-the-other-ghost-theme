@@ -52,17 +52,53 @@
     {{!-- Hacker effects JavaScript --}}
     <script src="{{asset "js/hacker-effects.js"}}"></script>
     
-    {{!-- Footnote system --}}
+    {{!-- Content Enhancement System - Modular Architecture --}}
+    {{!-- Load in dependency order for proper initialization --}}
+    
+    {{!-- Pass Ghost theme settings to JavaScript --}}
+    <script>
+        // Make Ghost custom theme settings available to JavaScript
+        window.ghost_custom_settings = {
+            footnote_theme: '{{@custom.footnote_theme}}' || 'hacker',
+            enable_extensions: {{#if @custom.enable_extensions}}true{{else}}false{{/if}},
+            enable_modern_footnotes: {{#if @custom.enable_modern_footnotes}}true{{else}}false{{/if}},
+            tooltip_max_width: '{{@custom.tooltip_max_width}}' || '60vw',
+            animation_speed: '{{@custom.animation_speed}}' || 'normal',
+            primary_accent_color: '{{@custom.primary_accent_color}}' || '#00ff00',
+            extension_accent_color: '{{@custom.extension_accent_color}}' || '#ff8800',
+            enable_keyboard_navigation: {{#if @custom.enable_keyboard_navigation}}true{{else}}false{{/if}},
+            mobile_responsive: {{#if @custom.mobile_responsive}}true{{else}}false{{/if}},
+            debug_mode: {{#if @custom.debug_mode}}true{{else}}false{{/if}}
+        };
+        
+        // Apply theme colors as CSS custom properties
+        document.documentElement.style.setProperty('--footnote-accent', window.ghost_custom_settings.primary_accent_color);
+        document.documentElement.style.setProperty('--extension-accent', window.ghost_custom_settings.extension_accent_color);
+    </script>
+    
+    {{!-- 1. Unified Configuration (supports both legacy and modern systems) --}}
+    <script src="{{asset "js/content-enhancement-config.js"}}"></script>
+    
+    {{!-- 2. Modern Modular System Components (MUST load first to process before legacy) --}}
+    <script src="{{asset "js/content-processor-base.js"}}"></script>
+    <script src="{{asset "js/configuration-manager.js"}}"></script>
+    <script src="{{asset "js/paragraph-extension-processor.js"}}"></script>
+    <script src="{{asset "js/footnote-processor.js"}}"></script>
+    <script src="{{asset "js/content-enhancement-manager.js"}}"></script>
+    
+    {{!-- 3. Legacy System (loads AFTER modern system to preserve footnote tooltips) --}}
     <script src="{{asset "js/footnote-config.js"}}"></script>
     <script src="{{asset "js/footnote-system.js"}}"></script>
-    {{!-- TESTING: Incremental feature verification --}}
+    <script src="{{asset "js/footnote-legacy-adapter.js"}}"></script>
+    
+    {{!-- 4. Development and Debug Tools --}}
+    <script src="{{asset "js/debug-theme-settings.js"}}"></script>
+    {{!-- Additional debug tools (uncomment as needed):
     <script src="{{asset "js/footnote-test.js"}}"></script>
-    {{!-- DEBUG: Connection issues --}}
     <script src="{{asset "js/footnote-debug-connection.js"}}"></script>
-    {{!-- DEBUG: Direct pattern test --}}
     <script src="{{asset "js/footnote-direct-test.js"}}"></script>
-    {{!-- DEBUG: Raw content dump --}}
     <script src="{{asset "js/footnote-raw-content-dump.js"}}"></script>
+    --}}
     
     {{ghost_foot}}
 </body>

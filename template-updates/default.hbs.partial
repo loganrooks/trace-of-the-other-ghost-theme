@@ -1,0 +1,29 @@
+{{!-- Content Enhancement System - Script Loading Section --}}
+{{!-- Replace your existing footnote system scripts with this section --}}
+{{!-- Place this before the closing </body> tag in your default.hbs --}}
+
+{{!-- Content Enhancement System - Modular Architecture --}}
+{{!-- Load in dependency order for proper initialization --}}
+
+{{!-- 1. Unified Configuration (supports both legacy and modern systems) --}}
+<script src="{{asset "js/content-enhancement-config.js"}}"></script>
+
+{{!-- 2. Modern Modular System Components --}}
+<script src="{{asset "js/content-processor-base.js"}}"></script>
+<script src="{{asset "js/configuration-manager.js"}}"></script>
+<script src="{{asset "js/footnote-processor.js"}}"></script>
+<script src="{{asset "js/paragraph-extension-processor.js"}}"></script>
+<script src="{{asset "js/content-enhancement-manager.js"}}"></script>
+
+{{!-- 3. Legacy System (for backward compatibility during migration) --}}
+<script src="{{asset "js/footnote-config.js"}}"></script>
+<script src="{{asset "js/footnote-system.js"}}"></script>
+<script src="{{asset "js/footnote-legacy-adapter.js"}}"></script>
+
+{{!-- 4. Development and Debug Tools (comment out for production) --}}
+{{!-- Uncomment for debugging:
+<script src="{{asset "js/footnote-test.js"}}"></script>
+<script src="{{asset "js/footnote-debug-connection.js"}}"></script>
+<script src="{{asset "js/footnote-direct-test.js"}}"></script>
+<script src="{{asset "js/footnote-raw-content-dump.js"}}"></script>
+--}}
