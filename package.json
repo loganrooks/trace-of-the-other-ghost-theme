@@ -1,7 +1,7 @@
 {
     "name": "trace-of-the-other",
     "description": "A literary Ghost theme with enhanced footnotes and expandable commentary, preserving simple editor workflow",
-    "version": "2.1.5",
+    "version": "2.1.6",
     "engines": {
         "ghost": ">=5.0.0"
     },
@@ -68,7 +68,7 @@
             },
             "enable_deconstruction": {
                 "type": "boolean",
-                "default": false,
+                "default": true,
                 "description": "Enable radical text deconstruction effects (experimental feature)"
             }
         }
