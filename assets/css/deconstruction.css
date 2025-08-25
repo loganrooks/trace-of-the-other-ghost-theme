@@ -1,0 +1,636 @@
+/**
+ * Deconstruction Effects CSS
+ * 
+ * Visual styles for radical text deconstruction effects that literally
+ * perform deconstruction through CSS animations and transforms
+ * 
+ * Philosophy: These aren't just visual effects - they embody deconstructive
+ * theory by making visible the instability of text, meaning, and presence
+ * 
+ * Integration: Works with Ghost theme structure and accessibility requirements
+ * 
+ * Created: August 25, 2025
+ */
+
+/* ===== BASE DECONSTRUCTION STYLES ===== */
+
+[data-deconstruct] {
+  position: relative;
+  transition: all var(--deconstruct-speed, 0.3s) ease;
+  overflow: visible; /* Allow effects to extend beyond bounds */
+}
+
+.deconstruct-element {
+  position: relative;
+  display: block;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-left: 3px solid var(--hacker-green-dark, #008800);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+}
+
+/* Effect type indicators */
+.deconstruct-element::before {
+  content: '[' attr(data-deconstruct) ']';
+  position: absolute;
+  top: -0.5rem;
+  left: 0.5rem;
+  background: rgba(0, 0, 0, 0.9);
+  color: var(--hacker-green, #00ff00);
+  font-size: 0.7rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+/* ===== DISSOLUTION EFFECT ===== */
+
+.deconstruct-dissolve {
+  --dissolve-speed: 2s;
+  overflow: visible;
+}
+
+.deconstruct-dissolve .char {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.deconstruct-dissolve.dissolve-active .char {
+  animation: dissolve var(--dissolve-speed) ease-out forwards;
+  animation-delay: calc(var(--char-index) * 0.05s);
+}
+
+@keyframes dissolve {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+    filter: blur(0px);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(10px) rotate(5deg) scale(0.95);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px) rotate(10deg) scale(0.8);
+    filter: blur(3px);
+  }
+}
+
+/* Reverse animation for re-materialization */
+.deconstruct-dissolve.materializing .char {
+  animation: materialize var(--dissolve-speed) ease-in forwards;
+  animation-delay: calc(var(--char-index) * 0.03s);
+}
+
+@keyframes materialize {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) rotate(-10deg) scale(1.2);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* ===== LANGUAGE COLLISION EFFECT ===== */
+
+.deconstruct-collision {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
+.deconstruct-collision .rtl-text,
+.deconstruct-collision .ltr-text {
+  position: relative;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.deconstruct-collision .rtl-text {
+  writing-mode: horizontal-tb;
+  direction: rtl;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 0, 0, 0.1) 50%, rgba(255, 0, 0, 0.2) 100%);
+  border-right: 2px solid rgba(255, 0, 0, 0.5);
+  text-align: right;
+}
+
+.deconstruct-collision .ltr-text {
+  writing-mode: horizontal-tb;
+  direction: ltr;
+  background: linear-gradient(270deg, transparent 0%, rgba(0, 0, 255, 0.1) 50%, rgba(0, 0, 255, 0.2) 100%);
+  border-left: 2px solid rgba(0, 0, 255, 0.5);
+  text-align: left;
+}
+
+.deconstruct-collision.collision-active .rtl-text {
+  animation: rtl-collision 2s ease-in-out infinite;
+}
+
+.deconstruct-collision.collision-active .ltr-text {
+  animation: ltr-collision 2s ease-in-out infinite;
+}
+
+@keyframes rtl-collision {
+  0%, 100% {
+    transform: translateX(0);
+    filter: none;
+  }
+  50% {
+    transform: translateX(-10px);
+    filter: hue-rotate(30deg);
+    box-shadow: -5px 0 10px rgba(255, 0, 0, 0.3);
+  }
+}
+
+@keyframes ltr-collision {
+  0%, 100% {
+    transform: translateX(0);
+    filter: none;
+  }
+  50% {
+    transform: translateX(10px);
+    filter: hue-rotate(-30deg);
+    box-shadow: 5px 0 10px rgba(0, 0, 255, 0.3);
+  }
+}
+
+/* Collision barriers */
+.deconstruct-collision.collision-active::after {
+  content: '⚡';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: var(--accent-red, #ff0000);
+  animation: barrier-flash 1s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes barrier-flash {
+  0%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ===== RECURSIVE COMMENTARY EFFECT ===== */
+
+.deconstruct-recursion {
+  display: grid;
+  gap: 0.5rem;
+  overflow: visible;
+}
+
+.recursion-level {
+  position: relative;
+  padding-left: calc(var(--level) * 2rem);
+  opacity: calc(1 - (var(--level) * 0.15));
+  transform: scale(calc(1 - (var(--level) * 0.05)));
+  font-style: italic;
+  transition: all 0.3s ease;
+  border-left: 1px solid rgba(0, 255, 0, calc(1 - (var(--level) * 0.2)));
+}
+
+.deconstruct-recursion.recursion-active .recursion-level {
+  animation: recursive-emergence calc(1s + var(--level) * 0.5s) ease-out forwards;
+  animation-delay: calc(var(--level) * 0.3s);
+}
+
+@keyframes recursive-emergence {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.9);
+  }
+  100% {
+    opacity: calc(1 - (var(--level) * 0.15));
+    transform: translateX(0) scale(calc(1 - (var(--level) * 0.05)));
+  }
+}
+
+/* Infinite regression indicator */
+.deconstruct-recursion.recursion-active::after {
+  content: '∞';
+  position: absolute;
+  bottom: -1rem;
+  right: 1rem;
+  color: var(--hacker-green, #00ff00);
+  font-size: 1.5rem;
+  animation: infinity-pulse 2s ease-in-out infinite;
+}
+
+@keyframes infinity-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* ===== VOICE INTERRUPTION EFFECT ===== */
+
+.deconstruct-voices {
+  position: relative;
+  min-height: 3rem;
+  overflow: visible;
+}
+
+.deconstruct-voices .voice-interrupt,
+.deconstruct-voices .voice-uncertain,
+.deconstruct-voices .voice-critical,
+.deconstruct-voices .voice-nostalgic,
+.deconstruct-voices .voice-angry {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid var(--voice-color, #ff8800);
+  color: var(--voice-color, #ff8800);
+  font-weight: bold;
+  z-index: 5;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+}
+
+.deconstruct-voices.voices-active .voice-interrupt,
+.deconstruct-voices.voices-active .voice-uncertain,
+.deconstruct-voices.voices-active .voice-critical,
+.deconstruct-voices.voices-active .voice-nostalgic,
+.deconstruct-voices.voices-active .voice-angry {
+  animation: voice-interrupt 3s ease-in-out infinite;
+  animation-delay: var(--interrupt-delay, 0s);
+}
+
+@keyframes voice-interrupt {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.9);
+  }
+  10%, 80% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+
+/* Voice-specific colors */
+.voice-uncertain {
+  --voice-color: #888;
+}
+
+.voice-critical {
+  --voice-color: #ff4444;
+}
+
+.voice-nostalgic {
+  --voice-color: #8844ff;
+}
+
+.voice-angry {
+  --voice-color: #ff0000;
+}
+
+/* ===== TEMPORAL INSTABILITY EFFECT ===== */
+
+.deconstruct-temporal {
+  position: relative;
+  overflow: visible;
+}
+
+.deconstruct-temporal.temporal-active {
+  animation: temporal-flux 5s ease-in-out infinite;
+}
+
+@keyframes temporal-flux {
+  0%, 100% {
+    opacity: 1;
+    filter: blur(0px) hue-rotate(0deg);
+    transform: scale(1);
+  }
+  25% {
+    opacity: 0.7;
+    filter: blur(1px) hue-rotate(90deg);
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.3;
+    filter: blur(2px) hue-rotate(180deg);
+    transform: scale(1.02);
+  }
+  75% {
+    opacity: 0.8;
+    filter: blur(0.5px) hue-rotate(270deg);
+    transform: scale(0.99);
+  }
+}
+
+/* Temporal decay effect */
+.deconstruct-temporal.temporal-decay {
+  animation: temporal-decay 10s linear infinite;
+}
+
+@keyframes temporal-decay {
+  0% {
+    opacity: 1;
+    letter-spacing: normal;
+    word-spacing: normal;
+  }
+  50% {
+    opacity: 0.6;
+    letter-spacing: 0.1em;
+    word-spacing: 0.2em;
+  }
+  100% {
+    opacity: 0.3;
+    letter-spacing: 0.3em;
+    word-spacing: 0.5em;
+    filter: blur(1px);
+  }
+}
+
+/* Temporal glitch indicator */
+.deconstruct-temporal.temporal-active::before {
+  content: '⧖';
+  position: absolute;
+  top: -1rem;
+  right: 0;
+  color: var(--accent-cyan, #00ffff);
+  font-size: 1.2rem;
+  animation: time-distortion 1s ease-in-out infinite;
+}
+
+@keyframes time-distortion {
+  0%, 100% {
+    transform: rotate(0deg);
+    opacity: 0.5;
+  }
+  50% {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+}
+
+/* ===== SYNTACTIC BREAKDOWN EFFECT ===== */
+
+.deconstruct-syntax {
+  position: relative;
+  overflow: visible;
+}
+
+.deconstruct-syntax.syntax-active {
+  word-spacing: 0.2em;
+  letter-spacing: 0.05em;
+}
+
+.deconstruct-syntax .punctuation {
+  display: inline-block;
+  transition: all 0.5s ease;
+  position: relative;
+}
+
+.deconstruct-syntax.syntax-active .punctuation {
+  animation: punctuation-drift 4s ease-out forwards;
+  animation-delay: calc(var(--punctuation-index, 0) * 0.5s);
+}
+
+@keyframes punctuation-drift {
+  0% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateX(10px) translateY(-5px) rotate(15deg);
+  }
+  100% {
+    opacity: 0.2;
+    transform: translateX(30px) translateY(-15px) rotate(45deg);
+  }
+}
+
+/* Syntax breakdown fragments */
+.deconstruct-syntax.syntax-active {
+  animation: syntax-fragment 6s ease-in-out infinite;
+}
+
+@keyframes syntax-fragment {
+  0%, 100% {
+    word-spacing: 0.2em;
+    letter-spacing: 0.05em;
+  }
+  33% {
+    word-spacing: 0.5em;
+    letter-spacing: 0.1em;
+  }
+  66% {
+    word-spacing: 1em;
+    letter-spacing: 0.2em;
+  }
+}
+
+/* ===== ACCESSIBILITY & REDUCED MOTION ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-deconstruct],
+  .deconstruct-element,
+  .deconstruct-element *,
+  .char,
+  .punctuation,
+  .recursion-level,
+  .voice-interrupt {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .deconstruct-element {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  
+  /* Provide static visual indicators instead */
+  .deconstruct-dissolve::after {
+    content: ' [DISSOLVING]';
+    color: var(--accent-red, #ff0000);
+    font-size: 0.8em;
+  }
+  
+  .deconstruct-collision::after {
+    content: ' [COLLISION]';
+    color: var(--accent-red, #ff0000);
+    font-size: 0.8em;
+  }
+  
+  .deconstruct-recursion::after {
+    content: ' [RECURSION]';
+    color: var(--accent-red, #ff0000);
+    font-size: 0.8em;
+  }
+  
+  .deconstruct-voices::after {
+    content: ' [VOICES]';
+    color: var(--accent-red, #ff0000);
+    font-size: 0.8em;
+  }
+  
+  .deconstruct-temporal::after {
+    content: ' [TEMPORAL]';
+    color: var(--accent-red, #ff0000);
+    font-size: 0.8em;
+  }
+  
+  .deconstruct-syntax::after {
+    content: ' [SYNTAX]';
+    color: var(--accent-red, #ff0000);
+    font-size: 0.8em;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+
+@media (prefers-contrast: high) {
+  .deconstruct-element {
+    border-left-width: 4px;
+    background: rgba(0, 0, 0, 0.3);
+  }
+  
+  .deconstruct-element::before {
+    background: #000;
+    border: 1px solid #fff;
+  }
+  
+  .rtl-text,
+  .ltr-text {
+    border-width: 3px;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+
+@media print {
+  [data-deconstruct] {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+  
+  .deconstruct-element::before {
+    display: none;
+  }
+  
+  .char,
+  .punctuation,
+  .recursion-level,
+  .voice-interrupt {
+    animation: none !important;
+    position: static !important;
+    transform: none !important;
+  }
+  
+  .deconstruct-collision {
+    display: block;
+  }
+  
+  .rtl-text,
+  .ltr-text {
+    display: inline;
+    background: none;
+    border: none;
+  }
+}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+
+@media (max-width: 768px) {
+  .deconstruct-element {
+    margin: 0.5rem 0;
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .deconstruct-collision {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .recursion-level {
+    padding-left: calc(var(--level) * 1rem);
+  }
+  
+  .voice-interrupt {
+    position: relative;
+    display: block;
+    margin: 0.5rem 0;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .deconstruct-element {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+  
+  .deconstruct-element::before {
+    font-size: 0.6rem;
+  }
+  
+  /* Simplify effects on very small screens */
+  .char,
+  .punctuation {
+    animation-duration: 1s !important;
+  }
+  
+  .recursion-level {
+    padding-left: calc(var(--level) * 0.5rem);
+  }
+}
+
+/* ===== DEBUGGING STYLES ===== */
+
+.deconstruction-debug [data-deconstruct] {
+  outline: 2px dashed var(--accent-cyan, #00ffff);
+  outline-offset: 2px;
+}
+
+.deconstruction-debug [data-deconstruct]::after {
+  content: 'EFFECT: ' attr(data-deconstruct) ' | ACTIVE: ' attr(data-active, 'false');
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  font-size: 0.6rem;
+  color: var(--accent-cyan, #00ffff);
+  background: rgba(0, 0, 0, 0.9);
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  z-index: 100;
+}

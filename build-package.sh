@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Ghost Theme Package Builder with Semantic Versioning
-# Usage: ./build-package.sh [version-bump] [description]
+# Usage: ./build-package.sh [version-bump] [description] [--commit]
 # version-bump: patch (default), minor, major, or specific version like 2.0.1
 # description: Optional build description
+# --commit: Optional flag to commit changes to git
 
 set -e
 
@@ -27,9 +28,18 @@ fi
 
 echo -e "Current version: ${YELLOW}$CURRENT_VERSION${NC}"
 
-# Determine new version
+# Parse arguments
 VERSION_BUMP=${1:-patch}
 BUILD_DESC=${2:-"Development build"}
+COMMIT_CHANGES=false
+
+# Check for --commit flag in any position
+for arg in "$@"; do
+    if [ "$arg" = "--commit" ]; then
+        COMMIT_CHANGES=true
+        break
+    fi
+done
 
 if [[ $VERSION_BUMP =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     # Specific version provided
@@ -112,8 +122,8 @@ echo -e "${GREEN}✅ Package created successfully!${NC}"
 echo -e "📁 File: $PACKAGE_NAME"
 echo -e "📏 Size: $PACKAGE_SIZE"
 
-# Git integration (if in git repo)
-if git rev-parse --git-dir > /dev/null 2>&1; then
+# Git integration (if in git repo and --commit flag provided)
+if [ "$COMMIT_CHANGES" = true ] && git rev-parse --git-dir > /dev/null 2>&1; then
     echo -e "${BLUE}📝 Git integration...${NC}"
     
     # Add changed files
@@ -133,6 +143,8 @@ if git rev-parse --git-dir > /dev/null 2>&1; then
     else
         echo -e "${YELLOW}⚠️ No changes to commit${NC}"
     fi
+elif [ "$COMMIT_CHANGES" = false ]; then
+    echo -e "${YELLOW}📝 Git integration skipped (use --commit flag to enable)${NC}"
 fi
 
 echo ""
@@ -141,6 +153,6 @@ echo -e "${BLUE}📤 Upload $PACKAGE_NAME to Ghost Admin${NC}"
 echo ""
 echo "Next build commands:"
 echo "  ./build-package.sh patch \"Bug fixes\""
-echo "  ./build-package.sh minor \"New features\""
-echo "  ./build-package.sh major \"Breaking changes\""
-echo "  ./build-package.sh 2.1.0 \"Specific version\""
+echo "  ./build-package.sh minor \"New features\" --commit"
+echo "  ./build-package.sh major \"Breaking changes\" --commit"
+echo "  ./build-package.sh 2.1.0 \"Specific version\" --commit"

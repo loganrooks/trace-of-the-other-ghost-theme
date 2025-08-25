@@ -258,6 +258,9 @@ class ContentProcessor {
   }
 }
 
+// Expose class globally for system access
+window.ContentProcessor = ContentProcessor;
+
 /**
  * Interface definitions for type checking and documentation
  * These are used for validation and IDE support

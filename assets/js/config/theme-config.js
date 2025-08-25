@@ -109,6 +109,46 @@ window.ThemeConfig = {
         content: 'extension-content',
         box: 'paragraph-extension-box'
       }
+    },
+    
+    // Deconstruction processor - radical text effects
+    deconstruction: {
+      formats: ['html'],
+      patterns: {
+        selector: '[data-deconstruct]',            // HTML elements with data-deconstruct attribute
+        effectTypes: ['dissolve', 'collision', 'recursion', 'voices', 'temporal', 'syntax']
+      },
+      selectors: {
+        container: '.post-content, .page-content',
+        elements: '[data-deconstruct]'
+      },
+      classes: {
+        base: 'deconstruct-element',
+        dissolve: 'deconstruct-dissolve',
+        collision: 'deconstruct-collision', 
+        recursion: 'deconstruct-recursion',
+        voices: 'deconstruct-voices',
+        temporal: 'deconstruct-temporal',
+        syntax: 'deconstruct-syntax'
+      },
+      effects: {
+        enableDissolve: true,
+        enableCollision: true,
+        enableRecursion: true,
+        enableVoices: true,
+        enableTemporal: true,
+        enableSyntax: true
+      },
+      performance: {
+        useIntersectionObserver: true,
+        effectThrottle: 16,                        // ms between effect updates
+        maxActiveEffects: 10
+      },
+      accessibility: {
+        respectReducedMotion: true,
+        preserveReadability: true,
+        provideStaticFallback: true
+      }
     }
   },
   
@@ -298,6 +338,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (window.ghost_custom_settings.enable_modern_footnotes) {
       window.ThemeConfig.features.footnotes = true;
+    }
+    
+    if (window.ghost_custom_settings.enable_deconstruction) {
+      window.ThemeConfig.features.deconstruction = true;
+      console.log('🔥 Deconstruction effects enabled via Ghost settings');
     }
     
     if (window.ghost_custom_settings.debug_mode) {

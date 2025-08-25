@@ -17,6 +17,9 @@
     <link rel="stylesheet" type="text/css" href="{{asset "css/hacker-effects.css"}}">
     <link rel="stylesheet" type="text/css" href="{{asset "css/digital-talmud.css"}}">
     <link rel="stylesheet" type="text/css" href="{{asset "css/footnote-themes.css"}}">
+    {{#if @custom.enable_deconstruction}}
+    <link rel="stylesheet" type="text/css" href="{{asset "css/deconstruction.css"}}">
+    {{/if}}
     
     {{!-- Ghost head outputs meta tags and structured data --}}
     {{ghost_head}}
@@ -60,6 +63,7 @@
             footnote_theme: '{{@custom.footnote_theme}}' || 'hacker',
             enable_extensions: {{#if @custom.enable_extensions}}true{{else}}false{{/if}},
             enable_modern_footnotes: {{#if @custom.enable_modern_footnotes}}true{{else}}false{{/if}},
+            enable_deconstruction: {{#if @custom.enable_deconstruction}}true{{else}}false{{/if}},
             tooltip_max_width: '{{@custom.tooltip_max_width}}' || '60vw',
             animation_speed: '{{@custom.animation_speed}}' || 'normal',
             primary_accent_color: '{{@custom.primary_accent_color}}' || '#00ff00',
@@ -87,6 +91,10 @@
     <script src="{{asset "js/core/configuration-manager.js"}}"></script>
     
     {{!-- 3. Content Processors (MUST load before manager) --}}
+    {{!-- Processing order: deconstruction -> footnotes -> marginalia -> extensions --}}
+    {{#if @custom.enable_deconstruction}}
+    <script src="{{asset "js/processors/deconstruction-processor.js"}}"></script>
+    {{/if}}
     <script src="{{asset "js/processors/footnote-processor.js"}}"></script>
     <script src="{{asset "js/processors/marginalia-processor.js"}}"></script>
     {{#if @custom.enable_extensions}}
@@ -95,16 +103,30 @@
     
     {{!-- 4. Content Enhancement Manager (loads AFTER processors) --}}
     <script src="{{asset "js/core/content-enhancement-manager.js"}}"></script>
-    {{!-- Future: deconstruction processor will go here --}}
     
-    {{!-- 4. Effects (optional, theme-specific) --}}
+    {{!-- 5. Robust Initialization (handles initialization with error recovery) --}}
+    <script src="{{asset "js/core/initialization.js"}}"></script>
+    
+    {{!-- 6. Emergency Debug (always loads for troubleshooting) --}}
+    <script src="{{asset "js/debug/emergency-debug.js"}}"></script>
+    <script src="{{asset "js/debug/script-execution-debug.js"}}"></script>
+    <script src="{{asset "js/debug/deconstruction-pipeline-debug.js"}}"></script>
+    <script src="{{asset "js/debug/deconstruction-effects-debug.js"}}"></script>
+    <script src="{{asset "js/debug/deconstruction-css-debug.js"}}"></script>
+    <script src="{{asset "js/debug/automatic-processing-debug.js"}}"></script>
+    <script src="{{asset "js/debug/deconstruction-only-debug.js"}}"></script>
+    <script src="{{asset "js/debug/config-debug.js"}}"></script>
+    <script src="{{asset "js/debug/debug-loader-test.js"}}"></script>
+    
+    {{!-- 7. Effects (optional, theme-specific) --}}
     <script src="{{asset "js/effects/hacker-effects.js"}}"></script>
     {{!-- Other effects loaded conditionally based on theme settings --}}
     
-    {{!-- 5. Debug Tools (development only) --}}
+    {{!-- 8. Debug Tools (development only) --}}
     {{#if @custom.debug_mode}}
     <script src="{{asset "js/debug/debug-logger.js"}}"></script>
     <script src="{{asset "js/debug/system-diagnostic.js"}}"></script>
+    <script src="{{asset "js/debug/deconstruction-debugger.js"}}"></script>
     {{/if}}
     
     {{ghost_foot}}

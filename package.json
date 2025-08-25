@@ -1,7 +1,7 @@
 {
     "name": "trace-of-the-other",
     "description": "A literary Ghost theme with enhanced footnotes and expandable commentary, preserving simple editor workflow",
-    "version": "2.1.11",
+    "version": "2.1.24",
     "engines": {
         "ghost": ">=5.0.0"
     },

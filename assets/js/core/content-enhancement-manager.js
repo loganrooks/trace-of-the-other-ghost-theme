@@ -86,13 +86,60 @@ class ContentEnhancementManager {
 
   /**
    * Register default processors based on configuration and feature flags
-   * IMPORTANT: Extensions MUST process BEFORE footnotes to avoid breaking footnote tooltips
+   * UPDATED PROCESSING ORDER: Deconstruction → Footnotes → Marginalia → Extensions
    * @private
    */
   async registerDefaultProcessors() {
     const flags = window.CONTENT_ENHANCEMENT_FLAGS || {};
     
-    // Register marginalia processor FIRST - processes content before extensions and footnotes
+    // Register deconstruction processor FIRST - establishes unstable textual foundation
+    // Check multiple config sources for deconstruction enablement
+    const deconstructionEnabled = flags.ENABLE_DECONSTRUCTION === true || 
+                                 this.config?.features?.deconstruction === true ||
+                                 window.ghost_custom_settings?.enable_deconstruction === true;
+    
+    console.log('[ENHANCEMENT_MANAGER] Deconstruction check:', {
+      legacyFlag: flags.ENABLE_DECONSTRUCTION,
+      configFeature: this.config?.features?.deconstruction,
+      ghostSetting: window.ghost_custom_settings?.enable_deconstruction,
+      finalDecision: deconstructionEnabled
+    });
+    
+    if (deconstructionEnabled) {
+      console.log('[ENHANCEMENT_MANAGER] Registering deconstruction processor (FIRST - radical base layer)');
+      try {
+        if (typeof DeconstructionProcessor !== 'undefined') {
+          await this.registerProcessor('deconstruction', DeconstructionProcessor);
+          console.log('[ENHANCEMENT_MANAGER] ✅ Deconstruction processor registered successfully');
+        } else {
+          console.warn('[ENHANCEMENT_MANAGER] ⚠️ DeconstructionProcessor class not available');
+        }
+      } catch (error) {
+        console.error('[ENHANCEMENT_MANAGER] ❌ Deconstruction processor registration failed:', error);
+      }
+    } else {
+      console.log('[ENHANCEMENT_MANAGER] Deconstruction processor disabled');
+    }
+    
+    // Register footnote processor SECOND (moved up in order)
+    if (flags.USE_LEGACY_FOOTNOTES !== false) {
+      console.log('[ENHANCEMENT_MANAGER] Using legacy footnote system');
+      // Legacy system handled separately - don't register footnote processor
+    } else {
+      console.log('[ENHANCEMENT_MANAGER] Registering modern footnote processor (SECOND)');
+      try {
+        if (typeof FootnoteProcessor !== 'undefined') {
+          await this.registerProcessor('footnotes', FootnoteProcessor);
+          console.log('[ENHANCEMENT_MANAGER] ✅ Footnote processor registered successfully');
+        } else {
+          console.warn('[ENHANCEMENT_MANAGER] ⚠️ FootnoteProcessor class not available');
+        }
+      } catch (error) {
+        console.error('[ENHANCEMENT_MANAGER] ❌ Footnote processor registration failed:', error);
+      }
+    }
+    
+    // Register marginalia processor THIRD - comments on deconstructed and footnoted text
     console.log('[ENHANCEMENT_MANAGER] Checking marginalia registration...', {
       ENABLE_MARGINALIA: flags.ENABLE_MARGINALIA,
       condition: flags.ENABLE_MARGINALIA !== false,
@@ -100,31 +147,34 @@ class ContentEnhancementManager {
     });
     
     if (flags.ENABLE_MARGINALIA !== false) {
-      console.log('[ENHANCEMENT_MANAGER] Registering marginalia processor (FIRST - to process before other systems)');
+      console.log('[ENHANCEMENT_MANAGER] Registering marginalia processor (THIRD - comments on processed text)');
       try {
-        await this.registerProcessor('marginalia', MarginaliaProcessor);
-        console.log('[ENHANCEMENT_MANAGER] ✅ Marginalia processor registered successfully');
+        if (typeof MarginaliaProcessor !== 'undefined') {
+          await this.registerProcessor('marginalia', MarginaliaProcessor);
+          console.log('[ENHANCEMENT_MANAGER] ✅ Marginalia processor registered successfully');
+        } else {
+          console.warn('[ENHANCEMENT_MANAGER] ⚠️ MarginaliaProcessor class not available');
+        }
       } catch (error) {
         console.error('[ENHANCEMENT_MANAGER] ❌ Marginalia processor registration failed:', error);
       }
     } else {
-      console.log('[ENHANCEMENT_MANAGER] ❌ Marginalia processor registration skipped');
+      console.log('[ENHANCEMENT_MANAGER] Marginalia processor disabled');
     }
     
-    // Register extension processor SECOND if enabled
-    // This prevents breaking footnote event listeners
+    // Register extension processor FOURTH (LAST) if enabled
     if (flags.ENABLE_EXTENSIONS === true) {
-      console.log('[ENHANCEMENT_MANAGER] Registering paragraph extension processor (SECOND - to preserve footnote functionality)');
-      await this.registerProcessor('extensions', ParagraphExtensionProcessor);
-    }
-    
-    // Register footnote processor LAST
-    if (flags.USE_LEGACY_FOOTNOTES !== false) {
-      console.log('[ENHANCEMENT_MANAGER] Using legacy footnote system');
-      // Legacy system handled separately - don't register footnote processor
-    } else {
-      console.log('[ENHANCEMENT_MANAGER] Registering modern footnote processor (LAST - after all content processing)');
-      await this.registerProcessor('footnotes', FootnoteProcessor);
+      console.log('[ENHANCEMENT_MANAGER] Registering paragraph extension processor (FOURTH - final layer)');
+      try {
+        if (typeof ParagraphExtensionProcessor !== 'undefined') {
+          await this.registerProcessor('extensions', ParagraphExtensionProcessor);
+          console.log('[ENHANCEMENT_MANAGER] ✅ Extension processor registered successfully');
+        } else {
+          console.warn('[ENHANCEMENT_MANAGER] ⚠️ ParagraphExtensionProcessor class not available');
+        }
+      } catch (error) {
+        console.error('[ENHANCEMENT_MANAGER] ❌ Extension processor registration failed:', error);
+      }
     }
 
     // Future processors can be added here based on feature flags
@@ -578,6 +628,9 @@ if (document.readyState === 'loading') {
   // DOM already loaded, run immediately
   initializeContentEnhancement();
 }
+
+// Expose class globally for system access
+window.ContentEnhancementManager = ContentEnhancementManager;
 
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
