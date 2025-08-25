@@ -214,19 +214,92 @@
   --container-width: min(800px, 95vw); /* Full container width where marginalia can extend */
 }
 
+/* COMPREHENSIVE WIDTH RULES: Support all width values 5-90 */
+.marginalia-voice[data-width="5"] { max-width: calc(var(--container-width) * 0.05) !important; } /* 5% of container space */
+.marginalia-voice[data-width="6"] { max-width: calc(var(--container-width) * 0.06) !important; } /* 6% of container space */
+.marginalia-voice[data-width="7"] { max-width: calc(var(--container-width) * 0.07) !important; } /* 7% of container space */
+.marginalia-voice[data-width="8"] { max-width: calc(var(--container-width) * 0.08) !important; } /* 8% of container space */
+.marginalia-voice[data-width="9"] { max-width: calc(var(--container-width) * 0.09) !important; } /* 9% of container space */
+.marginalia-voice[data-width="10"] { max-width: calc(var(--container-width) * 0.10) !important; } /* 10% of container space */
+.marginalia-voice[data-width="11"] { max-width: calc(var(--container-width) * 0.11) !important; } /* 11% of container space */
+.marginalia-voice[data-width="12"] { max-width: calc(var(--container-width) * 0.12) !important; } /* 12% of container space */
+.marginalia-voice[data-width="13"] { max-width: calc(var(--container-width) * 0.13) !important; } /* 13% of container space */
+.marginalia-voice[data-width="14"] { max-width: calc(var(--container-width) * 0.14) !important; } /* 14% of container space */
 .marginalia-voice[data-width="15"] { max-width: calc(var(--container-width) * 0.15) !important; } /* 15% of container space */
+.marginalia-voice[data-width="16"] { max-width: calc(var(--container-width) * 0.16) !important; } /* 16% of container space */
+.marginalia-voice[data-width="17"] { max-width: calc(var(--container-width) * 0.17) !important; } /* 17% of container space */
+.marginalia-voice[data-width="18"] { max-width: calc(var(--container-width) * 0.18) !important; } /* 18% of container space */
+.marginalia-voice[data-width="19"] { max-width: calc(var(--container-width) * 0.19) !important; } /* 19% of container space */
 .marginalia-voice[data-width="20"] { max-width: calc(var(--container-width) * 0.20) !important; } /* 20% of container space */
+.marginalia-voice[data-width="21"] { max-width: calc(var(--container-width) * 0.21) !important; } /* 21% of container space */
+.marginalia-voice[data-width="22"] { max-width: calc(var(--container-width) * 0.22) !important; } /* 22% of container space */
+.marginalia-voice[data-width="23"] { max-width: calc(var(--container-width) * 0.23) !important; } /* 23% of container space */
+.marginalia-voice[data-width="24"] { max-width: calc(var(--container-width) * 0.24) !important; } /* 24% of container space */
 .marginalia-voice[data-width="25"] { max-width: calc(var(--container-width) * 0.25) !important; } /* 25% of container space */
+.marginalia-voice[data-width="26"] { max-width: calc(var(--container-width) * 0.26) !important; } /* 26% of container space */
+.marginalia-voice[data-width="27"] { max-width: calc(var(--container-width) * 0.27) !important; } /* 27% of container space */
+.marginalia-voice[data-width="28"] { max-width: calc(var(--container-width) * 0.28) !important; } /* 28% of container space */
+.marginalia-voice[data-width="29"] { max-width: calc(var(--container-width) * 0.29) !important; } /* 29% of container space */
 .marginalia-voice[data-width="30"] { max-width: calc(var(--container-width) * 0.30) !important; } /* 30% of container space */
+.marginalia-voice[data-width="31"] { max-width: calc(var(--container-width) * 0.31) !important; } /* 31% of container space */
+.marginalia-voice[data-width="32"] { max-width: calc(var(--container-width) * 0.32) !important; } /* 32% of container space */
+.marginalia-voice[data-width="33"] { max-width: calc(var(--container-width) * 0.33) !important; } /* 33% of container space */
+.marginalia-voice[data-width="34"] { max-width: calc(var(--container-width) * 0.34) !important; } /* 34% of container space */
 .marginalia-voice[data-width="35"] { max-width: calc(var(--container-width) * 0.35) !important; } /* 35% of container space */
+.marginalia-voice[data-width="36"] { max-width: calc(var(--container-width) * 0.36) !important; } /* 36% of container space */
+.marginalia-voice[data-width="37"] { max-width: calc(var(--container-width) * 0.37) !important; } /* 37% of container space */
+.marginalia-voice[data-width="38"] { max-width: calc(var(--container-width) * 0.38) !important; } /* 38% of container space */
+.marginalia-voice[data-width="39"] { max-width: calc(var(--container-width) * 0.39) !important; } /* 39% of container space */
 .marginalia-voice[data-width="40"] { max-width: calc(var(--container-width) * 0.40) !important; } /* 40% of container space */
+.marginalia-voice[data-width="41"] { max-width: calc(var(--container-width) * 0.41) !important; } /* 41% of container space */
+.marginalia-voice[data-width="42"] { max-width: calc(var(--container-width) * 0.42) !important; } /* 42% of container space */
+.marginalia-voice[data-width="43"] { max-width: calc(var(--container-width) * 0.43) !important; } /* 43% of container space */
+.marginalia-voice[data-width="44"] { max-width: calc(var(--container-width) * 0.44) !important; } /* 44% of container space */
 .marginalia-voice[data-width="45"] { max-width: calc(var(--container-width) * 0.45) !important; } /* 45% of container space */
-
-/* Extended range for wider marginalia */
+.marginalia-voice[data-width="46"] { max-width: calc(var(--container-width) * 0.46) !important; } /* 46% of container space */
+.marginalia-voice[data-width="47"] { max-width: calc(var(--container-width) * 0.47) !important; } /* 47% of container space */
+.marginalia-voice[data-width="48"] { max-width: calc(var(--container-width) * 0.48) !important; } /* 48% of container space */
+.marginalia-voice[data-width="49"] { max-width: calc(var(--container-width) * 0.49) !important; } /* 49% of container space */
 .marginalia-voice[data-width="50"] { max-width: calc(var(--container-width) * 0.50) !important; } /* 50% of container space */
+.marginalia-voice[data-width="51"] { max-width: calc(var(--container-width) * 0.51) !important; } /* 51% of container space */
+.marginalia-voice[data-width="52"] { max-width: calc(var(--container-width) * 0.52) !important; } /* 52% of container space */
+.marginalia-voice[data-width="53"] { max-width: calc(var(--container-width) * 0.53) !important; } /* 53% of container space */
+.marginalia-voice[data-width="54"] { max-width: calc(var(--container-width) * 0.54) !important; } /* 54% of container space */
+.marginalia-voice[data-width="55"] { max-width: calc(var(--container-width) * 0.55) !important; } /* 55% of container space */
+.marginalia-voice[data-width="56"] { max-width: calc(var(--container-width) * 0.56) !important; } /* 56% of container space */
+.marginalia-voice[data-width="57"] { max-width: calc(var(--container-width) * 0.57) !important; } /* 57% of container space */
+.marginalia-voice[data-width="58"] { max-width: calc(var(--container-width) * 0.58) !important; } /* 58% of container space */
+.marginalia-voice[data-width="59"] { max-width: calc(var(--container-width) * 0.59) !important; } /* 59% of container space */
 .marginalia-voice[data-width="60"] { max-width: calc(var(--container-width) * 0.60) !important; } /* 60% of container space */
+.marginalia-voice[data-width="61"] { max-width: calc(var(--container-width) * 0.61) !important; } /* 61% of container space */
+.marginalia-voice[data-width="62"] { max-width: calc(var(--container-width) * 0.62) !important; } /* 62% of container space */
+.marginalia-voice[data-width="63"] { max-width: calc(var(--container-width) * 0.63) !important; } /* 63% of container space */
+.marginalia-voice[data-width="64"] { max-width: calc(var(--container-width) * 0.64) !important; } /* 64% of container space */
+.marginalia-voice[data-width="65"] { max-width: calc(var(--container-width) * 0.65) !important; } /* 65% of container space */
+.marginalia-voice[data-width="66"] { max-width: calc(var(--container-width) * 0.66) !important; } /* 66% of container space */
+.marginalia-voice[data-width="67"] { max-width: calc(var(--container-width) * 0.67) !important; } /* 67% of container space */
+.marginalia-voice[data-width="68"] { max-width: calc(var(--container-width) * 0.68) !important; } /* 68% of container space */
+.marginalia-voice[data-width="69"] { max-width: calc(var(--container-width) * 0.69) !important; } /* 69% of container space */
 .marginalia-voice[data-width="70"] { max-width: calc(var(--container-width) * 0.70) !important; } /* 70% of container space */
+.marginalia-voice[data-width="71"] { max-width: calc(var(--container-width) * 0.71) !important; } /* 71% of container space */
+.marginalia-voice[data-width="72"] { max-width: calc(var(--container-width) * 0.72) !important; } /* 72% of container space */
+.marginalia-voice[data-width="73"] { max-width: calc(var(--container-width) * 0.73) !important; } /* 73% of container space */
+.marginalia-voice[data-width="74"] { max-width: calc(var(--container-width) * 0.74) !important; } /* 74% of container space */
+.marginalia-voice[data-width="75"] { max-width: calc(var(--container-width) * 0.75) !important; } /* 75% of container space */
+.marginalia-voice[data-width="76"] { max-width: calc(var(--container-width) * 0.76) !important; } /* 76% of container space */
+.marginalia-voice[data-width="77"] { max-width: calc(var(--container-width) * 0.77) !important; } /* 77% of container space */
+.marginalia-voice[data-width="78"] { max-width: calc(var(--container-width) * 0.78) !important; } /* 78% of container space */
+.marginalia-voice[data-width="79"] { max-width: calc(var(--container-width) * 0.79) !important; } /* 79% of container space */
 .marginalia-voice[data-width="80"] { max-width: calc(var(--container-width) * 0.80) !important; } /* 80% of container space */
+.marginalia-voice[data-width="81"] { max-width: calc(var(--container-width) * 0.81) !important; } /* 81% of container space */
+.marginalia-voice[data-width="82"] { max-width: calc(var(--container-width) * 0.82) !important; } /* 82% of container space */
+.marginalia-voice[data-width="83"] { max-width: calc(var(--container-width) * 0.83) !important; } /* 83% of container space */
+.marginalia-voice[data-width="84"] { max-width: calc(var(--container-width) * 0.84) !important; } /* 84% of container space */
+.marginalia-voice[data-width="85"] { max-width: calc(var(--container-width) * 0.85) !important; } /* 85% of container space */
+.marginalia-voice[data-width="86"] { max-width: calc(var(--container-width) * 0.86) !important; } /* 86% of container space */
+.marginalia-voice[data-width="87"] { max-width: calc(var(--container-width) * 0.87) !important; } /* 87% of container space */
+.marginalia-voice[data-width="88"] { max-width: calc(var(--container-width) * 0.88) !important; } /* 88% of container space */
+.marginalia-voice[data-width="89"] { max-width: calc(var(--container-width) * 0.89) !important; } /* 89% of container space */
 .marginalia-voice[data-width="90"] { max-width: calc(var(--container-width) * 0.90) !important; } /* 90% of container space */
 
 /* Content-length based sizing with width limits */

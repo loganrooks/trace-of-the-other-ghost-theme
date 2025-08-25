@@ -49,8 +49,6 @@
         </footer>
     </div>
 
-    {{!-- Hacker effects JavaScript --}}
-    <script src="{{asset "js/hacker-effects.js"}}"></script>
     
     {{!-- Content Enhancement System - Modular Architecture --}}
     {{!-- Load in dependency order for proper initialization --}}
@@ -76,34 +74,38 @@
         document.documentElement.style.setProperty('--extension-accent', window.ghost_custom_settings.extension_accent_color);
     </script>
     
-    {{!-- 1. Unified Configuration (supports both legacy and modern systems) --}}
-    <script src="{{asset "js/content-enhancement-config.js"}}"></script>
+    {{!-- ==============================================
+         UNIFIED CONTENT ENHANCEMENT SYSTEM
+         Clean, modular loading with new directory structure
+         ============================================== --}}
     
-    {{!-- 1.5. Structured Debug Logger (load before all processors) --}}
-    <script src="{{asset "js/debug-logger.js"}}"></script>
+    {{!-- 1. Configuration (single source of truth) --}}
+    <script src="{{asset "js/config/theme-config.js"}}"></script>
     
-    {{!-- 2. Modern Modular System Components (MUST load first to process before legacy) --}}
-    <script src="{{asset "js/content-processor-base.js"}}"></script>
-    <script src="{{asset "js/configuration-manager.js"}}"></script>
-    <script src="{{asset "js/marginalia-processor.js"}}"></script>
-    <script src="{{asset "js/paragraph-extension-processor.js"}}"></script>
-    <script src="{{asset "js/footnote-processor.js"}}"></script>
-    <script src="{{asset "js/content-enhancement-manager.js"}}"></script>
+    {{!-- 2. Core Foundation (required) --}}
+    <script src="{{asset "js/core/content-processor-base.js"}}"></script>
+    <script src="{{asset "js/core/configuration-manager.js"}}"></script>
     
-    {{!-- 3. Legacy System (loads AFTER modern system to preserve footnote tooltips) --}}
-    <script src="{{asset "js/footnote-config.js"}}"></script>
-    <script src="{{asset "js/footnote-system.js"}}"></script>
-    <script src="{{asset "js/footnote-legacy-adapter.js"}}"></script>
+    {{!-- 3. Content Processors (MUST load before manager) --}}
+    <script src="{{asset "js/processors/footnote-processor.js"}}"></script>
+    <script src="{{asset "js/processors/marginalia-processor.js"}}"></script>
+    {{#if @custom.enable_extensions}}
+    <script src="{{asset "js/processors/paragraph-extension-processor.js"}}"></script>
+    {{/if}}
     
-    {{!-- 4. Development and Debug Tools --}}
-    <script src="{{asset "js/debug-theme-settings.js"}}"></script>
-    <script src="{{asset "js/system-diagnostic.js"}}"></script>
-    {{!-- Additional debug tools (uncomment as needed):
-    <script src="{{asset "js/footnote-test.js"}}"></script>
-    <script src="{{asset "js/footnote-debug-connection.js"}}"></script>
-    <script src="{{asset "js/footnote-direct-test.js"}}"></script>
-    <script src="{{asset "js/footnote-raw-content-dump.js"}}"></script>
-    --}}
+    {{!-- 4. Content Enhancement Manager (loads AFTER processors) --}}
+    <script src="{{asset "js/core/content-enhancement-manager.js"}}"></script>
+    {{!-- Future: deconstruction processor will go here --}}
+    
+    {{!-- 4. Effects (optional, theme-specific) --}}
+    <script src="{{asset "js/effects/hacker-effects.js"}}"></script>
+    {{!-- Other effects loaded conditionally based on theme settings --}}
+    
+    {{!-- 5. Debug Tools (development only) --}}
+    {{#if @custom.debug_mode}}
+    <script src="{{asset "js/debug/debug-logger.js"}}"></script>
+    <script src="{{asset "js/debug/system-diagnostic.js"}}"></script>
+    {{/if}}
     
     {{ghost_foot}}
 </body>

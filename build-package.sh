@@ -97,27 +97,14 @@ echo -e "${BLUE}📦 Creating package...${NC}"
 # Remove any existing packages with same version
 rm -f trace-of-the-other-ghost-theme-v${NEW_VERSION}-*.zip
 
-# Create the zip package
+# Create the zip package with new directory structure
 zip -r "$PACKAGE_NAME" \
     package.json \
     *.hbs \
     partials/ \
     assets/css/ \
-    assets/js/content-enhancement-config.js \
-    assets/js/debug-logger.js \
-    assets/js/system-diagnostic.js \
-    assets/js/content-processor-base.js \
-    assets/js/configuration-manager.js \
-    assets/js/marginalia-processor.js \
-    assets/js/paragraph-extension-processor.js \
-    assets/js/footnote-processor.js \
-    assets/js/content-enhancement-manager.js \
-    assets/js/footnote-config.js \
-    assets/js/footnote-system.js \
-    assets/js/footnote-legacy-adapter.js \
-    assets/js/hacker-effects.js \
-    assets/js/debug-theme-settings.js \
-    -x "*.git*" "*.DS_Store" "*.log" "*.tmp" > /dev/null
+    assets/js/ \
+    -x "*.git*" "*.DS_Store" "*.log" "*.tmp" "*/.git/*" "*/node_modules/*" > /dev/null
 
 PACKAGE_SIZE=$(ls -lh "$PACKAGE_NAME" | awk '{print $5}')
 

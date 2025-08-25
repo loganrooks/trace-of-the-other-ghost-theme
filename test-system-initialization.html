@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Initialization Test</title>
+</head>
+<body>
+    <div class="post-content">
+        <p>Test content[^1] with footnote reference.</p>
+    </div>
+    
+    <div data-ref="1">Test footnote content</div>
+
+    <!-- Simulate theme loading order -->
+    <script>
+        // Simulate Ghost theme settings
+        window.ghost_custom_settings = {
+            footnote_theme: 'hacker',
+            enable_extensions: false,
+            enable_modern_footnotes: true,
+            debug_mode: true
+        };
+    </script>
+
+    <!-- Load in fixed order -->
+    <script src="assets/js/config/theme-config.js"></script>
+    <script src="assets/js/core/content-processor-base.js"></script>
+    <script src="assets/js/core/configuration-manager.js"></script>
+    
+    <!-- Processors load BEFORE manager -->
+    <script src="assets/js/processors/footnote-processor.js"></script>
+    <script src="assets/js/processors/marginalia-processor.js"></script>
+    
+    <!-- Manager loads LAST -->
+    <script src="assets/js/core/content-enhancement-manager.js"></script>
+
+    <script>
+        // Test if system initializes
+        setTimeout(() => {
+            console.log('=== SYSTEM TEST RESULTS ===');
+            console.log('ThemeConfig available:', !!window.ThemeConfig);
+            console.log('CONTENT_ENHANCEMENT_FLAGS available:', !!window.CONTENT_ENHANCEMENT_FLAGS);
+            console.log('DigitalTalmudFootnoteConfig available:', !!window.DigitalTalmudFootnoteConfig);
+            console.log('ContentEnhancementSystem available:', !!window.ContentEnhancementSystem);
+            console.log('contentEnhancementHealth function available:', typeof window.contentEnhancementHealth);
+            
+            if (window.contentEnhancementHealth) {
+                console.log('System Health:', window.contentEnhancementHealth());
+            } else {
+                console.error('❌ contentEnhancementHealth function not available - system failed to initialize');
+            }
+            
+            if (window.debugContentEnhancement) {
+                console.log('Debug function available - system likely initialized correctly');
+            } else {
+                console.error('❌ debugContentEnhancement function not available - system failed to initialize');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
