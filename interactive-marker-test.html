@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Marker System Test - Poem Overlay</title>
+    <link rel="stylesheet" href="assets/css/derridean.css">
+    <style>
+        body {
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fafafa;
+        }
+        
+        .test-post {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .test-post h1 {
+            color: #333;
+            border-bottom: 2px solid #007cba;
+            padding-bottom: 0.5rem;
+        }
+        
+        .test-post p {
+            margin: 1.5rem 0;
+            text-align: justify;
+        }
+        
+        .debug-panel {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .debug-panel h3 {
+            color: #4fd1c7;
+            margin-top: 0;
+        }
+        
+        .test-controls {
+            background: #f0f4f8;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .test-controls button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .test-controls button:hover {
+            background: #005a87;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            background: #gray;
+        }
+        
+        .status-indicator.ready {
+            background: #48bb78;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.processing {
+            background: #ed8936;
+            animation: blink 0.5s infinite;
+        }
+        
+        .status-indicator.error {
+            background: #f56565;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-controls">
+        <h2>Interactive Marker System Test</h2>
+        <div class="status">
+            <span class="status-indicator" id="systemStatus"></span>
+            <span id="systemStatusText">Initializing...</span>
+        </div>
+        <div style="margin-top: 1rem;">
+            <button onclick="testSystem()">Test System</button>
+            <button onclick="clearDebugLog()">Clear Log</button>
+            <button onclick="resetContent()">Reset Content</button>
+        </div>
+    </div>
+
+    <div class="test-post" id="testContent">
+        <h1>The Deconstructive Reader</h1>
+        
+        <p>The text arrives at our eyes carrying with it the weight of every previous reading, every interpretation that has settled into its margins like sediment. We do not read innocent words; we encounter palimpsests where meaning has been inscribed, erased, and written over countless times.</p>
+        
+        <p>What we call "understanding" is perhaps nothing more than our temporary arrangement with uncertainty, a provisional contract with ambiguity that we mistake for clarity. The reader becomes complicit in this fiction, participating in the violence of interpretation while believing themselves to be passive recipients of predetermined meaning.</p>
+        
+        <p>Yet somewhere in the gaps between intention and reception, between the author's ghost and the reader's desire, something else emerges. Not meaning in the traditional sense, but the very condition that makes meaning temporarily possible while simultaneously undermining its stability.</p>
+        
+        <p>The remainder, what Derrida calls the "supplement," haunts every reading. It is what escapes our interpretive frameworks while making those frameworks necessary. It is the excess that cannot be contained but without which there would be nothing to contain.</p>
+        
+        <p>And so we read, knowing that our reading performs its own undoing, that every act of interpretation creates the very instability it seeks to resolve. The text does not yield its secrets because it has no secrets to yield, only the endless play of differences that defer any final accounting.</p>
+        
+        <p>[?][target:p1-2|fade:0.1|animate:typing|overlay:over|duration:3000][
+The words dissolve
+Into palimpsest layers,
+Each reading a ghost
+Haunting the next.
+
+Memory writes itself
+Over the insufficient present,
+While meaning slips
+Through the cracks
+Between intention and arrival.
+
+What remains
+Is not text
+But the trembling
+Of difference itself.
+]</p>
+    </div>
+
+    <div class="debug-panel">
+        <h3>🔧 System Debug Log</h3>
+        <div id="debugLog">Starting interactive marker system...<br></div>
+    </div>
+
+    <!-- Load dependencies in correct order -->
+    <script src="assets/js/content-processor-base.js"></script>
+    <script src="assets/js/core/target-selector.js"></script>
+    <script src="assets/js/core/action-engine.js"></script>
+    <script src="assets/js/animations/typing-animation.js"></script>
+    <script src="assets/js/interactive-marker-processor.js"></script>
+
+    <script>
+        // Debug logging system
+        const debugLog = document.getElementById('debugLog');
+        const statusIndicator = document.getElementById('systemStatus');
+        const statusText = document.getElementById('systemStatusText');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}<br>`;
+            debugLog.innerHTML += logEntry;
+            debugLog.scrollTop = debugLog.scrollHeight;
+            
+            // Update status based on message content
+            if (message.includes('error') || message.includes('failed')) {
+                setStatus('error', 'Error occurred');
+            } else if (message.includes('processing') || message.includes('executing')) {
+                setStatus('processing', 'Processing...');
+            } else if (message.includes('initialized') || message.includes('ready')) {
+                setStatus('ready', 'System ready');
+            }
+        }
+        
+        function setStatus(status, text) {
+            statusIndicator.className = `status-indicator ${status}`;
+            statusText.textContent = text;
+        }
+        
+        function clearDebugLog() {
+            debugLog.innerHTML = 'Debug log cleared.<br>';
+        }
+        
+        function resetContent() {
+            location.reload();
+        }
+        
+        // Enhanced logger for the processor
+        const logger = {
+            debug: (msg, data) => log(`[DEBUG] ${msg}`, 'debug'),
+            info: (msg, data) => log(`[INFO] ${msg}`, 'info'),
+            warn: (msg, data) => log(`[WARN] ${msg}`, 'warn'),
+            error: (msg, error) => log(`[ERROR] ${msg}: ${error?.message || error}`, 'error'),
+            time: (label) => {
+                logger._timers = logger._timers || {};
+                logger._timers[label] = performance.now();
+            },
+            timeEnd: (label) => {
+                if (logger._timers && logger._timers[label]) {
+                    const duration = performance.now() - logger._timers[label];
+                    delete logger._timers[label];
+                    return duration;
+                }
+                return 0;
+            }
+        };
+        
+        // Global interactive marker processor instance
+        let interactiveMarkerProcessor = null;
+        
+        // Initialize the system
+        async function initializeSystem() {
+            try {
+                log('Initializing Interactive Marker System...');
+                
+                const container = document.getElementById('testContent');
+                if (!container) {
+                    throw new Error('Test content container not found');
+                }
+                
+                // Initialize processor
+                interactiveMarkerProcessor = new InteractiveMarkerProcessor({}, container);
+                
+                // Override logger to use our debug system
+                interactiveMarkerProcessor.logger = logger;
+                
+                // Initialize
+                const initResult = await interactiveMarkerProcessor.init();
+                if (!initResult) {
+                    throw new Error('Processor initialization failed');
+                }
+                
+                // Process content
+                await interactiveMarkerProcessor.process();
+                
+                log('Interactive Marker System initialized successfully');
+                setStatus('ready', 'Ready - Click [?] markers to test');
+                
+            } catch (error) {
+                log(`System initialization failed: ${error.message}`, 'error');
+                setStatus('error', `Initialization failed: ${error.message}`);
+            }
+        }
+        
+        // Test system functionality
+        function testSystem() {
+            log('Running system test...');
+            
+            if (!interactiveMarkerProcessor) {
+                log('System not initialized', 'error');
+                return;
+            }
+            
+            // Get processor statistics
+            const stats = interactiveMarkerProcessor.getStats ? interactiveMarkerProcessor.getStats() : {};
+            log(`System stats: processed=${stats.processed}, errors=${stats.errors}`);
+            
+            // Test target selector
+            try {
+                const targetSelector = new TargetSelector(document.getElementById('testContent'), logger);
+                const p1to2 = targetSelector.select('p1-2');
+                log(`Target selector test: Selected ${p1to2.length} elements for 'p1-2'`);
+                
+                const validation = targetSelector.validateSelector('p1-2');
+                log(`Selector validation: ${validation.valid ? 'PASS' : 'FAIL'} - ${validation.error || 'Valid'}`);
+            } catch (error) {
+                log(`Target selector test failed: ${error.message}`, 'error');
+            }
+            
+            log('System test completed');
+        }
+        
+        // Handle marker clicks for demo purposes
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('interactive-marker')) {
+                log(`Interactive marker clicked: ${event.target.dataset.markerId}`);
+                setStatus('processing', 'Executing interaction...');
+            }
+        });
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initializeSystem, 100);
+        });
+        
+        // Handle errors globally
+        window.addEventListener('error', (event) => {
+            log(`JavaScript error: ${event.message} (${event.filename}:${event.lineno})`, 'error');
+        });
+        
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`Unhandled promise rejection: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>

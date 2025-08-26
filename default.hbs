@@ -68,6 +68,9 @@
             animation_speed: '{{@custom.animation_speed}}' || 'normal',
             primary_accent_color: '{{@custom.primary_accent_color}}' || '#00ff00',
             extension_accent_color: '{{@custom.extension_accent_color}}' || '#ff8800',
+            interactive_text_color: '{{@custom.interactive_text_color}}' || '#ff0000',
+            interactive_bg_opacity: '{{@custom.interactive_bg_opacity}}' || '0.8',
+            interactive_fade_amount: '{{@custom.interactive_fade_amount}}' || '0.05',
             enable_keyboard_navigation: {{#if @custom.enable_keyboard_navigation}}true{{else}}false{{/if}},
             mobile_responsive: {{#if @custom.mobile_responsive}}true{{else}}false{{/if}},
             debug_mode: {{#if @custom.debug_mode}}true{{else}}false{{/if}}
@@ -80,18 +83,22 @@
     
     {{!-- ==============================================
          UNIFIED CONTENT ENHANCEMENT SYSTEM
-         Clean, modular loading with new directory structure
+         Full working system PLUS Interactive Markers
          ============================================== --}}
     
     {{!-- 1. Configuration (single source of truth) --}}
     <script src="{{asset "js/config/theme-config.js"}}"></script>
     
     {{!-- 2. Core Foundation (required) --}}
+    <script src="{{asset "js/utils/bracket-parser.js"}}"></script>
     <script src="{{asset "js/core/content-processor-base.js"}}"></script>
     <script src="{{asset "js/core/configuration-manager.js"}}"></script>
+    <script src="{{asset "js/core/target-selector.js"}}"></script>
+    <script src="{{asset "js/core/action-engine.js"}}"></script>
+    <script src="{{asset "js/animations/typing-animation.js"}}"></script>
     
     {{!-- 3. Content Processors (MUST load before manager) --}}
-    {{!-- Processing order: deconstruction -> footnotes -> marginalia -> extensions --}}
+    {{!-- Processing order: deconstruction -> footnotes -> marginalia -> extensions -> interactive --}}
     {{#if @custom.enable_deconstruction}}
     <script src="{{asset "js/processors/deconstruction-processor.js"}}"></script>
     {{/if}}
@@ -100,6 +107,7 @@
     {{#if @custom.enable_extensions}}
     <script src="{{asset "js/processors/paragraph-extension-processor.js"}}"></script>
     {{/if}}
+    <script src="{{asset "js/interactive-marker-processor.js"}}"></script>
     
     {{!-- 4. Content Enhancement Manager (loads AFTER processors) --}}
     <script src="{{asset "js/core/content-enhancement-manager.js"}}"></script>
@@ -117,10 +125,10 @@
     <script src="{{asset "js/debug/deconstruction-only-debug.js"}}"></script>
     <script src="{{asset "js/debug/config-debug.js"}}"></script>
     <script src="{{asset "js/debug/debug-loader-test.js"}}"></script>
+    <script src="{{asset "js/debug/interactive-marker-debug.js"}}"></script>
     
-    {{!-- 7. Effects (optional, theme-specific) --}}
+    {{!-- 7. Effects (stable theme effects only) --}}
     <script src="{{asset "js/effects/hacker-effects.js"}}"></script>
-    {{!-- Other effects loaded conditionally based on theme settings --}}
     
     {{!-- 8. Debug Tools (development only) --}}
     {{#if @custom.debug_mode}}

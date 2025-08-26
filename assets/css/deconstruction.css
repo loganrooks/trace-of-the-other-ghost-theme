@@ -168,18 +168,8 @@
   }
 }
 
-/* Collision barriers */
-.deconstruct-collision.collision-active::after {
-  content: '⚡';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2rem;
-  color: var(--accent-red, #ff0000);
-  animation: barrier-flash 1s ease-in-out infinite;
-  z-index: 10;
-}
+/* Remove lightning bolt - the violence IS the scattering */
+/* Collision effect removed - violence is performed by word scattering itself */
 
 @keyframes barrier-flash {
   0%, 100% {
@@ -268,9 +258,10 @@
   border: 1px solid var(--voice-color, #ff8800);
   color: var(--voice-color, #ff8800);
   font-weight: bold;
+  font-size: var(--voice-size, 1em);  /* Now set per individual voice */
   z-index: 5;
   opacity: 0;
-  transform: translateY(-10px) scale(0.9);
+  transform: translateY(-10px) scale(var(--voice-intensity, 0.9));
 }
 
 .deconstruct-voices.voices-active .voice-interrupt,
@@ -278,8 +269,61 @@
 .deconstruct-voices.voices-active .voice-critical,
 .deconstruct-voices.voices-active .voice-nostalgic,
 .deconstruct-voices.voices-active .voice-angry {
-  animation: voice-interrupt 3s ease-in-out infinite;
+  animation: voice-interrupt var(--voice-duration, 3s) ease-in-out infinite;
   animation-delay: var(--interrupt-delay, 0s);
+  /* Each voice now has its own size, duration, delay, and intensity */
+}
+
+/* Voice Mode-Specific Styles */
+
+/* Interrupt mode (default) - Sequential interruptions */
+.voice-mode-interrupt {
+  /* Default behavior already implemented */
+}
+
+/* Overlap mode - Voices overlap more heavily */
+.voice-mode-overlap .voice-uncertain,
+.voice-mode-overlap .voice-critical,
+.voice-mode-overlap .voice-nostalgic,
+.voice-mode-overlap .voice-angry {
+  /* Overlapping voices get more aggressive positioning */
+  z-index: var(--voice-z-index, 5);
+  transform: translateY(calc(var(--voice-overlap-offset, -10px) + var(--voice-index, 0) * -5px)) scale(var(--voice-intensity, 0.9));
+}
+
+/* Argue mode - Voices in heated debate */
+.voice-mode-argue .voice-uncertain,
+.voice-mode-argue .voice-critical,
+.voice-mode-argue .voice-nostalgic,
+.voice-mode-argue .voice-angry {
+  /* Arguing voices get more chaotic positioning */
+  animation-timing-function: ease-in-out;
+  transform: translateY(calc(var(--voice-chaos-offset, -15px) + sin(var(--voice-index, 0) * 60deg) * 10px)) 
+             rotate(calc(var(--voice-index, 0) * 2deg)) 
+             scale(var(--voice-intensity, 0.95));
+}
+
+/* Cascade mode - Rapid waterfall effect */
+.voice-mode-cascade .voice-uncertain,
+.voice-mode-cascade .voice-critical,
+.voice-mode-cascade .voice-nostalgic,
+.voice-mode-cascade .voice-angry {
+  animation-timing-function: ease-out;
+  transform: translateX(calc(var(--voice-index, 0) * 20px)) 
+             translateY(calc(var(--voice-index, 0) * -8px)) 
+             scale(var(--voice-intensity, 0.9));
+}
+
+/* Simultaneous mode - All voices appear together */
+.voice-mode-simultaneous .voice-uncertain,
+.voice-mode-simultaneous .voice-critical,
+.voice-mode-simultaneous .voice-nostalgic,
+.voice-mode-simultaneous .voice-angry {
+  /* All appear at once with slight position variations */
+  transform: translateY(calc(-10px + var(--voice-index, 0) * -3px)) 
+             translateX(calc(var(--voice-index, 0) * 15px)) 
+             scale(var(--voice-intensity, 0.9));
+  animation-delay: 0s !important; /* Override individual delays */
 }
 
 @keyframes voice-interrupt {
@@ -491,11 +535,7 @@
     font-size: 0.8em;
   }
   
-  .deconstruct-voices::after {
-    content: ' [VOICES]';
-    color: var(--accent-red, #ff0000);
-    font-size: 0.8em;
-  }
+  /* Removed voices label - effects speak for themselves */
   
   .deconstruct-temporal::after {
     content: ' [TEMPORAL]';
@@ -553,8 +593,9 @@
     transform: none !important;
   }
   
-  .deconstruct-collision {
+  .collision-container {
     display: block;
+    padding: 0.5rem;
   }
   
   .rtl-text,
@@ -574,9 +615,13 @@
     font-size: 0.9rem;
   }
   
-  .deconstruct-collision {
-    flex-direction: column;
-    gap: 0.5rem;
+  .collision-container {
+    display: block;
+  }
+  
+  .collision-word {
+    display: inline;
+    margin-right: 0.3em;
   }
   
   .recursion-level {

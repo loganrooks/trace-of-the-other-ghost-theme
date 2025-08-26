@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bracket Parser Debug Test</title>
+    <style>
+        body { font-family: monospace; margin: 2rem; }
+        .test-section { margin: 2rem 0; padding: 1rem; border: 1px solid #ccc; }
+        .test-input { background: #f5f5f5; padding: 1rem; white-space: pre-wrap; }
+        .test-output { background: #e8f5e8; padding: 1rem; }
+        .error { background: #ffe8e8; color: red; }
+        .success { color: green; }
+        .debug { color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Bracket Parser Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Your Exact Failing Content</h2>
+        <div class="test-input" id="testInput">
+[m][2 1.1 32 r][Final margin: This catalogue of exclusions could continue indefinitely. At some point, the gesture of acknowledging what's excluded becomes its own form of bad faith—as if listing omissions could somehow include them. The remainder remains. It must.] [?][target:p1-3|fade:0.05|animate:typing|overlay:over|duration:4000][
+The remainder remains. It must—
+No. Not must. The word breaks against
+Saffuriyya
+The village that was. That is not. That appears anyway in discussions of paleonymy while
+THE MUNICIPAL ARCHIVE: Tzippori, established 1949 THE OLIVE GROVE: [continues growing where it always grew] THE ACADEMIC:
+"The question of naming—"
+حاجز
+The word at 5 AM. The word at 5 AM. The word at
+THE GPS: "In 400 meters, no route available" THE PHILOSOPHICAL VOICE: "The aporia of—" THE WAITING: [ ]
+Someone's grandmother remembers running but I cannot say "someone's grandmother" without making her an example of what she
+never was an example of
+כותב על כתיבה על כתיבה
+THE TRANSLATOR: "Writing about writing about writing" THE UNTRANSLATOR: Some things refuse your language THE CHILD: Why can't
+we go through? THE THEORY: "The structure of sovereignty—"
+al-Bassa [coordinates where coordinates fail]
+THE ARCHAEOLOGIST: No evidence of prior settlement THE EARTH: [yields Ottoman coins after rain] THE WRITER: "I am trying to
+end this essay but—"
+She interrupts: You were never trying to end. You were trying to continue in the guise of ending. Your voices are all yours,
+even when you pretend they aren't.
+THE MACHINE: I have no voice. I am pure iteration. THE READER: Then who is speaking? THE CHECKPOINT AT QALANDIA: [morning
+backup, 3 hours]
+The taxi driver changes stations from Hebrew news to—
+No. There is no taxi driver. Or there was, but making him appear here as example
+THE ACTUAL TAXI DRIVER: I changed stations because I liked the song THE THEORIST'S GHOST: But surely it signifies— THE SONG:
+[continues regardless]
+Write. Without ground. Without—
+מחסום
+The word that stops. The word that stops words. The word
+[document corrupted at this point] [or refusing corruption] [or performing refusal] [or]
+—drink, she says, and who is she? The one excluded from your analysis of exclusion, the one who appears only to mark absence,
+never to speak her own
+I AM SPEAKING
+But in whose language?
+EVERYONE'S GRANDMOTHER: We all remember running from something NO ONE'S GRANDMOTHER: The universal is another violence THIS
+PARTICULAR GRANDMOTHER: Fadwa, from Haifa, 1948, who would not want to be in your essay
+The remainder doesn't remain It returns Returns as what was never absent Only unheard
+Or—
+]
+        </div>
+        <div id="testOutput" class="test-output"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Simple Pattern</h2>
+        <div class="test-input">[?][target:p1|fade:0.1][Simple content]</div>
+        <div id="simpleOutput" class="test-output"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Nested Brackets</h2>
+        <div class="test-input">[?][target:p1][Content with [nested] and [more [deeply nested]] brackets]</div>
+        <div id="nestedOutput" class="test-output"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <div id="consoleOutput" class="debug"></div>
+    </div>
+
+    <!-- Load the bracket parser -->
+    <script src="assets/js/utils/bracket-parser.js"></script>
+
+    <script>
+        // Capture console output
+        const consoleDiv = document.getElementById('consoleOutput');
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            debug: console.debug
+        };
+
+        function logToPage(type, ...args) {
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            consoleDiv.innerHTML += `<div class="${type}">[${type.toUpperCase()}] ${message}</div>`;
+            originalConsole[type](...args);
+        }
+
+        console.log = (...args) => logToPage('log', ...args);
+        console.error = (...args) => logToPage('error', ...args);
+        console.debug = (...args) => logToPage('debug', ...args);
+
+        // Debug logger that logs to page
+        const debugLogger = {
+            debug: console.debug,
+            info: console.log,
+            warn: console.log,
+            error: console.error
+        };
+
+        function runTest(inputId, outputId, testName) {
+            const outputDiv = document.getElementById(outputId);
+            let testInput;
+            
+            if (inputId === 'testInput') {
+                testInput = document.getElementById(inputId).textContent.trim();
+            } else {
+                testInput = document.querySelector(`#${outputId}`).previousElementSibling.textContent.trim();
+            }
+
+            console.log(`\n=== ${testName} ===`);
+            console.log(`Input length: ${testInput.length} characters`);
+            console.log(`Input preview: "${testInput.substring(0, 100)}..."`);
+
+            try {
+                // Test if BracketParser exists
+                if (typeof BracketParser === 'undefined') {
+                    throw new Error('BracketParser not loaded!');
+                }
+
+                const parser = new BracketParser(debugLogger);
+                
+                // Test interactive markers
+                console.log('\n--- Testing Interactive Markers ---');
+                const interactiveMatches = parser.findInteractiveMarkers(testInput);
+                console.log(`Found ${interactiveMatches.length} interactive markers`);
+                
+                interactiveMatches.forEach((match, i) => {
+                    console.log(`Interactive ${i + 1}:`);
+                    console.log(`  - Full match length: ${match.fullMatch.length}`);
+                    console.log(`  - Action config: "${match.actionConfig}"`);
+                    console.log(`  - Content length: ${match.content.length}`);
+                    console.log(`  - Content preview: "${match.content.substring(0, 50)}..."`);
+                    console.log(`  - Start: ${match.startIndex}, End: ${match.endIndex}`);
+                });
+
+                // Test marginalia patterns
+                console.log('\n--- Testing Marginalia Patterns ---');
+                const marginaliaMatches = parser.findMarginaliaPatterns(testInput);
+                console.log(`Found ${marginaliaMatches.length} marginalia patterns`);
+                
+                marginaliaMatches.forEach((match, i) => {
+                    console.log(`Marginalia ${i + 1}:`);
+                    console.log(`  - Full match length: ${match.fullMatch.length}`);
+                    console.log(`  - Config: "${match.config}"`);
+                    console.log(`  - Content length: ${match.content.length}`);
+                    console.log(`  - Content preview: "${match.content.substring(0, 50)}..."`);
+                    console.log(`  - Start: ${match.startIndex}, End: ${match.endIndex}`);
+                });
+
+                // Test validation
+                console.log('\n--- Testing Validation ---');
+                const validation = parser.validatePattern(testInput, '[?]');
+                console.log(`Validation result:`, validation);
+
+                // Display results
+                outputDiv.innerHTML = `
+                    <div class="success">✅ Test Passed</div>
+                    <div><strong>Interactive Markers Found:</strong> ${interactiveMatches.length}</div>
+                    <div><strong>Marginalia Patterns Found:</strong> ${marginaliaMatches.length}</div>
+                    <div><strong>Validation:</strong> ${validation.valid ? '✅ Valid' : '❌ Invalid'}</div>
+                    ${validation.errors.length > 0 ? '<div class="error">Errors: ' + JSON.stringify(validation.errors) + '</div>' : ''}
+                    ${validation.warnings.length > 0 ? '<div>Warnings: ' + JSON.stringify(validation.warnings) + '</div>' : ''}
+                `;
+
+            } catch (error) {
+                console.error('Test failed:', error);
+                outputDiv.innerHTML = `<div class="error">❌ Test Failed: ${error.message}</div>`;
+            }
+        }
+
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🔧 Starting Bracket Parser Debug Tests');
+            console.log(`BracketParser available: ${typeof BracketParser !== 'undefined'}`);
+            
+            try {
+                runTest('testInput', 'testOutput', 'Your Exact Failing Content');
+                runTest(null, 'simpleOutput', 'Simple Pattern Test');
+                runTest(null, 'nestedOutput', 'Nested Brackets Test');
+                
+                console.log('\n🎯 All tests completed - check results above');
+            } catch (error) {
+                console.error('Failed to run tests:', error);
+            }
+        });
+
+        // Test the bracket counting algorithm directly
+        function testBracketCounting() {
+            console.log('\n=== Testing Bracket Counting Algorithm ===');
+            
+            const testCases = [
+                "[simple content]",
+                "[content with [nested] brackets]", 
+                "[content with [deeply [nested]] brackets]",
+                "[continues growing where it always grew]",
+                "[coordinates where coordinates fail]"
+            ];
+
+            testCases.forEach((testCase, i) => {
+                console.log(`\nTest case ${i + 1}: "${testCase}"`);
+                
+                if (typeof BracketParser !== 'undefined') {
+                    const parser = new BracketParser(debugLogger);
+                    const result = parser.extractBracketSection(testCase, 1); // Start after opening [
+                    
+                    if (result) {
+                        console.log(`✅ Extracted: "${result.content}"`);
+                        console.log(`   End index: ${result.endIndex}`);
+                    } else {
+                        console.log(`❌ Failed to extract`);
+                    }
+                } else {
+                    console.log(`❌ BracketParser not available`);
+                }
+            });
+        }
+
+        // Run additional tests
+        setTimeout(testBracketCounting, 1000);
+    </script>
+</body>
+</html>

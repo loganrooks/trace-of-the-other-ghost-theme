@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deconstruction Effects Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fafafa;
+        }
+        .demo-section {
+            background: white;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .demo-title {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .effect-description {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-left: 4px solid #007acc;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .demo-controls {
+            background: #e9ecef;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 0.5rem;
+        }
+        button:hover {
+            background: #005999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Deconstruction Effects Demonstration</h1>
+    <p>This page demonstrates all available deconstruction effects in the trace-of-the-other Ghost theme. Each effect explores different aspects of deconstructive philosophy through interactive web experiences.</p>
+
+    <div class="demo-controls">
+        <button onclick="window.location.reload()">Reset All Effects</button>
+        <button onclick="window.debugDeconstructionOnly && window.debugDeconstructionOnly()">Debug Effects</button>
+    </div>
+
+    <!-- DISSOLVE EFFECT -->
+    <div class="demo-section">
+        <h2 class="demo-title">1. Dissolve Effect</h2>
+        <div class="effect-description">
+            Text fragments and dissolves, questioning the stability of meaning and presence.
+        </div>
+        
+        <div data-deconstruct="dissolve" data-intensity="medium" data-delay="normal">
+            What remains when the text itself refuses to remain present? The dissolve effect performs the philosophical operation of showing how meaning never fully arrives, always already departing even as it appears to establish itself on the page.
+        </div>
+        
+        <p><strong>Parameters:</strong> <code>data-intensity="low|medium|high"</code>, <code>data-delay="fast|normal|slow"</code></p>
+    </div>
+
+    <!-- PERFORMATIVE COLLISION CRITIQUE -->
+    <div class="demo-section">
+        <h2 class="demo-title">2. Collision Effect - Critique of Violent Meaning-Making</h2>
+        <div class="effect-description">
+            <strong>Performative Critique:</strong> This effect exposes how bringing concepts together in philosophy is inherently violent. Words start as individual concepts, get forced into relation, fragment under the pressure, and bear permanent scars from having been made to "mean together."
+        </div>
+        
+        <div data-deconstruct="collision" data-force="strong" data-scatter="wide" onclick="this.classList.add('collision-active'); setTimeout(() => this.classList.remove('collision-active'), 8000);" style="cursor: pointer; border: 2px dashed #ccc; padding: 2rem; margin: 2rem 0; position: relative; min-height: 150px; background: rgba(250,250,250,0.5);">
+            Philosophy emerges from collision—not the peaceful dialogue of reason, but the violent encounter between concepts that cannot be reconciled. Each word here performs its own resistance to systematic coherence.
+            <div style="position: absolute; bottom: 5px; right: 10px; font-size: 0.7em; color: #999; font-style: italic;">⮟ Click to trigger collision</div>
+        </div>
+        
+        <p><strong>What This Performs:</strong></p>
+        <ul>
+            <li><strong>Phase 1 - Before Violence:</strong> Words appear as individual concepts with borders (their wholeness before philosophy)</li>
+            <li><strong>Phase 2 - Violent Synthesis:</strong> Words violently resist being brought into relation - scatter, fragment, some become illegible</li>
+            <li><strong>Phase 3 - Scarred Remains:</strong> What survives bears scars - words return changed, never quite whole again</li>
+            <li><strong>The Critique:</strong> Exposes the violence hidden in "systematic" philosophy's claim to peaceful synthesis</li>
+            <li><strong>Parameters:</strong> <code>data-force="gentle|medium|strong"</code>, <code>data-scatter="tight|medium|wide"</code></li>
+        </ul>
+    </div>
+
+    <!-- RECURSION EFFECT -->
+    <div class="demo-section">
+        <h2 class="demo-title">3. Recursion Effect</h2>
+        <div class="effect-description">
+            Text references itself infinitely, creating loops that question linear reading.
+        </div>
+        
+        <div data-deconstruct="recursion" data-depth="3" data-timing="cascade">
+            The text that speaks of itself speaking of itself speaking of... where does the original end and the copy begin? Derrida's iterability means every repetition is already different, already other.
+        </div>
+        
+        <p><strong>Parameters:</strong> <code>data-depth="2|3|4|5"</code>, <code>data-timing="cascade|simultaneous|delayed"</code></p>
+    </div>
+
+    <!-- VOICES EFFECT - ALL MODES -->
+    <div class="demo-section">
+        <h2 class="demo-title">4. Voices Effect - Multiple Modes</h2>
+        <div class="effect-description">
+            Multiple voices interrupt, overlap, argue, cascade, or appear simultaneously.
+        </div>
+
+        <h3>Interrupt Mode (Default)</h3>
+        <div data-deconstruct="voices" data-mode="interrupt">
+            <span data-voice="uncertain">What happens when philosophy—</span>
+            <span data-voice="critical" data-interrupts="true">Making particular into universal.</span>
+            <span data-voice="uncertain">tries to speak the unspeakable?</span>
+        </div>
+
+        <h3>Overlap Mode</h3>
+        <div data-deconstruct="voices" data-mode="overlap" data-delay="slow">
+            <span data-voice="critical">The critique of presence</span>
+            <span data-voice="nostalgic">always already deferred</span>
+            <span data-voice="uncertain">in the play of différance</span>
+        </div>
+
+        <h3>Argue Mode</h3>
+        <div data-deconstruct="voices" data-mode="argue">
+            <span data-voice="critical">Deconstruction is not nihilism!</span>
+            <span data-voice="uncertain">But what remains?</span>
+            <span data-voice="angry">Nothing remains!</span>
+        </div>
+
+        <h3>Cascade Mode</h3>
+        <div data-deconstruct="voices" data-mode="cascade" data-delay="fast">
+            <span data-voice="nostalgic">Trace</span>
+            <span data-voice="uncertain">of trace</span>
+            <span data-voice="critical">of trace...</span>
+        </div>
+
+        <h3>Simultaneous Mode</h3>
+        <div data-deconstruct="voices" data-mode="simultaneous">
+            <span data-voice="uncertain">All</span>
+            <span data-voice="critical">voices</span>
+            <span data-voice="nostalgic">at</span>
+            <span data-voice="angry">once</span>
+        </div>
+
+        <h3>Individual Voice Parameters</h3>
+        <div data-deconstruct="voices" data-mode="interrupt">
+            <span data-voice="uncertain" data-size="small" data-delay="fast" data-intensity="0.8">whispered doubt</span>
+            <span data-voice="critical" data-size="large" data-delay="slow" data-intensity="1.2" data-interrupts="true">BOLD CRITIQUE</span>
+            <span data-voice="nostalgic" data-size="tiny" data-delay="very-slow" data-intensity="0.7">fading memory...</span>
+        </div>
+
+        <p><strong>Modes:</strong> <code>interrupt</code>, <code>overlap</code>, <code>argue</code>, <code>cascade</code>, <code>simultaneous</code></p>
+        <p><strong>Voice Types:</strong> <code>uncertain</code>, <code>critical</code>, <code>nostalgic</code>, <code>angry</code></p>
+        <p><strong>Parameters:</strong> <code>data-size="tiny|small|normal|large|xl"</code>, <code>data-delay="fast|normal|slow|very-slow"</code>, <code>data-intensity="0.6-1.5"</code></p>
+    </div>
+
+    <!-- PERFORMATIVE TEMPORAL CRITIQUE -->
+    <div class="demo-section">
+        <h2 class="demo-title">5. Temporal Effect - Critique of Linear Reading Time</h2>
+        <div class="effect-description">
+            <strong>Performative Critique:</strong> This effect exposes the fiction of "the present moment" in reading. It shows how your "now" is contaminated by words already read (past) and words not yet read (future). Reading time itself becomes a philosophical problem.
+        </div>
+        
+        <div data-deconstruct="temporal" data-direction="critique" data-speed="medium" style="position: relative; padding: 2rem; margin: 2rem 0; min-height: 150px; border: 2px solid #ddd; background: rgba(245,245,250,0.7);">
+            Time in deconstruction is not the linear progression of presence to presence, but the complex temporality of the trace—always already past, never quite present, perpetually deferred toward a future that never arrives as such.
+        </div>
+        
+        <p><strong>What This Performs:</strong></p>
+        <ul>
+            <li><strong>Questions "Now":</strong> When exactly are you reading this? The "present" of reading is revealed as impossible</li>
+            <li><strong>Past Contamination:</strong> Shows words you've already read lingering in and contaminating the current moment</li>
+            <li><strong>Future Contamination:</strong> Reveals how unread words already affect your present understanding</li>
+            <li><strong>Reading Paradox:</strong> Exposes the impossibility of simultaneous comprehension vs. sequential reading</li>
+            <li><strong>Time Awareness:</strong> Tracks actual reading time to demonstrate meaning's temporal decay</li>
+            <li><strong>The Critique:</strong> Demonstrates that "linear time" and "present moment" are philosophical fictions</li>
+            <li><strong>Parameters:</strong> <code>data-direction="critique|contaminate|paradox"</code>, <code>data-speed="slow|medium|fast"</code></li>
+        </ul>
+    </div>
+
+    <!-- SYNTAX EFFECT -->
+    <div class="demo-section">
+        <h2 class="demo-title">6. Syntax Effect</h2>
+        <div class="effect-description">
+            Grammar and syntax break down, revealing the arbitrary nature of linguistic structures.
+        </div>
+        
+        <div data-deconstruct="syntax" data-chaos="high" data-preserve="punctuation">
+            Language, when it reaches its limit, begins to stutter. Not the smooth functioning of communication, but the breakdown that reveals what was always already broken in the fantasy of transparent meaning.
+        </div>
+        
+        <p><strong>Parameters:</strong> <code>data-chaos="low|medium|high"</code>, <code>data-preserve="punctuation|structure|none"</code></p>
+    </div>
+
+    <!-- COMBINED EFFECTS -->
+    <div class="demo-section">
+        <h2 class="demo-title">7. Combined Effects</h2>
+        <div class="effect-description">
+            Multiple effects can work together, creating complex deconstructive interactions.
+        </div>
+        
+        <div data-deconstruct="dissolve collision" data-intensity="low" data-force="gentle">
+            When effects combine, they do not simply add together but interact in ways that exceed the sum of their parts—a demonstration of how deconstruction always operates through supplementarity rather than addition.
+        </div>
+
+        <div data-deconstruct="voices temporal" data-mode="argue" data-direction="reverse">
+            <span data-voice="critical">The present</span>
+            <span data-voice="uncertain">is never</span>
+            <span data-voice="nostalgic">present</span>
+        </div>
+        
+        <p><strong>Usage:</strong> Space-separated effect names in <code>data-deconstruct</code> attribute</p>
+    </div>
+
+    <!-- SPECTRAL VOICE SYSTEM -->
+    <div class="demo-section">
+        <h2 class="demo-title">8. Spectral Voice System</h2>
+        <div class="effect-description">
+            Inspired by sophisticated deconstructive performance - spectral voices with spatial ambiguity and haunting effects.
+        </div>
+        
+        <div class="spectral-container" style="position: relative; min-height: 200px; padding: 2rem; border: 1px solid #ddd; background: rgba(250,250,250,0.5);">
+            <div class="main-voice" style="line-height: 1.8; max-width: 60%;">The text's ending tries to contain what exceeds it, but—</div>
+            <div class="spectral-voice" data-delay="1500" style="position: absolute; opacity: 0; color: #888; font-style: italic; top: 50px; left: 100px; max-width: 200px;">[someone changes stations. or channels. the frequency shifts—]</div>
+            <div class="main-voice" style="line-height: 1.8; margin-top: 1rem; max-width: 60%;">What happens when the remainder returns?</div>
+            <div class="spectral-voice" data-delay="3000" style="position: absolute; opacity: 0; color: #666; font-style: italic; top: 120px; right: 50px; text-align: right; max-width: 150px;">[Hebrew: אין סוף, Arabic: ∞]</div>
+            <div class="main-voice" style="line-height: 1.8; margin-top: 1rem;">Without—</div>
+            <div class="spectral-voice" data-delay="4500" style="position: absolute; opacity: 0; color: #999; font-style: italic; bottom: 20px; left: 20px; font-size: 0.8em; max-width: 180px;">[this morning meant something else when you started reading]</div>
+        </div>
+        
+        <p><strong>Features Demonstrated:</strong></p>
+        <ul>
+            <li>Temporal appearance/disappearance with staggered delays</li>
+            <li>Spatial ambiguity - voices appear in floating positions</li>
+            <li>Spectral commentary that questions the main text</li>
+            <li>Language mixing effects (Hebrew/Arabic integration)</li>
+            <li>Reading-time sensitivity and ghostly persistence</li>
+        </ul>
+    </div>
+
+    <!-- DEBUG SECTION -->
+    <div class="demo-section">
+        <h2 class="demo-title">9. Debug Tools</h2>
+        <div class="effect-description">
+            Tools for understanding how the deconstruction system processes content.
+        </div>
+        
+        <div class="demo-controls">
+            <button onclick="window.systemDiagnostic && window.systemDiagnostic()">System Diagnostic</button>
+            <button onclick="window.deconstructionEffectsDebug && window.deconstructionEffectsDebug()">Effects Debug</button>
+            <button onclick="window.deconstructionPipelineDebug && window.deconstructionPipelineDebug()">Pipeline Debug</button>
+            <button onclick="window.scriptExecutionDebug && window.scriptExecutionDebug()">Script Debug</button>
+        </div>
+        
+        <p>These debug functions are available in the browser console to help understand how effects are being processed and applied.</p>
+    </div>
+
+    <script>
+        // Provide feedback when effects are processed
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎭 Enhanced Deconstruction Effects Demo loaded');
+            console.log('Available debug functions:');
+            console.log('- systemDiagnostic()');
+            console.log('- deconstructionEffectsDebug()');
+            console.log('- deconstructionPipelineDebug()');
+            console.log('- scriptExecutionDebug()');
+            
+            // Check if deconstruction processor is available
+            if (window.ContentEnhancementManager) {
+                console.log('✅ ContentEnhancementManager available');
+            } else {
+                console.warn('❌ ContentEnhancementManager not available - effects may not process');
+            }
+            
+            if (window.DeconstructionProcessor) {
+                console.log('✅ DeconstructionProcessor available');
+            } else {
+                console.warn('❌ DeconstructionProcessor not available');
+            }
+            
+            // Initialize spectral voice system
+            initializeSpectralVoices();
+        });
+        
+        // Spectral voice system implementation
+        function initializeSpectralVoices() {
+            const spectralVoices = document.querySelectorAll('.spectral-voice');
+            console.log(`🔮 Initializing ${spectralVoices.length} spectral voices`);
+            
+            spectralVoices.forEach((voice, index) => {
+                const delay = parseInt(voice.dataset.delay) || (1500 + index * 1000);
+                
+                setTimeout(() => {
+                    // Haunting animation
+                    voice.style.transition = 'opacity 2s ease-in-out, transform 2s ease-in-out';
+                    voice.style.opacity = '0.7';
+                    voice.style.transform = 'translateY(-5px)';
+                    
+                    // Continue haunting cycle
+                    const hauntInterval = setInterval(() => {
+                        const randomX = (Math.random() - 0.5) * 30;
+                        const randomY = (Math.random() - 0.5) * 20;
+                        const opacity = 0.4 + Math.random() * 0.3;
+                        
+                        voice.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                        voice.style.opacity = opacity;
+                    }, 3000 + Math.random() * 2000);
+                    
+                    // Add click interaction
+                    voice.addEventListener('click', () => {
+                        voice.style.opacity = voice.style.opacity > 0.8 ? '0.3' : '1';
+                        voice.style.transform += ' scale(' + (0.8 + Math.random() * 0.4) + ')';
+                    });
+                    
+                }, delay);
+            });
+        }
+        
+        // Add a simple manual trigger for effects
+        window.triggerEffectsManually = function() {
+            if (window.ContentEnhancementManager && window.ContentEnhancementManager.processAllContent) {
+                console.log('🔄 Manually triggering content processing...');
+                window.ContentEnhancementManager.processAllContent();
+            } else {
+                console.error('❌ Cannot manually trigger - ContentEnhancementManager not available');
+            }
+        };
+        
+        // Enhanced collision demo trigger
+        window.triggerCollisionDemo = function() {
+            const collisionElements = document.querySelectorAll('[data-deconstruct*="collision"]');
+            console.log(`💥 Triggering ${collisionElements.length} collision effects`);
+            collisionElements.forEach(element => {
+                element.classList.add('collision-active');
+                setTimeout(() => {
+                    element.classList.remove('collision-active');
+                }, 6000);
+            });
+        };
+        
+        // Add interactive collision button
+        setTimeout(() => {
+            const collisionSection = document.querySelector('[data-deconstruct*="collision"]')?.parentNode;
+            if (collisionSection) {
+                const button = document.createElement('button');
+                button.textContent = '💥 Trigger Collision';
+                button.onclick = triggerCollisionDemo;
+                button.style.marginTop = '1rem';
+                collisionSection.appendChild(button);
+            }`
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -177,6 +177,19 @@ class ContentEnhancementManager {
       }
     }
 
+    // Register interactive marker processor (FIFTH - after all text processors are done)
+    console.log('[ENHANCEMENT_MANAGER] Registering interactive marker processor');
+    try {
+      if (typeof InteractiveMarkerProcessor !== 'undefined') {
+        await this.registerProcessor('interactive', InteractiveMarkerProcessor);
+        console.log('[ENHANCEMENT_MANAGER] ✅ Interactive marker processor registered successfully');
+      } else {
+        console.warn('[ENHANCEMENT_MANAGER] ⚠️ InteractiveMarkerProcessor class not available');
+      }
+    } catch (error) {
+      console.error('[ENHANCEMENT_MANAGER] ❌ Interactive marker processor registration failed:', error);
+    }
+
     // Future processors can be added here based on feature flags
     // Processing order matters for DOM manipulation!
     // if (flags.ENABLE_MARGINALIA === true) {
