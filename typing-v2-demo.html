@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TypingAnimationV2 Demo - Clean Element-Based Approach</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        
+        .test-target {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            min-height: 50px;
+        }
+        
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        button:hover {
+            background: #00cc00;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .comparison > div {
+            border: 1px solid #444;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>TypingAnimationV2 Demo</h1>
+    <p>This demonstrates the new clean, element-based typing animation system that addresses the architectural issues identified.</p>
+    
+    <div class="demo-section">
+        <h2>🆚 V1 vs V2 Comparison</h2>
+        <div class="comparison">
+            <div>
+                <h3>V1 (Character-Based)</h3>
+                <ul>
+                    <li>❌ Generates 2000+ tokens</li>
+                    <li>❌ Character-by-character parsing</li>
+                    <li>❌ Complex HTML token system</li>
+                    <li>❌ Performance issues</li>
+                    <li>❌ Hard to debug</li>
+                </ul>
+            </div>
+            <div>
+                <h3>V2 (Element-Based)</h3>
+                <ul>
+                    <li>✅ Element-by-element parsing</li>
+                    <li>✅ Clean architecture</li>
+                    <li>✅ Better performance</li>
+                    <li>✅ Easy to debug</li>
+                    <li>✅ Follows best practices</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="demo-section">
+        <h2>🧪 Test Content</h2>
+        <div class="test-target" id="target1">Click a button below to see typing animation...</div>
+        
+        <button onclick="testSimpleText()">Simple Text</button>
+        <button onclick="testHtmlFormatting()">HTML Formatting</button>
+        <button onclick="testComplexContent()">Complex Content</button>
+        <button onclick="testRTLContent()">RTL Content</button>
+        <button onclick="clearTarget()">Clear</button>
+    </div>
+    
+    <div class="demo-section">
+        <h2>📊 Performance Comparison</h2>
+        <div id="performance-results">
+            <button onclick="runPerformanceTest()">Run Performance Test</button>
+        </div>
+        <pre id="performance-log"></pre>
+    </div>
+
+    <!-- Load the animation system -->
+    <script src="assets/js/animations/typing-animation-v2.js"></script>
+    
+    <script>
+        let currentAnimation = null;
+        
+        async function testSimpleText() {
+            const target = document.getElementById('target1');
+            clearTarget();
+            
+            try {
+                const animation = new TypingAnimationV2(console);
+                currentAnimation = animation;
+                
+                await animation.execute({
+                    targetElements: [target],
+                    content: 'This is a simple text typing test. It should type smoothly without generating thousands of tokens.',
+                    duration: 3000,
+                    overlay: 'replace'
+                });
+            } catch (error) {
+                console.error('Animation failed:', error);
+                target.innerHTML = '❌ Animation failed: ' + error.message;
+            }
+        }
+        
+        async function testHtmlFormatting() {
+            const target = document.getElementById('target1');
+            clearTarget();
+            
+            try {
+                const animation = new TypingAnimationV2(console);
+                currentAnimation = animation;
+                
+                await animation.execute({
+                    targetElements: [target],
+                    content: 'This text has <strong>bold formatting</strong> and <em>italic text</em>.<br>It also has <a href="#test">hyperlinks</a> that should render properly.',
+                    duration: 4000,
+                    overlay: 'replace'
+                });
+            } catch (error) {
+                console.error('Animation failed:', error);
+                target.innerHTML = '❌ Animation failed: ' + error.message;
+            }
+        }
+        
+        async function testComplexContent() {
+            const target = document.getElementById('target1');
+            clearTarget();
+            
+            try {
+                const animation = new TypingAnimationV2(console);
+                currentAnimation = animation;
+                
+                await animation.execute({
+                    targetElements: [target],
+                    content: '<h3>Complex Content Test</h3><p>This paragraph contains <strong>bold text</strong>, <em>italic text</em>, and even <code>code snippets</code>.</p><p>Multiple paragraphs should have proper line breaks between them.</p><ul><li>List item 1</li><li>List item 2</li></ul>',
+                    duration: 6000,
+                    overlay: 'replace'
+                });
+            } catch (error) {
+                console.error('Animation failed:', error);
+                target.innerHTML = '❌ Animation failed: ' + error.message;
+            }
+        }
+        
+        async function testRTLContent() {
+            const target = document.getElementById('target1');
+            clearTarget();
+            
+            try {
+                const animation = new TypingAnimationV2(console);
+                currentAnimation = animation;
+                
+                await animation.execute({
+                    targetElements: [target],
+                    content: 'English text followed by Hebrew: <span dir="rtl">בוות על כתבה על כתב</span><br>And Arabic: <span dir="rtl">حاجز النص العربي</span><br>Mixed content should work properly.',
+                    duration: 5000,
+                    overlay: 'replace'
+                });
+            } catch (error) {
+                console.error('Animation failed:', error);
+                target.innerHTML = '❌ Animation failed: ' + error.message;
+            }
+        }
+        
+        function clearTarget() {
+            const target = document.getElementById('target1');
+            target.innerHTML = '';
+            
+            if (currentAnimation) {
+                // Clean up any overlay elements
+                document.querySelectorAll('.typing-animation-overlay, .typing-animation-beside').forEach(el => el.remove());
+                currentAnimation = null;
+            }
+        }
+        
+        async function runPerformanceTest() {
+            const log = document.getElementById('performance-log');
+            const results = document.getElementById('performance-results');
+            
+            log.textContent = 'Running performance test...\n';
+            
+            const testContent = 'Test content with <strong>formatting</strong> and <em>emphasis</em>.<br>Multiple lines for testing.<p>Paragraph content</p>';
+            
+            // Test V2 performance
+            const startTime = performance.now();
+            
+            try {
+                const animation = new TypingAnimationV2(console);
+                const elements = animation.parseToElements(testContent);
+                
+                const endTime = performance.now();
+                
+                log.textContent += `✅ V2 Performance Results:\n`;
+                log.textContent += `- Parse time: ${(endTime - startTime).toFixed(2)}ms\n`;
+                log.textContent += `- Elements generated: ${elements.length}\n`;
+                log.textContent += `- Elements: ${elements.map(e => e.type).join(', ')}\n\n`;
+                
+                log.textContent += `🎯 V2 Benefits:\n`;
+                log.textContent += `- Clean element-based parsing\n`;
+                log.textContent += `- No 2000+ token generation\n`;
+                log.textContent += `- Better performance and debugging\n`;
+                log.textContent += `- Follows architectural best practices\n`;
+                
+            } catch (error) {
+                log.textContent += `❌ V2 test failed: ${error.message}\n`;
+            }
+        }
+        
+        // Health check on load
+        window.addEventListener('load', () => {
+            const healthCheck = TypingAnimationV2.healthCheck();
+            console.log('🏥 TypingAnimationV2 Health Check:', healthCheck);
+            
+            const allHealthy = Object.values(healthCheck).every(v => v === true);
+            if (allHealthy) {
+                console.log('✅ All systems healthy - ready for animation');
+            } else {
+                console.warn('⚠️ Some health checks failed:', healthCheck);
+            }
+        });
+    </script>
+</body>
+</html>

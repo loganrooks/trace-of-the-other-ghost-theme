@@ -247,10 +247,37 @@ class ActionEngine {
    */
   async executeAnimation(actionState) {
     const animationType = actionState.actions.animate;
-    const animationModule = this.animationModules.get(animationType);
+    let animationModule = this.animationModules.get(animationType);
+    
+    // If animation module not found, try just-in-time registration
+    if (!animationModule && animationType === 'typing') {
+      this.logger.warn(`Animation module not found: ${animationType}, attempting just-in-time registration...`);
+      
+      // Try to register TypingAnimation if available
+      if (typeof TypingAnimation !== 'undefined') {
+        try {
+          const typingAnimation = new TypingAnimation(this.logger);
+          this.registerAnimation('typing', typingAnimation);
+          animationModule = this.animationModules.get('typing');
+          this.logger.info('✅ Just-in-time registration of TypingAnimation successful');
+        } catch (error) {
+          this.logger.error('❌ Just-in-time registration failed:', error);
+        }
+      } else if (typeof window.TypingAnimation !== 'undefined') {
+        try {
+          const typingAnimation = new window.TypingAnimation(this.logger);
+          this.registerAnimation('typing', typingAnimation);
+          animationModule = this.animationModules.get('typing');
+          this.logger.info('✅ Just-in-time registration of window.TypingAnimation successful');
+        } catch (error) {
+          this.logger.error('❌ Just-in-time registration failed:', error);
+        }
+      }
+    }
     
     if (!animationModule) {
-      throw new Error(`Animation module not found: ${animationType}`);
+      const availableModules = Array.from(this.animationModules.keys());
+      throw new Error(`Animation module not found: ${animationType} (available: ${availableModules.join(', ')})`);
     }
     
     // Prepare animation configuration

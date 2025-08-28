@@ -299,7 +299,7 @@ class InteractiveMarkerProcessor extends ContentProcessor {
     const marker = document.createElement('span');
     marker.className = 'interactive-marker';
     marker.dataset.markerId = markerId;
-    marker.textContent = '[?]';
+    marker.textContent = '?';
     marker.title = `Interactive content: ${actions.animate} animation`;
     marker.setAttribute('role', 'button');
     marker.setAttribute('tabindex', '0');
@@ -422,14 +422,70 @@ class InteractiveMarkerProcessor extends ContentProcessor {
     // Initialize ActionEngine
     this.actionEngine = new ActionEngine(this.container, this.logger);
     
-    // Register default animation modules
-    if (typeof TypingAnimation !== 'undefined') {
-      const typingAnimation = new TypingAnimation(this.logger);
-      this.actionEngine.registerAnimation('typing', typingAnimation);
-      this.logger.debug('Registered typing animation module');
+    this.logger.debug('=== INITIALIZING ACTION ENGINE ===');
+    this.logger.debug('Checking for TypingAnimation availability...');
+    this.logger.debug('typeof TypingAnimation:', typeof TypingAnimation);
+    this.logger.debug('window.TypingAnimation exists:', typeof window.TypingAnimation !== 'undefined');
+    
+    // Attempt to register TypingAnimation with retry logic
+    await this.registerTypingAnimationWithRetry();
+    
+    // List registered animations for debug
+    if (this.actionEngine && this.actionEngine.animations) {
+      const registeredAnimations = Object.keys(this.actionEngine.animations || {});
+      this.logger.debug('Registered animation modules:', registeredAnimations);
     }
     
-    this.logger.debug('ActionEngine initialized with animation modules');
+    this.logger.debug('=== ACTION ENGINE INITIALIZATION COMPLETE ===');
+  }
+
+  /**
+   * Register TypingAnimation with retry mechanism in case of timing issues
+   * @private
+   */
+  async registerTypingAnimationWithRetry(maxRetries = 3, delayMs = 100) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      this.logger.debug(`TypingAnimation registration attempt ${attempt}/${maxRetries}`);
+      
+      // Check if TypingAnimation is available
+      if (typeof TypingAnimation !== 'undefined') {
+        try {
+          const typingAnimation = new TypingAnimation(this.logger);
+          this.actionEngine.registerAnimation('typing', typingAnimation);
+          this.logger.debug('✅ Successfully registered typing animation module (global)');
+          return true;
+        } catch (error) {
+          this.logger.error('❌ Failed to create TypingAnimation instance (global):', error);
+        }
+      } else if (typeof window.TypingAnimation !== 'undefined') {
+        try {
+          const typingAnimation = new window.TypingAnimation(this.logger);
+          this.actionEngine.registerAnimation('typing', typingAnimation);
+          this.logger.debug('✅ Successfully registered typing animation module (window)');
+          return true;
+        } catch (error) {
+          this.logger.error('❌ Failed to create window.TypingAnimation instance:', error);
+        }
+      } else {
+        this.logger.warn(`❌ Attempt ${attempt}: TypingAnimation class not found`);
+        
+        // Log available Animation-related globals for debugging
+        const animationGlobals = Object.keys(window).filter(k => 
+          k.toLowerCase().includes('animation') || k.toLowerCase().includes('typing')
+        );
+        this.logger.debug('Available animation-related globals:', animationGlobals);
+        
+        // If not the final attempt, wait before retrying
+        if (attempt < maxRetries) {
+          this.logger.debug(`Waiting ${delayMs}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+      }
+    }
+    
+    this.logger.error('❌ Failed to register TypingAnimation after all attempts');
+    this.logger.error('This will cause "Animation module not found: typing" errors');
+    return false;
   }
 
   /**
@@ -501,44 +557,60 @@ class InteractiveMarkerProcessor extends ContentProcessor {
       style.id = 'interactive-marker-styles';
       style.textContent = `
         .interactive-marker {
-          display: inline-block;
-          background: #007cba;
-          color: white;
-          font-size: 0.8em;
-          font-weight: bold;
-          padding: 2px 6px;
-          margin: 0 2px;
+          /* Base styling similar to footnote links */
+          position: relative;
+          display: inline-flex;
+          vertical-align: super;
+          font-size: 0.75em;
+          line-height: 1;
+          margin: 0 0.1em;
+          
+          /* Box styling similar to extensions but larger */
+          width: 2em;
+          height: 2em;
+          font-weight: 500;
+          background: rgba(0, 255, 255, 0.1);
+          border: 1px solid #00ffff;
           border-radius: 3px;
-          cursor: pointer;
+          padding: 0;
+          
+          /* Center the ? symbol */
+          align-items: center;
+          justify-content: center;
+          
+          /* Interactive styling */
+          color: #00ffff;
           text-decoration: none;
+          cursor: pointer;
           transition: all 0.2s ease;
           user-select: none;
-          position: relative;
-          top: -1px;
+          text-shadow: 0 0 3px rgba(0, 255, 255, 0.5);
         }
         
         .interactive-marker:hover,
         .interactive-marker:focus {
-          background: #005a87;
-          transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(0, 124, 186, 0.3);
+          background: rgba(0, 255, 255, 0.2);
+          border-color: #00ffff;
+          box-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+          transform: scale(1.05);
           outline: none;
         }
         
         .interactive-marker:active {
-          transform: translateY(0);
-          box-shadow: 0 1px 2px rgba(0, 124, 186, 0.3);
+          transform: scale(0.95);
+          box-shadow: 0 0 4px rgba(0, 255, 255, 0.4);
         }
         
         .interactive-marker[aria-pressed="true"] {
-          background: #28a745;
+          background: rgba(0, 255, 255, 0.3);
+          transform: scale(1.1);
         }
         
         .interactive-marker-active {
-          animation: pulse 1s infinite;
+          animation: interactive-pulse 1s infinite;
         }
         
-        @keyframes pulse {
+        @keyframes interactive-pulse {
           0% { opacity: 1; }
           50% { opacity: 0.7; }
           100% { opacity: 1; }
@@ -563,4 +635,129 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = InteractiveMarkerProcessor;
 } else if (typeof window !== 'undefined') {
   window.InteractiveMarkerProcessor = InteractiveMarkerProcessor;
+  
+  // Global debug function for troubleshooting
+  window.debugInteractiveMarkerHTML = function() {
+    const container = document.querySelector('.post-content, .content, main, body');
+    if (!container) {
+      console.error('No content container found');
+      return;
+    }
+    
+    console.log('=== INTERACTIVE MARKER HTML DEBUG ===');
+    
+    // Find all [?] patterns in HTML
+    const htmlContent = container.innerHTML;
+    console.log('Container HTML length:', htmlContent.length);
+    
+    // Look for [?] patterns - need to escape the ? character  
+    const interactivePatterns = htmlContent.match(/\[\?\]\[([^\]]*)\]\[([^\]]*)\]/g);
+    console.log('Interactive patterns found:', interactivePatterns ? interactivePatterns.length : 0);
+    
+    if (interactivePatterns) {
+      interactivePatterns.forEach((pattern, i) => {
+        console.log(`Pattern ${i + 1}:`, pattern);
+        
+        // Try to extract the content part
+        const match = pattern.match(/\[\?\]\[([^\]]*)\]\[([^\]]*)\]/);
+        if (match) {
+          const config = match[1];
+          const content = match[2];
+          console.log(`  Config: "${config}"`);
+          console.log(`  Content: "${content.substring(0, 100)}${content.length > 100 ? '...' : ''}"`);
+          
+          // Check if content contains HTML
+          const hasHTML = /<[^>]+>/.test(content);
+          console.log(`  Contains HTML: ${hasHTML}`);
+          
+          if (hasHTML) {
+            const htmlTags = content.match(/<[^>]+>/g);
+            console.log(`  HTML tags: ${htmlTags ? htmlTags.length : 0}`);
+            if (htmlTags) {
+              console.log(`  Sample tags:`, htmlTags.slice(0, 3));
+            }
+          }
+        }
+      });
+    }
+    
+    // Check existing interactive markers
+    const existingMarkers = container.querySelectorAll('.interactive-marker');
+    console.log('Existing interactive markers in DOM:', existingMarkers.length);
+    
+    existingMarkers.forEach((marker, i) => {
+      console.log(`Marker ${i + 1}:`, {
+        id: marker.dataset.markerId,
+        text: marker.textContent,
+        classes: marker.className
+      });
+    });
+    
+    console.log('=== END DEBUG ===');
+    
+    return {
+      patterns: interactivePatterns,
+      markers: existingMarkers.length,
+      containerLength: htmlContent.length
+    };
+  };
+  
+  // Debug function to manually trigger typing animation
+  window.debugTypingAnimation = function(testContent) {
+    console.log('=== MANUAL TYPING ANIMATION DEBUG ===');
+    
+    if (!testContent) {
+      testContent = 'Test <strong>bold</strong> and <em>italic</em> text';
+    }
+    
+    // Find an existing interactive marker processor
+    const container = document.querySelector('.post-content, .content, main, body');
+    if (!container) {
+      console.error('No container found');
+      return;
+    }
+    
+    // Create a test typing animation
+    const logger = window.logger ? window.logger('debug') : console;
+    
+    if (typeof window.TypingAnimation === 'undefined') {
+      console.error('TypingAnimation class not available');
+      return;
+    }
+    
+    const typingAnimation = new window.TypingAnimation(logger);
+    
+    // Create a test element to type into
+    const testElement = document.createElement('div');
+    testElement.style.cssText = `
+      position: fixed;
+      top: 100px;
+      left: 100px;
+      width: 300px;
+      height: 200px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 20px;
+      z-index: 9999;
+      border: 2px solid cyan;
+    `;
+    document.body.appendChild(testElement);
+    
+    // Test the typing animation directly
+    typingAnimation.performTypingAnimation(
+      [{ element: testElement }],
+      testContent,
+      { characterDelay: 50, punctuationPause: 100, lineBreakPause: 300 },
+      { cancelled: false, timeouts: [], elements: [testElement] }
+    ).then(() => {
+      console.log('✅ Test typing animation completed');
+    }).catch(error => {
+      console.error('❌ Test typing animation failed:', error);
+    });
+    
+    return {
+      testElement: testElement,
+      cleanup: () => testElement.remove()
+    };
+  };
 }

@@ -16,6 +16,19 @@ class FootnoteProcessor extends ContentProcessor {
     this.footnotes = new Map();
     this.tooltips = new Map();
     this.counter = 0;
+    
+    // Debug mode from Ghost settings
+    this.debugMode = window.ghost_custom_settings?.debug_mode || false;
+  }
+
+  /**
+   * Debug logging helper - only logs if debug mode is enabled
+   * @param {...any} args - Arguments to log
+   */
+  debugLog(...args) {
+    if (this.debugMode) {
+      console.log('[FOOTNOTE_DEBUG]', ...args);
+    }
   }
 
   /**
@@ -31,7 +44,7 @@ class FootnoteProcessor extends ContentProcessor {
         throw new Error('Footnote pattern configuration is required');
       }
 
-      console.log(`[FOOTNOTE_PROCESSOR] Initialized with pattern: ${this.config.patterns.footnotePattern}`);
+      this.debugLog(`Initialized with pattern: ${this.config.patterns.footnotePattern}`);
       return true;
     } catch (error) {
       console.error('[FOOTNOTE_PROCESSOR] Initialization failed:', error);
@@ -175,7 +188,7 @@ class FootnoteProcessor extends ContentProcessor {
           isExtension: false // Will be determined when connecting content
         });
 
-        console.log(`✅ Stored footnote ${globalNumber} with originalNumber: "${originalNum}"`);
+        this.debugLog(`✅ Stored footnote ${globalNumber} with originalNumber: "${originalNum}"`);
 
         // Create semantic footnote reference
         const ref = this.createFootnoteReference(globalNumber, originalNum);
@@ -191,8 +204,8 @@ class FootnoteProcessor extends ContentProcessor {
     });
 
     this.counter = globalNumber - 1;
-    console.log(`Final footnotes count: ${this.counter}`);
-    console.groupEnd();
+    this.debugLog(`Final footnotes count: ${this.counter}`);
+    if (this.debugMode) console.groupEnd();
   }
 
   /**
@@ -235,15 +248,15 @@ class FootnoteProcessor extends ContentProcessor {
    * @private
    */
   connectFootnoteContent() {
-    console.group('[FOOTNOTE_PROCESSOR] Connection Debug');
+    if (this.debugMode) console.group('[FOOTNOTE_PROCESSOR] Connection Debug');
     
     // Search globally since Ghost may place footnote cards outside container
     const footnoteCards = document.querySelectorAll(this.config.selectors?.footnoteCards || '[data-ref]');
-    console.log(`Found ${footnoteCards.length} footnote cards`);
+    this.debugLog(`Found ${footnoteCards.length} footnote cards`);
     
     footnoteCards.forEach((card, index) => {
       const refNumber = parseInt(card.getAttribute(this.config.patterns?.referenceAttribute || 'data-ref'));
-      console.log(`Card ${index + 1}: data-ref="${refNumber}"`);
+      this.debugLog(`Card ${index + 1}: data-ref="${refNumber}"`);
       
       let matched = false;
       // Find corresponding footnote
@@ -278,7 +291,7 @@ class FootnoteProcessor extends ContentProcessor {
       }
     });
     
-    console.groupEnd();
+    if (this.debugMode) console.groupEnd();
   }
 
   /**
@@ -405,7 +418,7 @@ class FootnoteProcessor extends ContentProcessor {
       this.addBackrefLinkBehaviors(link);
     });
 
-    console.log(`[FOOTNOTE_PROCESSOR] Enhanced ${footnoteLinks.length} footnote links and ${backrefLinks.length} back-references`);
+    this.debugLog(`Enhanced ${footnoteLinks.length} footnote links and ${backrefLinks.length} back-references`);
   }
 
   /**
@@ -668,7 +681,7 @@ class FootnoteProcessor extends ContentProcessor {
     // Mark link as expanded
     linkElement.classList.add('extension-expanded');
 
-    console.log(`[FOOTNOTE_PROCESSOR] Created inline extension for footnote ${footnoteNum}`);
+    this.debugLog(`Created inline extension for footnote ${footnoteNum}`);
   }
 
   /**

@@ -577,6 +577,13 @@ class ContentEnhancementManager {
  * Eliminates race conditions from multiple DOMContentLoaded listeners
  */
 function initializeContentEnhancement() {
+  // Check if new architecture classes are loaded - if so, skip old system entirely
+  if (window.ThemeSystemCoordinator && window.FootnoteService) {
+    console.log('[ENHANCEMENT_MANAGER] 🏗️ New architecture components detected - skipping old system initialization');
+    console.log('[ENHANCEMENT_MANAGER] ✅ New architecture will handle all functionality');
+    return;
+  }
+  
   // Prevent multiple initialization
   if (window.ContentEnhancementSystem) {
     console.log('[ENHANCEMENT_MANAGER] System already initialized - skipping');
@@ -589,10 +596,13 @@ function initializeContentEnhancement() {
     return;
   }
   
-  console.log('[ENHANCEMENT_MANAGER] 🚀 Initializing unified content enhancement system');
+  console.log('[ENHANCEMENT_MANAGER] 🚀 Initializing unified content enhancement system (legacy mode)');
   
   // Create single system instance
   window.ContentEnhancementSystem = new ContentEnhancementManager();
+  
+  // Create alias for backward compatibility and debug scripts
+  window.contentManager = window.ContentEnhancementSystem;
   
   // Initialize all processors and process content
   window.ContentEnhancementSystem.initialize()

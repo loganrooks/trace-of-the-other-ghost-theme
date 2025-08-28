@@ -95,9 +95,17 @@
     <script src="{{asset "js/core/configuration-manager.js"}}"></script>
     <script src="{{asset "js/core/target-selector.js"}}"></script>
     <script src="{{asset "js/core/action-engine.js"}}"></script>
-    <script src="{{asset "js/animations/typing-animation.js"}}"></script>
     
-    {{!-- 3. Content Processors (MUST load before manager) --}}
+    {{!-- 2b. NEW ARCHITECTURAL COMPONENTS (implementing ARCHITECTURAL_OVERHAUL_PLAN.md) --}}
+    <script src="{{asset "js/core/theme-system-coordinator.js"}}"></script>
+    <script src="{{asset "js/services/footnote-service.js"}}"></script>
+    <script src="{{asset "js/testing/regression-tests.js"}}"></script>
+    
+    {{!-- 3. Animation Modules (MUST load before processors that use them) --}}
+    <script src="{{asset "js/animations/typing-animation.js"}}"></script>
+    <script src="{{asset "js/animations/typing-animation-v2.js"}}"></script>
+    
+    {{!-- 4. Content Processors (MUST load before manager) --}}
     {{!-- Processing order: deconstruction -> footnotes -> marginalia -> extensions -> interactive --}}
     {{#if @custom.enable_deconstruction}}
     <script src="{{asset "js/processors/deconstruction-processor.js"}}"></script>
@@ -109,13 +117,13 @@
     {{/if}}
     <script src="{{asset "js/interactive-marker-processor.js"}}"></script>
     
-    {{!-- 4. Content Enhancement Manager (loads AFTER processors) --}}
+    {{!-- 5. Content Enhancement Manager (loads AFTER processors) --}}
     <script src="{{asset "js/core/content-enhancement-manager.js"}}"></script>
     
-    {{!-- 5. Robust Initialization (handles initialization with error recovery) --}}
+    {{!-- 6. Robust Initialization (handles initialization with error recovery) --}}
     <script src="{{asset "js/core/initialization.js"}}"></script>
     
-    {{!-- 6. Emergency Debug (always loads for troubleshooting) --}}
+    {{!-- 7. Emergency Debug (always loads for troubleshooting) --}}
     <script src="{{asset "js/debug/emergency-debug.js"}}"></script>
     <script src="{{asset "js/debug/script-execution-debug.js"}}"></script>
     <script src="{{asset "js/debug/deconstruction-pipeline-debug.js"}}"></script>
@@ -126,11 +134,21 @@
     <script src="{{asset "js/debug/config-debug.js"}}"></script>
     <script src="{{asset "js/debug/debug-loader-test.js"}}"></script>
     <script src="{{asset "js/debug/interactive-marker-debug.js"}}"></script>
+    <script src="{{asset "js/debug/simple-typing-debug.js"}}"></script>
+    <script src="{{asset "js/debug/emergency-footnote-diagnostic.js"}}"></script>
+    <script src="{{asset "js/debug/debug-control.js"}}"></script>
+    <script src="{{asset "js/debug/white-box-diagnostic.js"}}"></script>
+    <script src="{{asset "js/debug/console-access-validator.js"}}"></script>
+    <script src="{{asset "js/debug/config-inspection.js"}}"></script>
+    <script src="{{asset "js/debug/system-conflict-resolver.js"}}"></script>
     
-    {{!-- 7. Effects (stable theme effects only) --}}
+    {{!-- NEW ARCHITECTURE IMPLEMENTATION --}}
+    <script src="{{asset "js/core/architectural-implementation.js"}}"></script>
+    
+    {{!-- 8. Effects (stable theme effects only) --}}
     <script src="{{asset "js/effects/hacker-effects.js"}}"></script>
     
-    {{!-- 8. Debug Tools (development only) --}}
+    {{!-- 9. Debug Tools (development only) --}}
     {{#if @custom.debug_mode}}
     <script src="{{asset "js/debug/debug-logger.js"}}"></script>
     <script src="{{asset "js/debug/system-diagnostic.js"}}"></script>

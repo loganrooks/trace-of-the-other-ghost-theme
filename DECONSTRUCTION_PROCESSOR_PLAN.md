@@ -14,17 +14,18 @@ The theme uses a modular content enhancement system with:
   - `ParagraphExtensionProcessor`: Handles `[+][content]` patterns  
   - `FootnoteProcessor`: Enhanced footnote processing
 - **Configuration System**: Unified config with feature flags
-- **Processing Order**: Marginalia → Extensions → Footnotes (critical for DOM stability)
+- **Processing Order**: Deconstruction → Footnotes → Marginalia (UPDATED - deconstruction establishes unstable foundation)
 
 ### Dependencies
-- **JavaScript Loading Order** (from `default.hbs`):
-  1. `content-enhancement-config.js` (feature flags)
-  2. `debug-logger.js` (structured logging)
-  3. `content-processor-base.js` (base class)
-  4. `configuration-manager.js`
-  5. Individual processors
-  6. `content-enhancement-manager.js`
-  7. Legacy footnote system (must load after modern system)
+- **JavaScript Loading Order** (from `default.hbs`) - Updated for unified system:
+  1. `config/theme-config.js` (unified configuration)
+  2. `core/content-processor-base.js` (base class)
+  3. `core/configuration-manager.js`
+  4. Individual processors (in order):
+     - `processors/deconstruction-processor.js` (FIRST - establishes unstable foundation)
+     - `processors/footnote-processor.js`
+     - `processors/marginalia-processor.js`
+  5. `core/content-enhancement-manager.js`
 
 ### Ghost Platform Constraints
 - Content must be entered via HTML cards in Ghost editor
@@ -146,7 +147,7 @@ class DeconstructionProcessor extends ContentProcessor {
 
 ### 4. CSS Architecture
 
-Create `assets/css/deconstruction.css`:
+Create `assets/css/deconstruction.css` (integrated with existing theme CSS structure):
 
 ```css
 /* Base deconstruction styles */
@@ -242,14 +243,14 @@ Create `assets/css/deconstruction.css`:
 
 ### 5. Integration with Content Enhancement System
 
-#### 5.1 Registration in `content-enhancement-manager.js`
+#### 5.1 Registration in `core/content-enhancement-manager.js`
 
-Add to `registerDefaultProcessors()` method:
+Add to `registerDefaultProcessors()` method (FIRST in processing order):
 
 ```javascript
-// Register deconstruction processor FIRST (before marginalia)
-// to establish deconstructed base that marginalia can comment on
-if (flags.ENABLE_DECONSTRUCTION === true) {
+// Register deconstruction processor FIRST (before footnotes/marginalia)
+// to establish deconstructed base that others can comment on
+if (this.config.features.deconstruction) {
   console.log('[ENHANCEMENT_MANAGER] Registering deconstruction processor (FIRST - radical base layer)');
   await this.registerProcessor('deconstruction', DeconstructionProcessor);
 }
@@ -257,17 +258,19 @@ if (flags.ENABLE_DECONSTRUCTION === true) {
 
 #### 5.2 Feature Flag Configuration
 
-Add to `window.CONTENT_ENHANCEMENT_FLAGS`:
+Add to unified `config/theme-config.js`:
 
 ```javascript
-ENABLE_DECONSTRUCTION: false, // Set to true when ready to test
-ENABLE_DECONSTRUCTION_PROCESSOR: false,
-DECONSTRUCTION_DEBUG: false
+// In window.ThemeConfig.features
+deconstruction: false, // Set to true when ready to test
+
+// In window.ThemeConfig.debug  
+deconstructionDebug: false
 ```
 
-#### 5.3 Configuration in `content-enhancement-config.js`
+#### 5.3 Processor Configuration in `config/theme-config.js`
 
-Add processor configuration:
+Add to `window.ThemeConfig.processors`:
 
 ```javascript
 deconstruction: {
@@ -332,13 +335,17 @@ deconstruction: {
 4. **Effect Pooling**: Reuse effect instances
 5. **Throttling**: Limit concurrent effects
 
+## Plan Updates (August 2025)
+
+**This plan has been updated to reflect the unified configuration system and reorganized file structure implemented during technical debt remediation.**
+
 ### 9. Implementation Timeline
 
 #### Phase 1: Core Infrastructure (Week 1)
-- [ ] Create `DeconstructionProcessor` base class
-- [ ] Implement configuration integration
-- [ ] Set up feature flags
-- [ ] Create basic CSS structure
+- [ ] Create `processors/deconstruction-processor.js` base class
+- [ ] Implement unified configuration integration
+- [ ] Set up feature flags in unified config
+- [ ] Create `assets/css/deconstruction.css` structure
 
 #### Phase 2: Basic Effects (Week 2)
 - [ ] Implement dissolution effect
