@@ -140,6 +140,7 @@
     {{!-- 2b. NEW ARCHITECTURAL COMPONENTS (implementing ARCHITECTURAL_OVERHAUL_PLAN.md) --}}
     <script src="{{asset "js/core/theme-system-coordinator.js"}}"></script>
     <script src="{{asset "js/services/footnote-service.js"}}"></script>
+    <script src="{{asset "js/services/trace-effects-service.js"}}"></script>
     <script src="{{asset "js/testing/regression-tests.js"}}"></script>
     
     {{!-- 3. Animation Modules (MUST load before processors that use them) --}}
@@ -170,35 +171,16 @@
     {{!-- 6. Robust Initialization (handles initialization with error recovery) --}}
     <script src="{{asset "js/core/initialization.js"}}"></script>
     
-    {{!-- 7. Emergency Debug (always loads for troubleshooting) --}}
-    <script src="{{asset "js/debug/emergency-debug.js"}}"></script>
-    <script src="{{asset "js/debug/script-execution-debug.js"}}"></script>
-    <script src="{{asset "js/debug/deconstruction-pipeline-debug.js"}}"></script>
-    <script src="{{asset "js/debug/deconstruction-effects-debug.js"}}"></script>
-    <script src="{{asset "js/debug/deconstruction-css-debug.js"}}"></script>
-    <script src="{{asset "js/debug/automatic-processing-debug.js"}}"></script>
-    <script src="{{asset "js/debug/deconstruction-only-debug.js"}}"></script>
-    <script src="{{asset "js/debug/config-debug.js"}}"></script>
-    <script src="{{asset "js/debug/debug-loader-test.js"}}"></script>
-    <script src="{{asset "js/debug/interactive-marker-debug.js"}}"></script>
-    <script src="{{asset "js/debug/simple-typing-debug.js"}}"></script>
-    <script src="{{asset "js/debug/emergency-footnote-diagnostic.js"}}"></script>
-    <script src="{{asset "js/debug/debug-control.js"}}"></script>
-    <script src="{{asset "js/debug/white-box-diagnostic.js"}}"></script>
-    <script src="{{asset "js/debug/console-access-validator.js"}}"></script>
-    <script src="{{asset "js/debug/config-inspection.js"}}"></script>
-    <script src="{{asset "js/debug/system-conflict-resolver.js"}}"></script>
+    {{!-- 7. Essential Debug Tools (minimal set for production) --}}
     <script src="{{asset "js/debug/architecture-detection-debug.js"}}"></script>
     <script src="{{asset "js/debug/href-format-diagnostic.js"}}"></script>
     
     {{!-- 8. Effects (stable theme effects only) --}}
     <script src="{{asset "js/effects/hacker-effects.js"}}"></script>
     
-    {{!-- 9. Debug Tools (development only) --}}
+    {{!-- 9. Additional Debug Tools (development only - archived scripts can be re-enabled here) --}}
     {{#if @custom.debug_mode}}
-    <script src="{{asset "js/debug/debug-logger.js"}}"></script>
-    <script src="{{asset "js/debug/system-diagnostic.js"}}"></script>
-    <script src="{{asset "js/debug/deconstruction-debugger.js"}}"></script>
+    {{!-- Archived debug scripts available in archive/debug-tools/ --}}
     {{/if}}
     
     {{ghost_foot}}

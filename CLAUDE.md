@@ -8,14 +8,20 @@ This is a conceptual Ghost theme called "trace-of-the-other" that explores decon
 
 ## Project Status
 
-**Version: 2.5.4** - The Ghost theme has undergone a major architectural overhaul following service-oriented design principles. The theme features a robust footnote/tooltip system, interactive markers with typing animations, and comprehensive debugging capabilities.
+**Version: 2.6.0** - Major cleanup and introduction of productive deconstructive effects. The codebase has been streamlined with disruptive experiments archived and new trace effects that enhance rather than break reading.
 
-### Recent Architectural Changes
-- **Service-Based Architecture**: Migrated from coupled ContentEnhancementManager to modular ThemeSystemCoordinator
-- **FootnoteService**: Clean implementation with proper event delegation and multiple href pattern matching
+### Recent Changes (2025-08-28)
+- **Codebase Cleanup**: Archived 31 debug scripts, legacy code, and disruptive experiments
+- **TraceEffectsService**: New service for productive deconstructive effects
+- **Streamlined Loading**: Reduced default.hbs from 40+ debug scripts to 3 essential ones
+- **Organized Archives**: All experimental code preserved in `archive/` directory
+
+### Core Architecture
+- **Service-Based Architecture**: Modular ThemeSystemCoordinator manages all services
+- **FootnoteService**: Robust tooltip system with multiple href pattern matching
+- **TraceEffectsService**: Palimpsest layers, semantic instability, temporal questioning
 - **LayerManager**: Z-index management preventing CSS conflicts
 - **EventBus**: Decoupled communication between services
-- **HealthMonitor**: System health checks and debugging support
 
 ## Key Concepts
 
@@ -77,22 +83,33 @@ The theme is built around several philosophical concepts that inform the technic
   - Detects new architecture and defers if present
   - Prevents dual initialization conflicts
 
-### File Structure
+### Current File Structure (Post-Cleanup)
 ```
 ├── package.json              # Ghost theme metadata and custom settings
-├── default.hbs              # Base template with script loading order
+├── default.hbs              # Base template (cleaned, minimal scripts)
 ├── index.hbs               # Home page template
-├── post.hbs               # Post template with footnote/margin support
+├── post.hbs               # Post template with footnote support
 ├── page.hbs               # Page template
 ├── partials/              # Reusable template components
 ├── assets/
-│   ├── css/              # Philosophical styling system
+│   ├── css/              # Styling system
 │   ├── js/
-│   │   ├── core/         # New architecture core services
-│   │   ├── services/     # Feature-specific services
-│   │   ├── utils/        # Utilities (link-fixer, etc.)
-│   │   ├── processors/   # Content processors
-│   │   └── debug/        # Debugging tools
+│   │   ├── core/         # Core architecture (8 files)
+│   │   ├── services/     # FootnoteService, TraceEffectsService
+│   │   ├── utils/        # bracket-parser, link-fixer
+│   │   ├── processors/   # Content processors (4 files)
+│   │   ├── animations/   # Typing animations
+│   │   ├── effects/      # hacker-effects.js
+│   │   ├── testing/      # regression-tests.js
+│   │   └── debug/        # 3 essential debug tools only
+├── archive/               # Preserved experimental code
+│   ├── disruptive-experiments/  # differance.js, supplement.js, pharmakon.js
+│   ├── debug-tools/             # 28 archived debug scripts
+│   ├── old-architecture/        # Legacy system files
+│   ├── legacy/                  # Old implementations
+│   ├── test-files/              # Test HTML and scripts
+│   ├── backup/                  # Backup files
+│   └── old-packages/            # Previous theme versions (.zip)
 ```
 
 ## Development Best Practices
@@ -235,29 +252,28 @@ chore: Maintenance tasks
 
 ### Philosophical Implementations
 
-#### Marginalia System (`marginalia.js`)
-- Multi-modal commentary: traditional, invasive, talmudic, choral, ghosted
-- Voice interactions with personality-based responses
-- Margin-to-center invasion mechanics
-- Inter-voice conversations
+#### TraceEffectsService (NEW - v2.6.0)
+**Productive Deconstructive Effects:**
+1. **Palimpsest Layers**: Shows text history and revisions as ghost text
+2. **Semantic Instability**: Key terms reveal alternative meanings on hover
+3. **Temporal Layers**: Timestamps question themselves ("posted yesterday?")
+4. **Platform Awareness**: Subtle indicators of Ghost CMS constraints
+5. **Reading Traces**: Visual marks showing which text has been read
 
-#### Différance Effects (`differance.js`)
-- Deferred loading with philosophical states
-- Temporal text revisions
-- Glitch effects and presence flickering
-- Reading time tracking with commentary
+**Key Features:**
+- Non-invasive: All effects are subtle and user-controlled
+- Progressive Enhancement: Works without JavaScript, enhances with it
+- Configurable Intensity: subtle/visible/prominent modes
+- Performance Optimized: Uses IntersectionObserver and event delegation
 
-#### Supplement Mechanics (`supplement.js`)
-- Marginal content becoming primary
-- Footnotes overtaking main text
-- Comments replacing original content
-- Search creating what it seeks
+#### Archived Experimental Features
+The following disruptive features have been archived in `archive/disruptive-experiments/`:
+- **marginalia.js**: Invasive margin commentary (broke reading flow)
+- **differance.js**: Random delays and glitches (frustrated users)
+- **supplement.js**: Content replacement (too unpredictable)
+- **pharmakon.js**: Dual-nature interactions (confusing)
 
-#### Pharmakon Interactions (`pharmakon.js`)
-- Features as remedy and poison simultaneously
-- Reading tools that help and hinder
-- Navigation that leads astray
-- Protection that exposes
+These experiments remain available for reference but are not loaded in production.
 
 ## Custom Settings Configuration
 
