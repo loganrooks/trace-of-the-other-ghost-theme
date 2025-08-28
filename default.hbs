@@ -60,25 +60,65 @@
     <script>
         // Make Ghost custom theme settings available to JavaScript
         window.ghost_custom_settings = {
-            footnote_theme: '{{@custom.footnote_theme}}' || 'hacker',
-            enable_extensions: {{#if @custom.enable_extensions}}true{{else}}false{{/if}},
-            enable_modern_footnotes: {{#if @custom.enable_modern_footnotes}}true{{else}}false{{/if}},
-            enable_deconstruction: {{#if @custom.enable_deconstruction}}true{{else}}false{{/if}},
-            tooltip_max_width: '{{@custom.tooltip_max_width}}' || '60vw',
-            animation_speed: '{{@custom.animation_speed}}' || 'normal',
+            // Visual Theme
             primary_accent_color: '{{@custom.primary_accent_color}}' || '#00ff00',
             extension_accent_color: '{{@custom.extension_accent_color}}' || '#ff8800',
             interactive_text_color: '{{@custom.interactive_text_color}}' || '#ff0000',
+            hyperlink_color: '{{@custom.hyperlink_color}}' || '#00a8ff',
+            
+            // Footnote Settings
+            enable_modern_footnotes: {{#if @custom.enable_modern_footnotes}}true{{else}}false{{/if}},
+            tooltip_bg_opacity: '{{@custom.tooltip_bg_opacity}}' || '0.95',
+            tooltip_max_width: '{{@custom.tooltip_max_width}}' || '400px',
+            
+            // Extensions
+            enable_extensions: {{#if @custom.enable_extensions}}true{{else}}false{{/if}},
+            
+            // Interactive Features
+            enable_deconstruction: {{#if @custom.enable_deconstruction}}true{{else}}false{{/if}},
             interactive_bg_opacity: '{{@custom.interactive_bg_opacity}}' || '0.8',
-            interactive_fade_amount: '{{@custom.interactive_fade_amount}}' || '0.05',
+            animation_speed: '{{@custom.animation_speed}}' || 'normal',
+            
+            // Accessibility
             enable_keyboard_navigation: {{#if @custom.enable_keyboard_navigation}}true{{else}}false{{/if}},
             mobile_responsive: {{#if @custom.mobile_responsive}}true{{else}}false{{/if}},
+            
+            // Developer Options
             debug_mode: {{#if @custom.debug_mode}}true{{else}}false{{/if}}
         };
         
         // Apply theme colors as CSS custom properties
         document.documentElement.style.setProperty('--footnote-accent', window.ghost_custom_settings.primary_accent_color);
         document.documentElement.style.setProperty('--extension-accent', window.ghost_custom_settings.extension_accent_color);
+        document.documentElement.style.setProperty('--hyperlink-color', window.ghost_custom_settings.hyperlink_color);
+        
+        // Apply hyperlink styles
+        const linkStyles = document.createElement('style');
+        linkStyles.textContent = `
+            .post-content a, .page-content a,
+            .footnote-tooltip a, 
+            .typing-overlay a,
+            .interactive-overlay a {
+                color: ${window.ghost_custom_settings.hyperlink_color};
+                text-decoration: underline;
+                transition: all 0.2s ease;
+            }
+            .post-content a:hover, .page-content a:hover,
+            .footnote-tooltip a:hover,
+            .typing-overlay a:hover,
+            .interactive-overlay a:hover {
+                color: #ffffff;
+                text-shadow: 0 0 8px ${window.ghost_custom_settings.hyperlink_color};
+            }
+            /* Preserve italic/bold formatting in tooltips */
+            .footnote-tooltip em, .footnote-tooltip i {
+                font-style: italic;
+            }
+            .footnote-tooltip strong, .footnote-tooltip b {
+                font-weight: bold;
+            }
+        `;
+        document.head.appendChild(linkStyles);
     </script>
     
     {{!-- ==============================================
@@ -91,6 +131,7 @@
     
     {{!-- 2. Core Foundation (required) --}}
     <script src="{{asset "js/utils/bracket-parser.js"}}"></script>
+    <script src="{{asset "js/utils/link-fixer.js"}}"></script>
     <script src="{{asset "js/core/content-processor-base.js"}}"></script>
     <script src="{{asset "js/core/configuration-manager.js"}}"></script>
     <script src="{{asset "js/core/target-selector.js"}}"></script>
@@ -120,6 +161,12 @@
     {{!-- 5. Content Enhancement Manager (loads AFTER processors) --}}
     <script src="{{asset "js/core/content-enhancement-manager.js"}}"></script>
     
+    {{!-- Script failure debug (must load before architectural-implementation) --}}
+    <script src="{{asset "js/debug/script-failure-debug.js"}}"></script>
+    
+    {{!-- NEW ARCHITECTURE IMPLEMENTATION (must load BEFORE old system initialization) --}}
+    <script src="{{asset "js/core/architectural-implementation.js"}}"></script>
+    
     {{!-- 6. Robust Initialization (handles initialization with error recovery) --}}
     <script src="{{asset "js/core/initialization.js"}}"></script>
     
@@ -141,9 +188,8 @@
     <script src="{{asset "js/debug/console-access-validator.js"}}"></script>
     <script src="{{asset "js/debug/config-inspection.js"}}"></script>
     <script src="{{asset "js/debug/system-conflict-resolver.js"}}"></script>
-    
-    {{!-- NEW ARCHITECTURE IMPLEMENTATION --}}
-    <script src="{{asset "js/core/architectural-implementation.js"}}"></script>
+    <script src="{{asset "js/debug/architecture-detection-debug.js"}}"></script>
+    <script src="{{asset "js/debug/href-format-diagnostic.js"}}"></script>
     
     {{!-- 8. Effects (stable theme effects only) --}}
     <script src="{{asset "js/effects/hacker-effects.js"}}"></script>

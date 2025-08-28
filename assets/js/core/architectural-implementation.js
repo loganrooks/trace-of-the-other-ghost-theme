@@ -8,16 +8,24 @@
  * Based on: ARCHITECTURAL_OVERHAUL_PLAN.md
  */
 
+// Debug tracking - mark script as started
+if (typeof window.trackArchitecturalStep === 'function') {
+  window.trackArchitecturalStep('architectural-implementation.js script started');
+  window.architecturalDebug.scriptStarted = true;
+}
+
 /**
  * Initialize the new architectural system
  */
 async function initializeNewArchitecture() {
-  // Check if old system is already running - if so, skip new architecture
-  if (window.ContentEnhancementSystem) {
-    console.log('🏗️ Old system already running - skipping new architecture initialization');
-    console.log('✅ Backwards compatibility: using existing old system');
-    return;
+  // Debug tracking
+  if (typeof window.trackArchitecturalStep === 'function') {
+    window.trackArchitecturalStep('initializeNewArchitecture called');
+    window.architecturalDebug.initStarted = true;
   }
+  
+  // New architecture takes precedence - initialize regardless of old system state
+  console.log('🏗️ New architecture initializing (will replace any existing systems)');
   
   console.log('🏗️ ARCHITECTURAL IMPLEMENTATION STARTING');
   console.log('==========================================');
@@ -32,6 +40,12 @@ async function initializeNewArchitecture() {
     }
     
     window.themeCoordinator = new ThemeSystemCoordinator();
+    
+    // Debug tracking
+    if (typeof window.trackArchitecturalStep === 'function') {
+      window.trackArchitecturalStep('ThemeSystemCoordinator created');
+      window.architecturalDebug.coordinatorCreated = true;
+    }
     
     // Step 2: Create and register FootnoteService with health check
     console.log('📝 Step 2: Registering FootnoteService...');
@@ -48,6 +62,20 @@ async function initializeNewArchitecture() {
       footnoteService,
       FootnoteService.healthCheck
     );
+    
+    // TODO: Add missing processors - EXTREMELY EASY with new architecture!
+    // Each processor becomes a simple service:
+    //
+    // const extensionService = new ExtensionService(window.themeCoordinator);
+    // window.themeCoordinator.registerSystem('extensions', extensionService, ExtensionService.healthCheck);
+    //
+    // const interactiveService = new InteractiveMarkerService(window.themeCoordinator);  
+    // window.themeCoordinator.registerSystem('interactive', interactiveService, InteractiveMarkerService.healthCheck);
+    //
+    // const marginaliaService = new MarginaliaService(window.themeCoordinator);
+    // window.themeCoordinator.registerSystem('marginalia', marginaliaService, MarginaliaService.healthCheck);
+    //
+    // This is FAR cleaner than debugging the old system's broken event handlers!
     
     // Step 3: Initialize all systems
     console.log('🚀 Step 3: Initializing all systems...');
@@ -86,6 +114,13 @@ async function initializeNewArchitecture() {
   } catch (error) {
     console.error('❌ ARCHITECTURAL IMPLEMENTATION FAILED:', error);
     console.error('Falling back to old system...');
+    
+    // Debug tracking
+    if (typeof window.trackArchitecturalStep === 'function') {
+      window.trackArchitecturalStep('ERROR in initializeNewArchitecture', error.message);
+      window.architecturalDebug.error = error.message;
+    }
+    
     return false;
   }
 }

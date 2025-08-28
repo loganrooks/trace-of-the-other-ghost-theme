@@ -168,12 +168,26 @@ class FootnoteService {
       const link = event.target?.closest?.('.footnote-ref a');
       if (!link) return;
 
-      // Extract footnote number from href (#fn-1 -> 1)
+      // Extract footnote number from href (handles multiple formats)
       const href = link.getAttribute('href');
-      const match = href.match(/#fn-(\w+)/);
-      if (!match) return;
-
-      const refNumber = match[1];
+      let refNumber = null;
+      
+      // Try multiple patterns
+      const patterns = [
+        /#fn-(\w+)/,        // #fn-1
+        /#footnote-(\d+)/,  // #footnote-1 (Ghost default)
+        /#.*?(\d+)/         // Any hash with number
+      ];
+      
+      for (const pattern of patterns) {
+        const match = href.match(pattern);
+        if (match) {
+          refNumber = match[1];
+          break;
+        }
+      }
+      
+      if (!refNumber) return;
       const content = this.footnoteContent.get(refNumber);
       
       if (!content) {
@@ -184,7 +198,7 @@ class FootnoteService {
       // Create or update tooltip
       let tooltip = this.tooltips.get(refNumber);
       if (!tooltip) {
-        tooltip = this.createTooltip(refNumber, content.text);
+        tooltip = this.createTooltip(refNumber, content.html);
         this.tooltips.set(refNumber, tooltip);
       }
 
@@ -211,10 +225,24 @@ class FootnoteService {
       if (!link) return;
 
       const href = link.getAttribute('href');
-      const match = href.match(/#fn-(\w+)/);
-      if (!match) return;
-
-      const refNumber = match[1];
+      let refNumber = null;
+      
+      // Try multiple patterns (same as showTooltip)
+      const patterns = [
+        /#fn-(\w+)/,        // #fn-1
+        /#footnote-(\d+)/,  // #footnote-1 (Ghost default)
+        /#.*?(\d+)/         // Any hash with number
+      ];
+      
+      for (const pattern of patterns) {
+        const match = href.match(pattern);
+        if (match) {
+          refNumber = match[1];
+          break;
+        }
+      }
+      
+      if (!refNumber) return;
       const tooltip = this.tooltips.get(refNumber);
       
       if (tooltip) {
@@ -231,25 +259,21 @@ class FootnoteService {
   /**
    * Create tooltip element
    * @param {string} refNumber - Footnote reference number
-   * @param {string} text - Tooltip text content
+   * @param {string} html - Tooltip HTML content
    * @returns {HTMLElement} Tooltip element
    * @private
    */
-  createTooltip(refNumber, text) {
+  createTooltip(refNumber, html) {
     const tooltip = document.createElement('div');
     tooltip.className = 'footnote-tooltip';
     tooltip.id = `footnote-tooltip-${refNumber}`;
-    tooltip.textContent = text;
+    tooltip.innerHTML = html;
     
-    // Apply initial styles
+    // Apply initial styles (these get overridden by CSS but help with initial render)
     tooltip.style.cssText = `
       position: fixed;
       display: none;
       visibility: hidden;
-      max-width: 300px;
-      font-size: 14px;
-      line-height: 1.4;
-      word-wrap: break-word;
       pointer-events: none;
     `;
 
@@ -322,6 +346,12 @@ class FootnoteService {
    * @private
    */
   getCSS(zIndex) {
+    // Get theme settings
+    const opacity = window.ghost_custom_settings?.tooltip_bg_opacity || '0.95';
+    const accentColor = window.ghost_custom_settings?.primary_accent_color || '#00ff00';
+    const maxWidth = window.ghost_custom_settings?.tooltip_max_width || '400px';
+    const linkColor = window.ghost_custom_settings?.hyperlink_color || '#00a8ff';
+    
     return `
       .footnotes-disabled .footnote-ref {
         pointer-events: none !important;
@@ -329,16 +359,22 @@ class FootnoteService {
       
       .footnote-tooltip {
         z-index: ${zIndex};
-        background: var(--footnote-bg, rgba(0, 0, 0, 0.95));
-        color: var(--footnote-accent, #00ff00);
-        border: var(--footnote-border, 1px solid #008800);
-        padding: 10px;
-        border-radius: 4px;
-        font-family: var(--footnote-font, 'JetBrains Mono', monospace);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        background: rgba(0, 0, 0, ${opacity});
+        color: #ffffff;
+        border: 1px solid ${accentColor};
+        padding: 12px 14px;
+        border-radius: 2px;
+        font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+        font-size: 13px;
+        line-height: 1.4;
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.1), 
+                    0 4px 12px rgba(0, 0, 0, 0.5);
         transition: opacity 0.2s ease;
+        max-width: min(${maxWidth}, 80vw);
+        word-wrap: break-word;
       }
       
+      /* Arrow pointing to footnote ref */
       .footnote-tooltip::before {
         content: '';
         position: absolute;
@@ -349,7 +385,39 @@ class FootnoteService {
         height: 0;
         border-left: 5px solid transparent;
         border-right: 5px solid transparent;
-        border-top: 5px solid var(--footnote-border, #008800);
+        border-top: 5px solid ${accentColor};
+      }
+      
+      /* Match the footnote marker styling */
+      .footnote-ref a {
+        color: ${accentColor};
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      
+      .footnote-ref a:hover {
+        color: #ffffff;
+        text-shadow: 0 0 8px ${accentColor};
+      }
+      
+      /* Preserve formatting in tooltip content */
+      .footnote-tooltip em, .footnote-tooltip i {
+        font-style: italic;
+      }
+      
+      .footnote-tooltip strong, .footnote-tooltip b {
+        font-weight: bold;
+      }
+      
+      .footnote-tooltip a {
+        color: ${linkColor};
+        text-decoration: underline;
+      }
+      
+      .footnote-tooltip a:hover {
+        color: #ffffff;
+        text-shadow: 0 0 6px ${linkColor};
       }
     `;
   }

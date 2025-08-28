@@ -1,7 +1,7 @@
 {
     "name": "trace-of-the-other",
     "description": "A literary Ghost theme with enhanced footnotes and expandable commentary, preserving simple editor workflow",
-    "version": "2.2.5",
+    "version": "2.5.4",
     "engines": {
         "ghost": ">=5.0.0"
     },
@@ -13,80 +13,85 @@
     "config": {
         "posts_per_page": 10,
         "custom": {
-            "footnote_theme": {
-                "type": "select",
-                "options": ["hacker", "academic", "minimal"],
-                "default": "hacker",
-                "description": "Choose the visual theme for footnotes and extensions"
+            "primary_accent_color": {
+                "type": "color",
+                "default": "#00ff00",
+                "description": "Primary accent color (hacker green) for footnotes and links"
             },
-            "enable_extensions": {
-                "type": "boolean",
-                "default": true,
-                "description": "Enable paragraph extensions using [+][content] syntax"
+            "extension_accent_color": {
+                "type": "color", 
+                "default": "#ff8800",
+                "description": "Accent color for paragraph extensions [+]"
+            },
+            "interactive_text_color": {
+                "type": "color",
+                "default": "#ff0000",
+                "description": "Text color for interactive markers [?]"
+            },
+            "hyperlink_color": {
+                "type": "color",
+                "default": "#00a8ff",
+                "description": "Color for hyperlinks in content and tooltips"
             },
             "enable_modern_footnotes": {
                 "type": "boolean", 
                 "default": true,
-                "description": "Use enhanced footnote processor with improved tooltips"
+                "group": "post",
+                "description": "Enable footnote tooltips on hover"
+            },
+            "tooltip_bg_opacity": {
+                "type": "select",
+                "options": ["0.85", "0.90", "0.95", "0.98", "1.0"],
+                "default": "0.95",
+                "group": "post",
+                "description": "Footnote tooltip background opacity (0.95 = 95% opaque)"
             },
             "tooltip_max_width": {
                 "type": "select",
-                "options": ["50vw", "60vw", "70vw", "80vw"],
-                "default": "60vw",
-                "description": "Maximum width for footnote tooltips on desktop"
+                "options": ["300px", "400px", "500px", "600px"],
+                "default": "400px",
+                "group": "post",
+                "description": "Maximum width for footnote tooltips"
+            },
+            "enable_extensions": {
+                "type": "boolean",
+                "default": true,
+                "group": "post",
+                "description": "Enable paragraph extensions using [+][content] syntax"
+            },
+            "enable_deconstruction": {
+                "type": "boolean",
+                "default": true,
+                "group": "post",
+                "description": "Enable text deconstruction effects (experimental)"
+            },
+            "interactive_bg_opacity": {
+                "type": "select",
+                "options": ["0.5", "0.7", "0.8", "0.9", "0.95"],
+                "default": "0.8",
+                "group": "post",
+                "description": "Background opacity for interactive [?] overlays"
             },
             "animation_speed": {
                 "type": "select",
                 "options": ["fast", "normal", "slow"],
                 "default": "normal", 
-                "description": "Speed of expand/collapse animations"
-            },
-            "primary_accent_color": {
-                "type": "color",
-                "default": "#00ff00",
-                "description": "Primary accent color for footnotes"
-            },
-            "extension_accent_color": {
-                "type": "color", 
-                "default": "#ff8800",
-                "description": "Accent color for paragraph extensions"
+                "description": "Speed of typing animations and expand/collapse effects"
             },
             "enable_keyboard_navigation": {
                 "type": "boolean",
                 "default": true,
-                "description": "Enable keyboard navigation for footnotes and extensions"
+                "description": "Enable keyboard shortcuts (Tab to navigate footnotes)"
             },
             "mobile_responsive": {
                 "type": "boolean",
                 "default": true,
-                "description": "Optimize footnotes and extensions for mobile devices"
+                "description": "Optimize tooltips and interactions for mobile devices"
             },
             "debug_mode": {
                 "type": "boolean",
                 "default": false,
-                "description": "Enable debug mode for troubleshooting (development only)"
-            },
-            "enable_deconstruction": {
-                "type": "boolean",
-                "default": true,
-                "description": "Enable radical text deconstruction effects (experimental feature)"
-            },
-            "interactive_text_color": {
-                "type": "color",
-                "default": "#ff0000",
-                "description": "Text color for interactive marker overlays"
-            },
-            "interactive_bg_opacity": {
-                "type": "select",
-                "options": ["0.3", "0.5", "0.7", "0.8", "0.9"],
-                "default": "0.8",
-                "description": "Background opacity for interactive marker overlays (0.3 = 30% opaque)"
-            },
-            "interactive_fade_amount": {
-                "type": "select",
-                "options": ["0.05", "0.1", "0.2", "0.3", "0.5"],
-                "default": "0.05",
-                "description": "How much to fade underlying text when showing interactive overlays"
+                "description": "Enable verbose console logging (development only)"
             }
         }
     },
